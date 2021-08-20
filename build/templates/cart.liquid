@@ -1,0 +1,216 @@
+{%- capture page_title %}{{ 'cart.general.title' | t }}{%- endcapture -%}
+
+{%- capture container_content -%}
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" id="cartform" class="form cart" novalidate>
+      <div class="cart__table-wrapper">
+
+        <div class="container__row cart__table">
+          <div class="cart__header">
+            <div class="row">
+              <div class="col col-md cart-line__image">
+              </div>
+              <div class="col col-md cart-line__title">
+                {{ 'cart.label.product' | t }}
+              </div>
+              <div class="col col-md cart-line__quantity">
+                {{ 'cart.label.quantity' | t }}
+              </div>
+              <div class="col col-md cart-line__subtotal">
+                {{ 'cart.label.total' | t }}
+              </div>
+              <div class="col col-md cart-line__remove">
+              </div>
+            </div>
+          </div>
+
+          <div class="cart__lines" data-cart-container="products">
+
+            {%- for line_item in cart.items -%}
+
+              <div class="row col-xs--middle cart-line" data-cart-line="{{ line_item.variant_id }}">
+
+                {%- comment %} Product image {%- endcomment -%}
+                <div class="col col-xs-3 col-md cart-line__image">
+                  {%- if line_item.image != blank -%}
+                    <a href="{{ line_item.url | within: collections.all }}">
+                      {%- render 'responsive-image',
+                        responsive_image: line_item.image,
+                        responsive_image_alt: line_item.title,
+                        responsive_image_size: "180x180",
+                        responsive_image_crop: "center"
+                      -%}
+                    </a>
+                  {%- endif -%}
+                </div>
+
+                <div class="col col-xs-9 col-md cart-line__title">
+
+                  {%- comment %} Product link {%- endcomment -%}
+                  <p>
+                    <a href="{{ line_item.url }}" class="cart-product-link">
+
+                      {%- comment %} Product title {%- endcomment -%}
+                      {%- render 'format-unprefix', format: line_item.product.title -%}
+
+                      {%- comment %} Product variant name {%- endcomment -%}
+                      {%- unless line_item.product.has_only_default_variant -%}
+                        <span class="cart-product-variant"> ({{ line_item.variant.title }})</span>
+                      {%- endunless -%}
+                    </a>
+                  </p>
+
+                  {%- comment %} Product properties {%- endcomment -%}
+                  {%- assign property_size = line_item.properties | size -%}
+
+                  {% if property_size > 0 %}
+                    <p>
+                      {% for p in line_item.properties %}
+                        {% assign property_key = p.first %}
+                        {% assign property_key_first = property_key | slice: 0 %}
+                        {% assign property_value = p.last %}
+                        {% unless property_value == blank or property_key_first == "_"  %}
+                          {{ property_key }}:
+                          {% if p.last contains '/uploads/' %}
+                            <a href="{{ property_value }}">{{ property_value | split: '/' | last }}</a>
+                          {% else %}
+                            {{ property_value }}
+                          {% endif %}
+                        {% endunless %}
+                      {% endfor %}
+                    </p>
+                  {% endif %}
+
+                  {%- comment %} Product price {%- endcomment -%}
+                  <p>
+                    {%- if line_item.original_line_price != line_item.final_line_price -%}
+                      <span class="visually-hidden">{{ 'cart.label.discounted_price' | t }}</span>
+                      {%- render 'format-price', format_price: line_item.final_price -%}
+                      <span class="visually-hidden">{{ 'cart.label.original_price' | t }}</span>
+                      <s>{%- render 'format-price', format_price: line_item.original_price -%}</s>
+                    {%- else -%}
+                      {%- render 'format-price', format_price: line_item.final_price -%}
+                    {%- endif -%}
+                  </p>
+
+                </div>
+
+                {%- comment %} Product quantity {%- endcomment -%}
+                <div class="col col-xs-12 col-md cart-line__quantity">
+                  <p class="cart-drawer__quantity-modifier" data-cart-drawer-quantity-modifiers>
+                    <button type="button" class="button__minus js" data-cart-drawer-quantity-modifier="-1"{% if line_item.quantity == 1 %} disabled="disabled"{% endif %}><i>-</i></button>
+                    <input data-cart-drawer-quantity-value type="number" min="1" autocomplete="off" name="updates[{{ line_item.variant.id }}]" value="{{ line_item.quantity }}" aria-label="{{ 'cart.general.item_quantity' | t }}" />
+                    <input data-cart-drawer-quantity-id type="hidden" name="id" value="{{ line_item.variant.id }}" />
+                    <button type="button" class="button__plus js" data-cart-drawer-quantity-modifier="1"><i>+</i></button>
+                  </p>
+                </div>
+
+                {%- comment %} Product subtotal {%- endcomment -%}
+                <div class="col col-xs-12 col-md cart-line__subtotal" data-cart-drawer-template-element="line-price">
+                  {%- render 'format-price', format_price: line_item.final_line_price -%}
+                </div>
+
+                {%- comment %} Product remove {%- endcomment -%}
+                <div class="col col-xs-1 col-md cart-line__remove">
+                  <a class="cart-remove" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" title="{{ 'cart.general.remove' | t }}" aria-label="Delete" data-ajax-cart-template-element="remove">
+                    {%- render 'global-icon', icon_name: 'delete', icon_size: 'md' -%}
+                  </a>
+                </div>
+              </div>
+
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment %} Cart footer {%- endcomment -%}
+        <div class="container__row cart__footer">
+
+          <div class="cart__totals-col" data-cart-container="totals">
+            <p class="price-total">
+
+              {%- comment %} Cart totals {%- endcomment -%}
+              {{ 'cart.general.subtotal' | t }}
+              <span class="price" data-cart-drawer-template-element="total">{%- render 'format-price', format_price: cart.total_price -%}</span>
+
+              {%- comment %} Cart discounts {%- endcomment -%}
+              <span class="price-discounts{% unless cart.total_discounts > 0 %} hidden{%- endunless -%}">
+                {{ 'cart.general.savings' | t }}
+                <span class="price" data-cart-drawer-template-element="discounts">{%- render 'format-price', format_price: cart.total_discounts -%}</span>
+              </span>
+            </p>
+
+            {%- comment %} Shipping at checkout line {%- endcomment -%}
+            {%- assign shipping_at_checkout = 'cart.general.shipping_at_checkout' | t -%}
+            {%- unless shipping_at_checkout contains 'cart.general.shipping_at_checkout' -%}
+              <p class="cart__shipping">{{ 'cart.general.shipping_at_checkout' | t }}</p>
+            {%- endunless -%}
+          </div>
+
+          {%- comment %} Cart notes {%- endcomment -%}
+          {%- if settings.cart_notes_enable -%}
+            <div class="cart__notes-col">
+              <div class="form__row">
+                <div class="form__label visually-hidden">
+                  <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+                </div>
+                <div class="form__input">
+                    <textarea name="note" id="CartSpecialInstructions" placeholder="{{ 'cart.general.note' | t }}">{{ cart.note }}</textarea>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {% comment %} Cart checkout {% endcomment %}
+          <div class="cart__checkout-col">
+            <div class="row row--gutter">
+
+              {%- comment %} Terms {%- endcomment -%}
+              {%- if settings.cart_terms_enable and settings.cart_terms_text != blank -%}
+                <div class="col col-xs-12 col-lg-6">
+                  {{ settings.cart_terms_text }}
+                </div>
+              {%- endif -%}
+
+              {%- comment %} Cart buttons {%- endcomment -%}
+              <div class="col col-xs-12 col-lg cart-buttons">
+
+                {%- comment %} Update button for no-js {%- endcomment -%}
+                <input type="submit" name="update" class="button no-js" value="{{ 'cart.general.update' | t }}" data-cart-update-button>
+
+                {%- comment %} Checkout button {%- endcomment -%}
+                <input type="submit" name="checkout" class="button button--funnel button--wide button-lg" value="{{ 'cart.general.checkout' | t }}">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </form>
+  {%- else -%}
+
+    {%- comment -%}
+    Cart empty state
+    {%- endcomment -%}
+    <div class="supports-cookies">
+      <p>{{ 'cart.general.empty' | t }}</p>
+      <p>{{ 'cart.general.continue_browsing_html' | t }}</p>
+    </div>
+
+    {%- comment -%}
+    Cart no cookies state
+    ---------------------
+    Browser cookies are required to use the cart. If cookies aren't enabled in the
+    browser a message is displayed prompting the user to enable them.
+    {%- endcomment -%}
+    <div class="supports-no-cookies">
+      <p>{{ 'cart.general.cookies_required' | t }}</p>
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- render 'container',
+    container_content: container_content,
+    container_title: page_title,
+    container_header_element: 'h1'
+-%}

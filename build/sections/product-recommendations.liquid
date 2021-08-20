@@ -1,0 +1,86 @@
+{%- comment %}
+  Shopify Product recommendations: https://shopify.dev/tutorials/develop-theme-recommended-products
+  This section renders an empty container which is filled by ajax.
+  The plugin product-recommendations.js replaces the section with the new html.
+{%- endcomment -%}
+
+{%- comment %} Set options {%- endcomment -%}
+{%- capture product_recommendations_options -%}
+  data-product-recommendations='{
+    "productId": {{ product.id }},
+    "limit": 8
+  }'
+{%- endcapture -%}
+
+{%- comment %} Set title {%- endcomment -%}
+{%- assign container_title = 'products.product.product_recommendations' | t -%}
+
+{%- comment %} Capture html result for plugin {% endcomment -%}
+{%- capture product_recommendations -%}
+  {%- if recommendations.products_count > 0 -%}
+
+    {%- comment %} Render wrapper / slider {%- endcomment -%}
+    <div data-swiper-options='{
+        "slidesPerView": 2,
+        "spaceBetween": 40,
+        "centeredSlides": false,
+        "centerInsufficientSlides": false,
+        "scrollbar": false,
+        "pagination": false,
+        "roundLengths": true,
+        "breakpointsInverse": true,
+        "breakpoints": {
+          "320": {
+            "slidesPerView": 1.3
+          },
+          "480": {
+            "slidesPerView": 2.3
+          },
+          "768": {
+            "slidesPerView": 3
+          },
+          "1024": {
+            "slidesPerView": 4
+          }
+        }
+      }'
+    >
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+
+          {%- comment %} Loop the products {%- endcomment -%}
+          {%- for product in recommendations.products -%}
+            <div class="swiper-slide">
+
+              {%- comment %} Render product link {%- endcomment -%}
+              {%- render 'product-link',
+                the_product: product,
+                product_view: 'grid',
+                responsive_image_alt: product.title,
+                responsive_image_size: "255x255",
+                responsive_image_class: "img--contain",
+                responsive_image_breakpoints_arr: "480|768|1024",
+                responsive_image_sizes_arr: "200x200|345x345|200x200"
+              -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment %} Render wrapper with data for plugin {% endcomment -%}
+{%- render 'container',
+  container_title: container_title,
+  container_content: product_recommendations,
+  container_classes: "product-recommendations js",
+  container_data: product_recommendations_options
+-%}
+
+{% schema %}
+{
+  "name": "Product Recommendations",
+  "class": "product-recommendations js hidden"
+}
+{% endschema %}

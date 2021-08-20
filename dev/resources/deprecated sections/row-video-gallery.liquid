@@ -1,0 +1,153 @@
+{%- comment -%} Get nr of columns from settings {%- endcomment -%}
+{%- assign items_per_row = section.settings.items_per_row | times: '1' -%}
+
+{%- comment -%} Get classes for responsive columns {%- endcomment -%}
+{%- render 'responsive-column-dimensions',
+  items_per_row = items_per_row
+-%}
+
+{%- comment -%} Get responsive image dimensions {%- endcomment -%}
+{%- render 'responsive-image-dimensions',
+  items_per_row = items_per_row,
+  responsive_image_ratio: '1'
+-%}
+
+{% comment %} create content {% endcomment %}
+{% capture section_content %}
+  {% if section.blocks.size > 0 %}
+    <div class="row row--gutter row--line-spacing {{ responsive_no_line_spacing }}">
+      {% for block in section.blocks %}
+        <div class="col {{ responsive_column_classes }} col--border" {{ block.shopify_attributes }}>
+
+          {%- assign video_url = block.settings.video_url -%}
+          {%- if video_url contains 'youtu.be' -%}
+            {%- assign video_embed_url = video_url | replace: 'https://youtu.be/', 'https://www.youtube.com/embed/' -%}
+            {%- capture video_embed -%}
+              <iframe width="560" height="315" src="{{ video_embed_url }}" frameborder="0" allowfullscreen></iframe>
+            {%- endcapture -%}
+          {%- elsif video_url contains 'vimeo.com' -%}
+            {%- assign video_embed_url = video_url -%}
+            {%- capture video_embed -%}
+              <iframe src="https://player.vimeo.com/video/{{ video_url | remove: 'https://vimeo.com/' }}?color=ffffff&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+            {%- endcapture -%}
+          {%- endif -%}
+
+          <div class="product-gallery-image">
+            <figure class="img img--responsive embed">
+              <div class="embed-wrapper">
+                {{ video_embed }}
+              </div>
+            </figure>
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+  {%- else -%}
+    <div class="row row--gutter row--line-spacing {{ responsive_no_line_spacing }}">
+      {%- for i in (1..section.settings.items_per_row) -%}
+        <div class="col {{ responsive_column_classes }} col--border">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endfor -%}
+    </div>
+  {% endif %}
+{% endcapture %}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Video gallery",
+  "class": "video-gallery-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Video gallery",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "items_per_row",
+    "default": "2",
+    "label": "Nr of items per row",
+    "options": [
+    {
+      "value": "1",
+      "label": "1"
+    },
+    {
+      "value": "2",
+      "label": "2"
+    },
+    {
+      "value": "3",
+      "label": "3"
+    },
+    {
+      "value": "4",
+      "label": "4"
+    } ]
+  } ],
+  "blocks": [
+  {
+    "type": "video",
+    "name": "video",
+    "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video url"
+    } ]
+  } ],
+  "presets": [
+  {
+    "name": "Video gallery",
+    "category": "Image",
+    "settings": {}
+  } ]
+}
+{% endschema %}

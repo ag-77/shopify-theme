@@ -1,0 +1,44 @@
+{%- comment -%}
+  EXAMPLE: translate customer.login.title:
+
+  {%- render 'format-translation',
+    namespace: 'customer.login',    // first part of locale key
+    key: 'title',                   // last part of locale key
+    fallback: 'Login'               // OPTIONAL hardcoded fallback text, will be rendered as <i class="translation-error">Login</i>
+  -%}
+
+  EXAMPLE: translate products.price.from_html:
+  {%- render 'format-translation',
+    namespace: 'products.price',    // first part of locale key
+    key: 'from_html',               // last part of locale key
+    fallback: 'from {{ html }}'     // hardcoded fallback text with translation parameter (must be typed exactly as "{{ html }}"). Fallback will be rendered as <i class="translation-error">Login</i>
+    html: price                     // optional, will be passed as {{ html }} to _html strings that can handle translation parameters
+  -%}
+
+{%- endcomment -%}
+
+{%- comment -%} Get the translation {%- endcomment -%}
+{%- assign translation_str =  namespace | append: '.' | append: key -%}
+{%- capture translated_str -%}
+  {%- comment -%} Passing html only works if the translation string contains "{{ html }}" {%- endcomment -%}
+  {%- if html -%}
+    {{- translation_str | t: html: html -}}
+  {%- else -%}
+    {{- translation_str | t -}}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} If translation error {%- endcomment -%}
+{%- if translated_str contains namespace -%}
+  {%- if fallback != blank -%}
+    {%- comment -%} If fallback has html {%- endcomment -%}
+    {%- if fallback contains "{{ html }}" and html != blank -%}
+      {%- assign fallback = fallback | replace: '{{ html }}', html -%}
+    {%- endif -%}
+    {%- comment -%} Output fallback {%- endcomment -%}
+    <i class="translation-error">{{ fallback }}</i>
+  {%- endif -%}
+{%- else -%}
+  {%- comment -%} Output translation {%- endcomment -%}
+  {{- translated_str -}}
+{%- endif -%}

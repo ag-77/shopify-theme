@@ -1,0 +1,78 @@
+// Content from rich text editors (WYSIWYG)
+.content {
+  @include clearfix();
+  p, figure, table, dl, blockquote, q {
+    margin: 0 0 $body-element-spacing 0;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  table {
+    table-layout: fixed;
+  }
+  a {
+    text-decoration: underline;
+    &[href]:focus,
+    &[href]:active,
+    &[href]:hover {
+      text-decoration: none;
+    }
+  }
+  .button {
+    text-decoration: none;
+    &[href]:focus,
+    &[href]:active,
+    &[href]:hover {
+      text-decoration: none;
+    }
+  }
+  h2,h3,h4,h5,h6 {
+    margin-bottom: 0.2em;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  ul,
+  ol {
+    margin: 0 0 $body-element-spacing $body-element-spacing;
+  }
+  ul {
+    list-style: disc outside;
+
+    ul {
+    list-style: circle outside;
+
+    ul {
+      list-style: square outside;
+    }
+    }
+  }
+  blockquote {
+    padding: 10px 30px;
+    position: relative;
+    p {
+      font-size: 120%;
+      display: inline;
+      font-style: italic;
+    }
+    &:before {
+      color: #ccc;
+      content: open-quote;
+      font-size: 4em;
+      position: absolute;
+      top: 16px;
+      left: 0;
+    }
+    &:after {
+      color: #ccc;
+      content: close-quote;
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      margin-left: 0.1em;
+      vertical-align: -0.6em;
+      display: inline-block;
+    }
+  }
+}

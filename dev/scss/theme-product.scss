@@ -1,0 +1,12 @@
+/*================ MIXINS ================*/
+@import url('mixins/mediaquery.scss');
+@import url('mixins/mixins.scss');
+
+/*================ SETTINGS ================*/
+@import url('settings.scss');
+
+/*================ PRODUCT PAGE ONLY ================*/
+@import url('ext/easyzoom.scss');
+@import url('theme/code_1/product.scss');
+@import url('theme/code_1/product-images.scss');
+@import url('theme/code_1/related-products.scss');

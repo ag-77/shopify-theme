@@ -1,0 +1,18 @@
+{% capture page_title %}{{ 'general.404.title' | t }}{% endcapture %}
+
+{% capture container_content %}
+  <div class="container__row">
+    <p>{{ 'general.404.subtext_html' | t }}</p>
+  </div>
+  <div class="container__row">
+    {%- render 'global-search', search_id: 'searchpage' -%}
+  </div>
+{% endcapture %}
+
+{%- render 'container',
+  container_content: container_content,
+  container_classes: 'text-align-center',
+  container_content_classes: 'site-center--narrow',
+  container_title: page_title,
+  container_header_element: 'h1'
+-%}

@@ -1,0 +1,177 @@
+{%- comment -%} Currency switcher {%- endcomment -%}
+{%- capture currency_switcher -%}
+  {%- form 'currency', class: "currency__switcher", data-currency: "switcher" -%}
+    <div class="row form__row">
+      <div class="form__input form__input--select">
+        <label for="currency" class="visually-hidden">
+          {{ 'currency_switcher.swich_currency' | t }}
+        </label>
+        <select name="currency" id="currency">
+          {%- for currency in shop.enabled_currencies -%}
+            <option{% if currency == cart.currency %} selected="selected"{% endif %} value="{{currency.iso_code}}">
+              {{currency.iso_code}} - {{currency.symbol}}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="button no-js">{{ 'currency_switcher.update' | t }}</button>
+  {%- endform -%}
+{%- endcapture -%}
+
+{%- comment -%} Cart link {%- endcomment -%}
+{%- capture cart_icon -%}
+    <a href="{{ routes.cart_url }}"
+      class="cart-icon"
+      title="{{ 'layout.cart.title' | t }} ({{ cart.item_count }} {{ 'layout.cart.items_count' | t: count: cart.item_count }})"
+      data-cart-drawer-link
+      data-toggle-element-class='{
+      "class": "cart-drawer--is-open"
+    }'>
+      {%- render 'global-icon', icon_name: 'cart' -%}
+      <span class="cart-count{% if cart.item_count == 0 %} hidden{% endif %}" data-cart-drawer-icon__wrapper>
+        <span data-cart-drawer-icon-quantity="{{ cart.item_count }}">
+          {{- cart.item_count -}}
+        </span>
+        <span class="visually-hidden">
+          {{- 'layout.cart.items_count' | t: count: cart.item_count -}}
+        </span>
+      </span>
+      <span class="visually-hidden" data-cart-drawer-icon-quantity="{{ cart.item_count }}">
+        {{- cart.item_count -}}
+      </span>
+      <span class="visually-hidden">
+        {{- 'layout.cart.items_count' | t: count: cart.item_count -}}
+      </span>
+    </a>
+{%- endcapture -%}
+
+{% comment -%} User link {% endcomment %}
+{% capture account_nav %}
+  {%- if shop.customer_accounts_enabled -%}
+    {%- if customer -%}
+      <div class="header-navigation__link-wrapper header-nav__account" data-collapsible-parent>
+        <a href="{{ routes.account_url }}" class="account-icon" data-collapsible-trigger title="{{ 'customer.account.title' | t }}">
+          {%- render 'global-icon', icon_name: 'user' -%}
+          <span class="visually-hidden">
+            {{ 'customer.account.title' | t }}
+          </span>
+          <span data-collapsible-trigger-icon>
+            {%- render 'global-icon', icon_name: 'expand', icon_size: 'sm' -%}
+          </span>
+        </a>
+        <div class="header__dropdown">
+          {% render 'account-nav' %}
+        </div>
+      </div>
+    {%- else -%}
+      <div class="header-navigation__link-wrapper">
+        <a href="{{ routes.account_login_url }}" class="account-icon">
+          <span class="visually-hidden">
+            {%- render 'format-translation', namespace: 'customer.login', key: 'title', fallback: 'Login' -%}
+          </span>
+          {%- render 'global-icon', icon_name: 'user' -%}
+        </a>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+{% endcapture %}
+
+{%- comment -%} Primary navigation {%- endcomment -%}
+{%- capture primary_nav -%}
+  <div role="navigation" class="header-navigation header-navigation--primary" data-collapsible-wrapper='{
+    "openOnHover": true,
+    "closeSiblings": 768,
+    "closeAll": true
+  }'>
+    {%- render 'global-linklist',
+      navigation_linklist: settings.main_linklist,
+      navigation_class_prefix: 'header-navigation',
+      navigation_collapsible: true
+    -%}
+  </div>
+{%- endcapture -%}
+
+{%- capture nav_toggle -%}
+  <button type="button" data-toggle-element-class='{
+    "class": "header-navigation--is-open"
+  }'>
+  <span class="visually-hidden">
+    {%- render 'format-translation', namespace: 'general.accessibility', key: 'toggle_navigation', fallback: 'Toggle navigation' -%}
+  </span>
+  {%- render 'global-icon', icon_name: 'menu', icon_size: 'md' -%}
+</button>
+{%- endcapture -%}
+
+{%- comment -%} Secondary navigation {%- endcomment -%}
+{%- capture secondary_nav -%}
+  <div role="navigation" class="header-navigation header-navigation--secondary">
+
+    {%- comment %} User icon {%- endcomment -%}
+    {{- account_nav -}}
+
+    {%- comment %} Cart icon {%- endcomment -%}
+    <div class="header-navigation__link-wrapper header-navigation__cart">
+    {{- cart_icon -}}
+    </div>
+
+    {% comment %} Mobile nav toggle {% endcomment %}
+    <div class="header-navigation__link-wrapper header-navigation__toggle">
+    {{ nav_toggle }}
+    </div>
+
+    {%- comment %} Currency switcher {% endcomment -%}
+    <div class="header-navigation__link-wrapper header-navigation__currency">
+      {{- currency_switcher -}}
+    </div>
+
+  </div>
+{%- endcapture -%}
+
+{%- comment -%} Render the header {%- endcomment -%}
+<div id="header" class="header" role="banner" data-collapsible-wrapper data-collapsible-options='{
+  "closeOnMouseleave": "true",
+  "closeSiblings": 768
+}'>
+
+  {% comment %} Mobile header dark overlay / close nav {% endcomment %}
+  <div class="header__wrapper-shadow" data-toggle-element-class='{
+    "class": "header-navigation--is-open"
+  }'>
+  </div>
+
+  {%- comment -%} Desktop header + mobile foldout nav {% endcomment %}
+  <div class="header__wrapper">
+    <div class="header__container site-center site-side-spacing">
+      <div class="row row--gutter col-xs--middle header__top">
+
+        <div class="col col-md col-logo">
+          {% comment %} Logo {% endcomment %}
+          {%- render 'global-logo' -%}
+        </div>
+
+        <div class="col col-md-6 col-secondary-nav">
+          {% comment %} Secondary Navigation {% endcomment %}
+          {{ secondary_nav }}
+        </div>
+
+      </div>
+
+      <div class="row row--gutter col-xs--middle header__bottom">
+
+        <div class="col col-xs-12 col-md-8 col-primary-nav">
+          {% comment %} Primary navigation {% endcomment %}
+          {{ primary_nav }}
+        </div>
+
+        <div class="col col-xs-12 col-md col-search">
+          {% comment %} Search {% endcomment %}
+          {%- render 'global-search' -%}
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

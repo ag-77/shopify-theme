@@ -1,0 +1,315 @@
+{%- comment %}
+  BREADCRUMB OPTIONS
+{% endcomment %}
+
+{%- comment -%} Show the 'Home' link? {%- endcomment -%}
+{%- assign show_home_link = true -%}
+
+{%- comment -%} Show the 'Collections' link when on a PDP without collection (/products/xxx)? {%- endcomment -%}
+{%- assign show_collections_link = false -%}
+
+{% comment %}
+  BREADCRUMB ARRAY
+  Creates an array from the main navigation.
+  Use of link "headers" linking to "#" is not allowed by google, so these will not show up in the breadcrumbs
+{% endcomment %}
+{% assign breadcrumb_str = '' %}
+
+{%- comment %} Don't render Breadcrumbs on these templates or when collection link must be shown {% endcomment -%}
+{%- unless template contains 'index' or request.path contains '/challenge' -%}
+
+  {% unless show_collections_link %}
+
+    {%- comment -%} Walk through the main-nav to find the active collection {%- endcomment %}
+    {%- capture collection_breadcrumbs -%}
+
+      {%- comment -%} Loop the main navigation to find nested active links and store in an array {%- endcomment %}
+      {%- for link in linklists[settings.main_linklist].links -%}
+
+        {%- comment -%} Active link and no active sublink {%- endcomment %}
+        {%- if link.active and link.child_active == false -%}
+
+          {% capture breadcrumb_str -%}
+            {{- breadcrumb_str}}
+            {% if link.url != "#" %}||{{link.title}}::{{ link.url }}{% endif %}
+          {% endcapture %}
+
+        {%- endif -%}
+
+        {%- comment -%} Child-Active link {%- endcomment %}
+        {%- if link.child_active -%}
+
+          {% capture breadcrumb_str -%}
+            {{- breadcrumb_str}}
+            {% if link.url != "#" %}||{{link.title}}::{{ link.url }}{% endif %}
+          {% endcapture %}
+
+          {%- for sublink in link.links -%}
+
+            {%- comment -%} Active sublink and no active subsublink {%- endcomment %}
+            {%- if sublink.active and sublink.child_active == false -%}
+
+              {% capture breadcrumb_str -%}
+                {{- breadcrumb_str}}
+                ||{{sublink.title}}
+                ::{{ sublink.url }}
+              {% endcapture %}
+
+            {%- endif -%}
+
+            {%- comment -%} Child-Active sublink {%- endcomment %}
+            {%- if sublink.child_active -%}
+
+              {% capture breadcrumb_str -%}
+                {{- breadcrumb_str}}
+                {% if sublink.url != "#" %}||{{sublink.title}}::{{ sublink.url }}{% endif %}
+              {% endcapture %}
+
+              {%- for subsublink in sublink.links -%}
+
+                {%- comment -%} Active subsublink {%- endcomment %}
+                {%- if subsublink.active -%}
+
+                  {% capture breadcrumb_str -%}
+                    {{- breadcrumb_str}}
+                    ||{{subsublink.title}}
+                    ::{{ subsublink.url }}
+                  {% endcapture %}
+
+                {%- endif -%}
+
+              {%- endfor -%}
+              {%- break -%}
+
+            {%- endif -%}
+          {%- endfor -%}
+
+        {%- break -%}
+        {%- endif -%}
+
+      {%- endfor -%}
+    {%- endcapture -%}
+  {% endunless %}
+
+  {% comment %} If path was found in navigation {% endcomment %}
+  {% if breadcrumb_str != blank  %}
+
+    {% comment %} Add product to breadcrumb if we came from a collection that's in the navigation {% endcomment %}
+    {%- if template contains "product" -%}
+      {% assign product_title = product.title | prepend: '||' %}
+      {% unless breadcrumb_str contains product_title %}
+        {% capture breadcrumb_str %}
+          {{ breadcrumb_str }}
+          {{ product_title }}
+        {% endcapture %}
+      {% endunless %}
+
+    {% comment %} Add article to breadcrumb if we came from a blog that's in the navigation {% endcomment %}
+    {%- elsif template contains "article" -%}
+      {% assign article_title = article.title | prepend: '||' %}
+      {% unless breadcrumb_str contains article_title %}
+        {% capture breadcrumb_str %}
+          {{ breadcrumb_str }}
+          {{ article_title }}
+        {% endcapture %}
+      {% endunless %}
+    {%- endif -%}
+
+  {% comment %} If no path is found in navigation, create breadcrumbs for all types of content {% endcomment %}
+  {% else %}
+
+    {%- comment -%} Product link {%- endcomment %}
+    {%- if template contains "product" -%}
+
+      {% capture breadcrumb_str %}
+
+        {%- comment -%} 'collections' link {%- endcomment %}
+        {%- if show_collections_link -%}
+          ||{{ 'general.breadcrumbs.collections' | t }}::/collections
+          {% if collection %}
+            ||{{collection.title}}::{{ collection.url }}
+          {% else %}
+            ||{{ 'general.breadcrumbs.products' | t }}::/collections/all
+          {% endif %}
+        {%- endif -%}
+        ||{{product.title}}
+      {% endcapture %}
+
+    {%- comment -%} Collection link {%- endcomment %}
+    {%- elsif template contains "collection" -%}
+
+      {% capture breadcrumb_str %}
+
+        {%- comment -%} 'collections' link {%- endcomment %}
+        {%- if show_collections_link -%}
+          ||{{ 'general.breadcrumbs.collections' | t }}::/collections
+          {% if collection.handle == 'all' -%} %}
+            ||{{ 'general.breadcrumbs.all_products' | t }}
+          {% else %}
+            ||{{collection.title}}
+          {% endif %}
+        {%- endif -%}
+
+        {%- comment -%} Current tags {%- endcomment %}
+        {% if current_tags %}
+          ||{{ current_tags.first | replace: ':',': ' }}
+        {% endif %}
+      {% endcapture %}
+
+    {%- comment -%} List collections link {%- endcomment %}
+    {%- elsif template contains "list-collections" -%}
+
+      {% capture breadcrumb_str %}
+        {%- if settings.hide_collections_page -%}
+          {{ 'general.breadcrumbs.404' | t }}
+        {%- else -%}
+          {{ 'general.breadcrumbs.collections' | t }}
+        {%- endif -%}
+      {% endcapture %}
+
+    {%- comment -%} Blog link {%- endcomment %}
+    {%- elsif template contains "blog" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{blog.title}}
+
+        {% comment %} Blog filter tags {% endcomment %}
+        {% if current_tags.size > 0 %}
+          {{ 'general.breadcrumbs.tagged' | t }}: {%- for tag in current_tags -%}{{ tag }}{%- unless forloop.last %}, {%- endunless %}{%- endfor %}
+        {% endif %}
+      {% endcapture %}
+
+    {%- comment -%} Blog > Article link {%- endcomment %}
+    {%- elsif template contains "article" -%}
+
+        {% capture breadcrumb_str %}
+          ||{{blog.title}}::{{ blog.url }}
+          ||{{article.title}}
+        {% endcapture %}
+
+    {% comment %} Page link {% endcomment %}
+    {%- elsif template contains "page" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{page.title}}
+      {% endcapture %}
+
+    {% comment %} Cart link {% endcomment %}
+    {%- elsif template contains "cart" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'cart.general.title' | t }}
+      {% endcapture %}
+
+    {% comment %} 404 link {% endcomment %}
+    {%- elsif template contains "404" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'general.breadcrumbs.404' | t }}
+      {% endcapture %}
+
+    {% comment %} Search link {% endcomment %}
+    {%- elsif template contains "search" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'general.search.header' | t }}
+      {% endcapture %}
+
+    {% comment %} Login link {% endcomment %}
+    {%- elsif template contains "customers/login" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.account.title' | t }}::/account
+      {% endcapture %}
+
+    {% comment %} Reset Password link {% endcomment %}
+    {%- elsif template contains "customers/reset_password" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.account.title' | t }}::/account
+      {% endcapture %}
+
+    {% comment %} Register link {% endcomment %}
+    {%- elsif template contains "customers/register" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.account.title' | t }}::/account
+      {% endcapture %}
+
+    {% comment %} Activate account link {% endcomment %}
+    {%- elsif template contains "customers/activate_account" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.account.title' | t }}::/account
+      {% endcapture %}
+
+    {% comment %} Account link {% endcomment %}
+    {%- elsif template contains "customers/account" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.account.title' | t }}
+      {% endcapture %}
+
+    {% comment %} Addresses link {% endcomment %}
+    {%- elsif template contains "customers/addresses" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.account.title' | t }}::/account
+      {% endcapture %}
+
+    {% comment %} Orders link {% endcomment %}
+    {%- elsif template contains "customers/order" -%}
+
+      {% capture breadcrumb_str %}
+        ||{{ 'customer.orders.title' | t }}::/account
+      {% endcapture %}
+    {%- endif -%}
+  {% endif %}
+
+  {% comment %} Prepend the homepage link {% endcomment %}
+  {%- if show_home_link -%}
+    {% assign home_link = 'general.breadcrumbs.home' | t %}
+    {% assign breadcrumb_str = breadcrumb_str | prepend: '::/' | prepend: home_link  |  prepend: '||'  %}
+  {%- endif -%}
+
+  {%- comment -%}
+    RENDER BREADCRUMB
+  {%- endcomment -%}
+  <div class="container breadcrumbs" itemprop="breadcrumb">
+    <div class="site-center site-side-spacing">
+
+      {%- comment -%} Render breadcrumbs {%- endcomment -%}
+      {%- assign breadcrumb_arr = breadcrumb_str | remove_first: '||' | split: '||' -%}
+      <ol class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+
+        {%- comment -%} Loop the array {%- endcomment -%}
+        {%- for path in breadcrumb_arr -%}
+          {%- assign path_arr = path | split: '::' -%}
+          {%- assign path_text = path_arr[0] -%}
+          {%- assign path_url = path_arr[1] -%}
+
+          {%- comment %} Never create a link on the last item {% endcomment -%}
+          {%- assign not_last_item = true -%}
+          {%- if forloop.last -%}
+            {%- assign not_last_item = false -%}
+          {%- endif %}
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            {%- capture path_name_item -%}
+              <span itemprop="name">
+                {%- render 'format-unprefix', format: path_text -%}
+              </span>
+            {%- endcapture -%}
+            {%- if path_url != blank and not_last_item -%}
+              <a itemprop="item" href="{{ path_url | strip }}">
+                {{- path_name_item -}}
+              </a>
+            {%- else -%}
+              {{- path_name_item -}}
+            {%- endif -%}
+            <meta itemprop="position" content="{{ forloop.index }}" />
+          </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+  </div>
+{%- endunless -%}

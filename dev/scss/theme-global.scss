@@ -1,0 +1,47 @@
+/*================ MIXINS ================*/
+@import url('mixins/mediaquery.scss');
+@import url('mixins/mixins.scss');
+
+/*================ SETTINGS ================*/
+@import url('settings.scss');
+
+/*================ FONTS ================*/
+@import url('fonts/fonts.scss');
+
+/*================ EXTERNAL ================*/
+// @import url('ext/line-awesome.scss');
+@import url('ext/jquery.fancybox.scss');
+@import url('ext/swiper.scss');
+
+/*================ GLOBAL ================*/
+@import url('global/site.scss');
+@import url('global/container.scss');
+@import url('global/row.scss');
+@import url('global/col.scss');
+@import url('global/buttons.scss');
+@import url('global/content.scss');
+@import url('global/form.scss');
+@import url('global/helper-classes.scss');
+@import url('global/fancybox.scss');
+@import url('global/img.scss');
+@import url('global/rte.scss');
+@import url('global/table.scss');
+
+/*================ BLOCKS ================*/
+@import url('theme/code_1/cart-drawer.scss');
+@import url('theme/code_1/footer.scss');
+@import url('theme/code_1/breadcrumbs.scss');
+@import url('theme/code_1/currency.scss');
+@import url('theme/code_1/customer.scss');
+@import url('theme/code_1/pagination.scss');
+@import url('theme/code_1/payment-icons.scss');
+@import url('theme/code_1/placeholder.scss');
+@import url('theme/code_1/product-link.scss');
+@import url('theme/code_1/product-badge.scss');
+@import url('theme/code_1/search.scss');
+@import url('theme/code_1/tabs.scss');
+@import url('theme/code_1/trustbutton.scss');
+@import url('theme/code_1/social-sharing.scss');
+
+/*================ PLUGINS ================*/
+@import url('plugins/plugin-country-popup.scss');

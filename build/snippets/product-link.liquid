@@ -1,0 +1,93 @@
+{%- comment %} If no collection is set, use the current collection for the link {% endcomment -%}
+{%- unless the_collection -%}
+  {%- if collection != blank -%}
+    {%- assign the_collection = collection -%}
+  {%- endif -%}
+{%- endunless -%}
+
+<div class="product-link product-link--{{ product_view }}">
+
+  <a href="{{ the_product.url | within: the_collection }}" class="product-link__image" aria-label="{{ the_product.title }}"
+    {% if pagination_link %}
+    data-ajax-pagination-item="{{ paginate.current_page }}"
+    {% endif %}
+  >
+
+    {% comment %} Product image {% endcomment %}
+    <div class="primary-image">
+      {%- assign product_link_image = the_product.featured_image -%}
+      {%- assign responsive_image_type = '' -%}
+      {%- if the_product.images.size == 0 -%}
+        {%- assign product_link_image = "no-image.gif" -%}
+        {%- assign responsive_image_type = 'asset' -%}
+      {%- endif -%}
+
+      {%- comment %} Set alt text for image {%- endcomment -%}
+      {%- unless responsive_image_alt -%}
+        {%- assign responsive_image_alt = the_product.featured_image.alt -%}
+        {%- if responsive_image_alt == blank -%}
+          {%- assign responsive_image_alt = the_product.title | escape -%}
+        {%- endif -%}
+      {%- endunless -%}
+
+      {%- render 'responsive-image',
+        responsive_image: product_link_image,
+        responsive_image_class: responsive_image_class,
+        responsive_image_crop: responsive_image_crop,
+        responsive_image_type: responsive_image_type,
+        responsive_image_alt: responsive_image_alt,
+        responsive_image_title: responsive_image_alt,
+        responsive_image_size_lazyload: responsive_image_size_lazyload,
+        responsive_image_size: responsive_image_size,
+        responsive_image_sizes_arr: responsive_image_sizes_arr,
+        responsive_image_breakpoints_arr: responsive_image_breakpoints_arr
+      -%}
+    </div>
+
+    {%- comment %} Product SALE/SOLD OUT badges {%- endcomment -%}
+    {%- render 'product-badges', the_product: the_product -%}
+
+  </a>
+
+  {% comment %} Product meta {% endcomment %}
+  <div class="product-link__meta">
+
+    <p class="h4 product-link__title">
+      <a href="{{ the_product.url | within: the_collection }}">
+        {%- render 'format-unprefix', format: the_product.title -%}
+      </a>
+    </p>
+
+    {%- if product_view == 'list' -%}
+      <p class="product-link__description">
+        {%- render 'format-content' with content: the_product.content, content_striptags: 'true', content_truncate: '350' -%}
+      </p>
+    {%- endif -%}
+
+    {%- render 'product-price', the_product: the_product -%}
+
+    {% comment %} Product order form {% endcomment %}
+    <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="form product-form product__asset">
+
+      {%- assign current_variant = the_product.first_available_variant -%}
+
+      <input type="hidden" name="quantity" value="1" data-cart-drawer-quantity>
+      <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+      <button
+        class="button button--funnel"
+        type="submit"
+        data-cart-drawer-add-button
+        {% unless current_variant.available %}disabled="disabled"{% endunless %}>
+          <span data-add-to-cart-text>
+            {% if current_variant.available %}
+              {{ 'products.product.add_to_cart' | t }}
+            {% else %}
+              {{ 'products.product.sold_out' | t }}
+            {% endif %}
+          </span>
+      </button>
+    </form>
+
+  </div>
+</div>

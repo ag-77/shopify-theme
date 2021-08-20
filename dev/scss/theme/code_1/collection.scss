@@ -1,0 +1,18 @@
+// Collection sort dropdown
+.collection__sorting {
+  @include mqmin($bp-md) {
+    float: right;
+  }
+}
+// collection navigation
+.collection__nav {
+  @include mqmax($bp-md) {
+    .form__label {
+      flex-grow: 1;
+      max-width: 25%
+    }
+    .form__input {
+      flex-grow: 2;
+    }
+  }
+}

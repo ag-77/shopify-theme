@@ -1,0 +1,83 @@
+{
+  "name": "code-shopify-theme",
+  "version": "2.10.1",
+  "description": "Shopify development Base theme by Code",
+  "main": "gulpfile.js",
+  "mode": "development",
+  "private": true,
+  "project": {
+    "themeName": "code"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "buildjs": "gulp buildJs",
+    "buildcss": "gulp buildCss",
+    "cleanup": "rm -f changelog.md readme.md",
+    "deploy": "npm run build && theme deploy -a",
+    "init": "npm run cleanup && npm run build",
+    "start": "gulp",
+    "start:stage": "gulp --env=stage",
+    "start:nl": "gulp --env=nl",
+    "openenvs": "gulp openenvs",
+    "openadmins": "gulp openadmins",
+    "rm_nm": "rm -rf node_modules/",
+    "zip": "npm run build && gulp zip"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@shopify/themekit": "^1.1.6",
+    "autoprefixer": "^10.0.1",
+    "browser-sync": "^2.26.12",
+    "files-exist": "^1.1.0",
+    "fs": "0.0.1-security",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-cached": "^1.1.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-cli": "^2.3.0",
+    "gulp-cssimport": "^7.0.0",
+    "gulp-exit": "0.0.2",
+    "gulp-include": "^2.4.1",
+    "gulp-notify": "^3.2.0",
+    "gulp-open": "^3.0.1",
+    "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "9.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-sass": "^4.1.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-zip": "^5.0.2",
+    "jquery": "^3.5.1",
+    "js-yaml": "^3.14.0",
+    "lazysizes": "^5.2.2",
+    "map-stream": "0.0.7",
+    "node-sass": "^4.14.1",
+    "normalize.css": "^8.0.1",
+    "postcss-scss": "3.0.2",
+    "postcss-shopify-settings-variables": "^0.4.0",
+    "readable-stream": "^3.6.0",
+    "streamqueue": "1.1.2",
+    "terminal-kit": "^1.43.0",
+    "through2": "^4.0.2",
+    "yargs": "^16.0.3"
+  },
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "browserslist": [
+    "> 1%",
+    "last 3 versions"
+  ],
+  "dependencies": {
+    "postcss": "^8.1.1",
+    "yarn": "^1.22.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://anti404@bitbucket.org/anti404/anti-404.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/anti404/anti-404#readme"
+}

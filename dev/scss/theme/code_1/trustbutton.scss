@@ -1,0 +1,70 @@
+.trustbuttons {
+  text-align: center;
+  padding-top: $body-element-spacing;
+  padding-bottom: $body-element-spacing;
+  @include mqmin($bp-md) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  &__col {
+    @include mqmax($bp-md) {
+      margin-top: $body-element-spacing * 2;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+  }
+  &__title {
+    font-weight: bold;
+  }
+  &__icon {
+    text-align: center;
+    .icon {
+      margin-left: auto;
+      margin-right: auto;
+      width: 64px;
+      padding-bottom: 64px;
+    }
+  }
+  &__link {
+    text-decoration: none;
+    color: $body-text-color;
+    transition: all 0.2s ease-in-out;
+    display: block;
+    .trustbuttons__icon .icon {
+      transition: all 0.2s ease-in-out;
+      transform: scale(1);
+      .fill {
+        transition: all 0.2s ease-in-out;
+      }
+    }
+    &:hover,
+    &:focus,
+    &:active {
+      color: $color-primary;
+      text-decoration: none;
+      .trustbuttons__icon .icon {
+        transform: scale(1.2);
+        .fill {
+          fill : $color-primary;
+        }
+      }
+    }
+    .container--primary & {
+      color: $color-primary-text;
+      &:hover,
+      &:focus,
+      &:active {
+        color: $color-primary-text;
+      }
+    }
+    .container--secondary & {
+      color: $color-secondary-text;
+      &:hover,
+      &:focus,
+      &:active {
+        color: $color-secondary-text;
+      }
+    }
+  }
+}

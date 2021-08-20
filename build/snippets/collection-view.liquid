@@ -1,0 +1,15 @@
+{% comment %}
+Toggle between collection.liquid and collection.list.liquid with the ?view= parameter.
+{% endcomment %}
+
+<div class="row col-xs--middle form__row collection-view">
+  <div class="form__label">
+    <label for="collection-view">{{ 'collections.sorting.view_as' | t }}</label>
+  </div>
+  <div class="form__input form__input--select">
+    <select name="collection-view" id="collection-view" data-collection-view>
+      <option value="grid"{% unless template contains 'list' %} selected="selected"{% endunless %}>{{ 'collections.general.grid_view' | t }}</option>
+      <option value="list"{% if template contains 'list' %} selected="selected"{% endif %}>{{ 'collections.general.list_view' | t }}</option>
+    </select>
+  </div>
+</div>

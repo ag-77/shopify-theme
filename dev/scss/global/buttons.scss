@@ -1,0 +1,160 @@
+// Default button
+.button {
+  box-sizing: border-box;
+  background: $button-background;
+  color: $button-text;
+  padding: 8px 8px;
+  text-decoration: none;
+  font-size: rem($body-font-size);
+  line-height: rem($body-font-size * 1.2);
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-color: $button-text;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.05);
+  transition: all 0.24s ease-in-out;
+  margin: 0;
+  border-radius: $button-border-radius;
+  cursor: pointer;
+  &:active,
+  &:focus,
+  &:hover {
+    outline: none;
+    text-decoration: none;
+    background: $button-background-hover;
+    box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.2);
+  }
+  // Primary color button
+  &--primary {
+    background-color: $button-background-primary;
+    border-color: $button-background-primary;
+    color: $button-text-primary;
+    &:active,
+    &:focus,
+    &:hover {
+      background-color: $button-background-primary-hover;
+      color: #fff;
+    }
+  }
+  // Secondary color button
+  &--secondary {
+    background-color: $button-background-secondary;
+    border-color: $button-background-secondary;
+    color: $button-text-secondary;
+    &:active,
+    &:focus,
+    &:hover {
+      background-color: $button-background-secondary-hover;
+      color: #fff;
+    }
+  }
+  // Funnel color button
+  &--funnel {
+    background-color: $button-background-funnel;
+    border-color: $button-background-funnel;
+    color: $button-text-funnel;
+    &:active,
+    &:focus,
+    &:hover {
+      background-color: $button-background-funnel-hover;
+      color: #fff;
+    }
+  }
+  // Disabled buttons
+  &[disabled],
+  &.disabled,
+  &--primary.disabled,
+  &--primary[disabled],
+  &--secondary.disabled,
+  &--secondary[disabled],
+  &--funnel.disabled,
+  &--funnel[disabled] {
+    cursor: default;
+    background-color: #ddd;
+    border-color: #ddd;
+    color: #999;
+    box-shadow: 0 0;
+    &:active,
+    &:focus,
+    &:hover {
+      color: #999;
+      background-color: #ddd;
+      border-color: #ddd;
+      box-shadow: 0 0;
+    }
+  }
+  // Size modifiers
+  &.button-xs {
+    font-size: rem($body-font-size * 0.5);
+    line-height: rem($body-font-size * 0.5 * 1.2);
+    padding: 4px 4px;
+  }
+  &.button-sm {
+    font-size: rem($body-font-size * 0.75);
+    line-height: rem($body-font-size * 0.75 * 1.2);
+    padding: 6px 6px;
+  }
+  &.button-md {
+    font-size: rem($body-font-size * 1.25);
+    line-height: rem($body-font-size * 1.25 * 1.2);
+    padding: 10px 10px;
+  }
+  &.button-lg {
+    font-size: rem($body-font-size * 1.5);
+    line-height: rem($body-font-size * 1.5 * 1.2);
+    padding: 12px 12px;
+  }
+  &.button-xl {
+    font-size: rem($body-font-size * 1.75);
+    line-height: rem($body-font-size * 1.75 * 1.2);
+    padding: 14px 14px;
+  }
+  &.button--wide {
+    display: block;
+    width: 100%;
+  }
+}
+.shopify-challenge__button {
+  @extend .button;
+}
+// Button wrapper for multiple buttons
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -$body-element-spacing;
+  .button {
+    margin: 0 $body-element-spacing $body-element-spacing 0;
+    &:last-child {
+      margin: 0 0 $body-element-spacing 0;
+    }
+  }
+}
+// Buttons in .content, formatted by format-content.liquid
+.button--wrapper {
+  background: transparent;
+  border: 0;
+  color: $body-text-color;
+  a {
+    @extend .button;
+  }
+  &.button--primary {
+    background: transparent;
+    border: 0;
+    color: $body-text-color;
+    a {
+      @extend .button--primary;
+    }
+  }
+  &.button--secondary {
+    background: transparent;
+    border: 0;
+    color: $body-text-color;
+    a {
+      @extend .button--secondary;
+    }
+  }
+}

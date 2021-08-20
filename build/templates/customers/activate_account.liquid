@@ -1,0 +1,58 @@
+{% capture container_content %}
+  <p>{{ 'customer.activate_account.subtext' | t }}</p>
+
+  {% form 'activate_customer_password', class:'form form__default form__centered' %}
+
+    {{ form.errors | default_errors }}
+
+    <div class="row form__row">
+      <div class="col col-xs-12 col-md-2 form__label">
+        <label for="CustomerPassword">
+          {{ 'customer.activate_account.password' | t }}
+        </label>
+      </div>
+      <div class="col col-xs-12 col-md form__input form__input--text">
+        <input type="password"
+          name="customer[password]"
+          id="CustomerPassword"
+          placeholder="{{ 'customer.activate_account.password' | t }}">
+      </div>
+    </div>
+
+    <div class="row form__row">
+      <div class="col col-xs-12 col-md-2 form__label">
+        <label for="CustomerPasswordConfirmation">
+          {{ 'customer.activate_account.password_confirm' | t }}
+        </label>
+      </div>
+      <div class="col col-xs-12 col-md form__input form__input--text">
+        <input type="password"
+          name="customer[password_confirmation]"
+          id="CustomerPasswordConfirmation"
+          placeholder="{{ 'customer.activate_account.password_confirm' | t }}">
+      </div>
+    </div>
+
+    <div class="row form-actions">
+      <div class="col col-xs-12 col-md-2">
+      </div>
+      <div class="col col-xs-12 col-md">
+        <p class="buttons">
+          <input type="submit" class="button button--primary" value="{{ 'customer.activate_account.submit' | t }}">
+          <input type="submit" class="button" name="decline" value="{{ 'customer.activate_account.cancel' | t }}">
+        </p>
+      </div>
+    </div>
+
+  {% endform %}
+{% endcapture %}
+
+{% capture page_title %}
+  {{ 'customer.activate_account.title' | t }}
+{% endcapture %}
+
+{%- render 'container',
+    container_content: container_content,
+    container_title: page_title,
+    container_header_element: 'h1'
+-%}

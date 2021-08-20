@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="no-js no-touch supports-no-cookies" lang="{{ shop.locale }}">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    {% render 'html-head-title' %}
+    {% render 'html-head-description' %}
+    {% render 'html-head-prefetch' %}
+    {% render 'html-head-css' %}
+    {% render 'html-head-js' %}
+    {% render 'html-head-favicon' %}
+    {% render 'html-head-canonical' %}
+    {% render 'html-head-social-meta-tags' %}
+    {% render 'html-head-google' %}
+
+    {{ content_for_header }}
+
+  </head>
+
+  <body id="{{ page_title | handleize }}" class="{% render 'html-template-class' %}" itemscope itemtype="http://schema.org/WebPage">
+
+    {%- comment %} Accessibility link to content or navigation {% endcomment -%}
+    <a class="visually-hidden skip-link" href="#MainContent" data-page-link-focus>
+      {{- 'general.accessibility.skip_to_content' | t -}}
+    </a>
+
+    <div class="site">
+
+      {%- comment %} Header {% endcomment -%}
+      {%- render 'site-header' -%}
+
+      <main id="MainContent" class="site__main" itemprop="mainContentOfPage">
+
+        {%- comment %} Breadcrumbs {%- endcomment -%}
+        {%- render 'global-breadcrumbs' -%}
+
+        {%- comment %} Page content {%- endcomment -%}
+        {%- if request.path contains '/challenge' -%}
+          {%- render 'shopify-challenge' -%}
+        {%- else -%}
+          {{ content_for_layout }}
+        {%- endif -%}
+
+      </main>
+
+      {%- comment %} Footer {% endcomment -%}
+      {%- render 'site-footer' -%}
+
+    </div>
+
+    {%- comment %} Drawer for ajax cart {% endcomment -%}
+    {%- render 'cart-drawer' -%}
+
+    {%- comment %} Country picker popup {% endcomment -%}
+    {%- if settings.enable_plugin_country_popup -%}
+      {%- section 'plugin-country-popup' -%}
+    {%- endif -%}
+
+  </body>
+</html>

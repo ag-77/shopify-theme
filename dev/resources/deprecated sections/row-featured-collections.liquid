@@ -1,0 +1,159 @@
+{%- comment -%} Get nr of columns from settings {%- endcomment -%}
+{%- assign items_per_row = section.settings.items_per_row | times: '1' -%}
+{%- assign max_items = section.settings.nr_items | times: '1' -%}
+
+{%- comment -%} Get classes for responsive columns {%- endcomment -%}
+{%- render 'responsive-column-dimensions',
+  items_per_row = items_per_row
+-%}
+
+{%- comment -%} If the items span muliple rows - don't remove the vertical line spacing {%- endcomment -%}
+{%- if max_items > items_per_row -%}
+  {%- assign responsive_no_line_spacing = '' -%}
+{%- endif -%}
+
+{%- comment -%} Get responsive image dimensions {%- endcomment -%}
+{%- render 'responsive-image-dimensions',
+  items_per_row = items_per_row,
+  responsive_image_ratio: '0.6'
+-%}
+
+{%- comment -%} Get the collections from settings {%- endcomment -%}
+{%- assign the_collection = collections[section.settings.collection] -%}
+
+{% comment %} create content {% endcomment %}
+{%- capture section_content -%}
+  {% if section.blocks.size > 0 %}
+    <div class="row row--gutter row--line-spacing {{ responsive_no_line_spacing }}">
+      {% for block in section.blocks %}
+
+        {% comment %} Get the collection from block settings {% endcomment %}
+        {%- assign the_collection = collections[block.settings.collection] -%}
+
+        <div class="col {{ responsive_column_classes }} col--border">
+          {%- render 'collection-link', collection: the_collection -%}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    {% comment %} show demo content {% endcomment %}
+    <div class="row row--gutter row--line-spacing {{ responsive_no_line_spacing }}">
+      {% for i in (1..items_per_row) %}
+        <div class="col {{ responsive_column_classes }} col--border">
+          {%- render 'collection-link',
+            collection_demo: i
+          -%}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{%- endcapture -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Featured collections",
+  "class": "collections-featured-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Featured collections",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "header",
+    "content": "Section content"
+  },
+  {
+    "type": "text",
+    "id": "nr_items",
+    "default": "3",
+    "label": "Nr of items"
+  },
+  {
+    "type": "select",
+    "id": "items_per_row",
+    "default": "3",
+    "label": "Nr of items per row",
+    "options": [
+    {
+      "value": "1",
+      "label": "1"
+    },
+    {
+      "value": "2",
+      "label": "2"
+    },
+    {
+      "value": "3",
+      "label": "3"
+    },
+    {
+      "value": "4",
+      "label": "4"
+    } ]
+  } ],
+  "blocks": [
+  {
+    "type": "collection",
+    "name": "Collection",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Select collection"
+      }
+    ]
+  } ],
+  "presets": [
+  {
+    "name": "Featured collections",
+    "category": "Collection",
+    "settings": {}
+  } ]
+}
+{% endschema %}

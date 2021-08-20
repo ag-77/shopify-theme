@@ -1,0 +1,95 @@
+
+{% comment %} Get page content from settings {% endcomment %}
+{% if section.settings.page != blank %}
+  {%- assign page_content = pages[section.settings.page].content -%}
+{% else %}
+  {%- capture page_content -%}
+    <p>[[PAGE-COL-ACCENT]]</p>
+    <h2>Page content</h2>
+    <p>Dolore ad commodo velit sint aute cupidatat incididunt qui in elit eiusmod consectetur voluptate ut non nisi deserunt anim in aute in occaecat dolore ex ut aliqua in reprehenderit ut sit reprehenderit nisi laboris sunt.</p>
+    <p>[[COL-BREAK]]</p>
+    {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+    <p>[[PAGE-COL-ACCENT-END]]</p>
+  {%- endcapture -%}
+{% endif %}
+
+{% comment %} create content {% endcomment %}
+{%- capture section_content -%}
+  <div class="content">
+    {% render 'format-content' with content: page_content %}
+  </div>
+{%- endcapture -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Featured page",
+  "class": "page-featured-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Featured page",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "header",
+    "content": "Section content"
+  },
+  {
+    "type": "page",
+    "id": "page",
+    "label": "Select page"
+  } ],
+  "presets": [
+  {
+    "name": "Featured page",
+    "category": "Text",
+    "settings":
+    {}
+  } ]
+}
+{% endschema %}

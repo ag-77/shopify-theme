@@ -1,0 +1,47 @@
+{%- comment -%}
+  This page represents the /collections and /products pages.
+  As it will show ALL collections, it can be turned of in the Theme Settings to show a 404 instead.
+  You can also set a comma separated list of collection handles to hide specific collections
+{%- endcomment -%}
+
+{%- if settings.hide_collections_page -%}
+
+  {%- render '404' -%}
+
+{%- else -%}
+
+  {%- comment -%} Create a comma seprated list of collection handles to hide specific collections {%- endcomment -%}
+  {%- assign hidden_collections_arr = 'frontpage' | split: ',' -%}
+
+  {%- comment -%} Capture the collection links {%- endcomment -%}
+  {%- capture container_content -%}
+    <div class="row row--gutter row--line-spacing">
+
+      {%- for the_collection in collections -%}
+        {%- unless hidden_collections_arr contains the_collection.handle -%}
+          <div class="col col-xs-12 col-md-4">
+            {%- render 'collection-link',
+              collection: the_collection,
+              responsive_image_alt: the_collection.title,
+              responsive_image_size_lazyload: "16x16",
+              responsive_image_class: 'img--cover img--contain img--4x4',
+              responsive_image_size: "360x360",
+              responsive_image_breakpoints_arr: "480|768",
+              responsive_image_sizes_arr: "420x420|708x708",
+              responsive_image_crop: 'center',
+
+
+            -%}
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+
+    </div>
+  {%- endcapture -%}
+
+  {%- render 'container',
+      container_content: container_content,
+      container_title: page_title,
+      container_header_element: 'h1'
+  -%}
+{%- endif -%}

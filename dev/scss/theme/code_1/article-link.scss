@@ -1,0 +1,27 @@
+// Link to blog artile
+.article-link {
+  padding: 0 0 $body-element-spacing 0;
+  position: relative;
+  z-index: 1;
+  &__image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+  &__meta {
+    padding: $body-element-spacing 0 0 0;
+  }
+  &__title {
+    a {
+      display: block;
+      color: $body-text-color;
+    }
+  }
+  &__author {
+    font-size: 90%;
+    color: $body-text-color-light;
+  }
+  &__description {
+    opacity: 0.7;
+  }
+}

@@ -1,0 +1,169 @@
+{%- capture section_content -%}
+  {%- if section.settings.title != blank or section.settings.newsletter_content != blank or section.settings.newsletter_button_text != blank -%}
+    {%- render 'global-newsletter'
+      news_title_str: section.settings.title,
+      news_description: section.settings.newsletter_content
+      newsletter_button_text: section.settings.newsletter_button_text,
+      newsletter_button_type: section.settings.newsletter_button_type
+    -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture container_classes -%}
+  {{ section.settings.section_background }} {{ section.settings.width_layout }} text-align-{{ section.settings.newsletter_text_align }}
+{%- endcapture -%}
+
+{% comment %} Add background image as inline style behind the classes {% endcomment %}
+{%- if section.settings.newsletter_background != blank -%}
+  {%- assign background_url = section.settings.newsletter_background | img_url: '2500x' -%}
+  {%- assign container_classes = container_classes | append: '" style="background-image:url(' | append: background_url | append: ')' -%}
+{%- endif -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_element: 'section',
+  container_content: section_content,
+  container_title: '',
+  container_classes: container_classes,
+  container_content_classes: 'site-center--narrow',
+  container_header_classes: 'site-center--narrow',
+  container_title_hidden: section.settings.hide_heading
+-%}
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "section-newsletter",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "select",
+    "id": "width_layout",
+    "label": "Section content width",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "Default"
+    },
+    {
+      "value": "container--wide",
+      "label": "Wide"
+    },
+    {
+      "value": "container--full",
+      "label": "Full width"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "container--accent container--block",
+    "options": [
+    {
+      "value": "",
+      "label": "Default"
+    },
+    {
+      "value": "container--block",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    },
+    {
+      "value": "container--primary container--block",
+      "label": "Primary color"
+    },
+    {
+      "value": "container--secondary container--block",
+      "label": "Secondary color"
+    }
+    ]
+  },
+  {
+    "type": "image_picker",
+    "id": "newsletter_background",
+    "label": "Background image"
+  },
+  {
+    "type": "header",
+    "content": "Section content"
+  },
+  {
+    "type": "richtext",
+    "id": "newsletter_content",
+    "label": "Body text"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Stay in touch"
+  },
+  {
+    "type": "text",
+    "id": "newsletter_button_text",
+    "label": "Button label",
+    "default": "Subscribe",
+    "placeholder": "Subscribe"
+  },
+  {
+    "type": "select",
+    "id": "newsletter_button_type",
+    "label": "Button type",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "Default"
+    },
+    {
+      "value": "button--primary",
+      "label": "Primary"
+    },
+    {
+      "value": "button--secondary",
+      "label": "Secondary"
+    },
+    {
+      "value": "button--funnel",
+      "label": "Funnel"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "newsletter_text_align",
+    "label": "Text align",
+    "default": "center",
+    "options": [
+    {
+      "value": "left",
+      "label": "Left"
+    },
+    {
+      "value": "center",
+      "label": "Centered"
+    },
+    {
+      "value": "right",
+      "label": "Right"
+    } ]
+  } ],
+  "presets": [
+  {
+    "name": "Newsletter",
+    "category": "Social",
+    "settings": {
+      "title": "Stay in touch",
+      "newsletter_content": "<p>Lorem ipsum amet fugiat nulla culpa consequat cupidatat et dolor velit tempor velit cillum ullamco veniam anim aliquip dolor et.</p>"
+    }
+  } ]
+}
+{% endschema %}

@@ -1,0 +1,140 @@
+{%- comment -%} Show results as list or grid (for products only) {%- endcomment -%}
+{%- assign search_view = 'list' -%}
+
+{%- comment -%} Get items per page {%- endcomment -%}
+{%- assign products_per_page = 12 -%}
+{%- if settings.search_prod_per_page != blank -%}
+  {%- assign products_per_page = settings.search_prod_per_page | times: "1" | at_most: 50 -%}
+{%- endif -%}
+
+{%- comment -%} Set title {%- endcomment -%}
+{%- assign page_title = 'general.search.title' | t -%}
+
+{%- comment -%} Set classes for responsive columns {%- endcomment -%}
+{%- assign responsive_image_size = "200x200" -%}
+{%- assign responsive_image_breakpoints_arr = "767" -%}
+{%- assign responsive_image_sizes_arr = "100x100" -%}
+
+{%- comment -%} Search results {%- endcomment -%}
+{%- capture container_content -%}
+
+  {%- comment -%} Show search form always or only when there are no results {%- endcomment -%}
+  {%- if settings.show_search -%}
+    <div class="search-page-form">
+      {%- render 'global-search', search_id: 'searchpage', predictive: 'false' -%}
+    </div>
+  {%- elsif search.performed == false or search.results_count == 0 -%}
+    <div class="search-page-form">
+      {%- render 'global-search', search_id: 'searchpage', predictive: 'false' -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment %} When a search is done {%- endcomment -%}
+  {%- if search.performed -%}
+
+    {%- comment %} Render search terms {% endcomment -%}
+    {%- if search.terms != "*" and search.terms != blank -%}
+      <p class="search-result-text">
+        <strong>
+          {%- if search.results_count == 0 -%}
+            {{ 'general.search.no_results_html' | t: terms: search.terms | remove: '*' }}
+          {%- else -%}
+            {{ 'general.search.results_for_html' | t: terms: search.terms | remove: '*' }}
+          {%- endif -%}
+        </strong>
+      </p>
+    {%- endif -%}
+
+    {%- paginate search.results by settings.search_prod_per_page -%}
+
+      <div class="container__row search__results">
+
+        {% comment %} Loop results {% endcomment %}
+        {%- for item in search.results -%}
+
+          {%- comment %} Render product link {% endcomment -%}
+          {%- if item.object_type == 'product' -%}
+            <div class="search-result-link-wrapper">
+              {%- render 'product-link',
+                the_product: item,
+                product_view: search_view,
+                responsive_image_crop: "center",
+                responsive_image_alt: featured_image.alt,
+                responsive_image_size: responsive_image_size,
+                responsive_image_breakpoints_arr: responsive_image_breakpoints_arr,
+                responsive_image_sizes_arr: responsive_image_sizes_arr,
+                responsive_column_classes: responsive_column_classes
+              -%}
+            </div>
+
+          {%- comment %} Render link to article, collection or page {% endcomment -%}
+          {%- else -%}
+
+            {%- assign featured_image = item.image | default: item.featured_image -%}
+            {%- assign responsive_image_type = '' -%}
+            {%- if featured_image == blank -%}
+              {%- assign featured_image = "no-image.gif" -%}
+              {%- assign responsive_image_type = 'asset' -%}
+            {%- endif -%}
+
+            {%- capture result_title -%}
+              {%- render 'format-unprefix', format: item.title -%}
+            {%- endcapture -%}
+
+            {%- capture result_content -%}
+              {%- assign item_content = item.content -%}
+              {%- render 'format-content',
+                content: item_content,
+                content_striptags: 'true',
+                content_truncate: 250
+              -%}
+            {%- endcapture -%}
+
+            <div class="search-result-link-wrapper">
+              <div class="product-link product-link--list">
+
+                <a class="product-image" href="{{ item.url }}">
+                  {%- render 'responsive-image',
+                    responsive_image: featured_image,
+                    responsive_image_class: 'img--contain',
+                    responsive_image_alt: featured_image.alt,
+                    responsive_image_type: responsive_image_type,
+                    responsive_image_size: responsive_image_size,
+                    responsive_image_breakpoints_arr: responsive_image_breakpoints_arr,
+                    responsive_image_sizes_arr: responsive_image_sizes_arr,
+                    responsive_column_classes: responsive_column_classes
+                  -%}
+                </a>
+
+                <div class="product-meta">
+                  <p class="product-title">
+                    <a href="{{ item.url }}">
+                      {{- result_title | highlight: search.terms -}}
+                    </a>
+                  </p>
+                  <p class="product-description">
+                    {{- result_content | highlight: search.terms -}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+      <div class="container__row">
+        {%- render 'global-pagination', paginate: paginate -%}
+      </div>
+      {%- endif -%}
+
+    {%- endpaginate -%}
+  {%- endif -%}
+
+{%- endcapture -%}
+
+{%- render 'container',
+  container_content: container_content,
+  container_title: page_title,
+  container_header_element: 'h1'
+-%}

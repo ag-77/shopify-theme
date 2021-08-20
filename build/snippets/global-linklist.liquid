@@ -1,0 +1,114 @@
+{% comment %}
+  Render a three level nested navigation from a linklist
+  When a link.url is '#' a span will be rendered on level 1 and 2
+  To make the lists collapsible add: navigation_collapsible: true and add the data-collapsible-wrapper to the parent of this snippet
+{% endcomment %}
+
+{%- if linklists[navigation_linklist].links.size > 0 -%}
+
+  {% comment %} Prefix all classes by default with nav {% endcomment %}
+  {%- unless navigation_class_prefix -%}
+    {%- assign navigation_class_prefix = 'nav' -%}
+  {%- endunless -%}
+
+  {% comment %} Make Lists collapsible {% endcomment %}
+  {%- assign collapsible_parent = '' -%}
+  {%- assign collapsible_trigger = '' -%}
+  {%- assign collapsible_target = '' -%}
+  {%- assign collapsible_trigger_icon = '' -%}
+  {%- if navigation_collapsible -%}
+    {%- assign collapsible_parent = ' data-collapsible-parent' -%}
+    {%- assign collapsible_trigger = ' data-collapsible-trigger' -%}
+    {%- assign collapsible_target = ' data-collapsible-target' -%}
+    {%- capture collapsible_trigger_icon -%}
+      <span class="{{ navigation_class_prefix }}__link-trigger" data-collapsible-trigger-icon>
+        {%- render 'global-icon', icon_name: 'expand', icon_size: 'sm' -%}
+      </span>
+    {%- endcapture -%}
+  {%- endif -%}
+
+  <ol class="{{ navigation_class_prefix }}__list level-1 list-unstyled">
+    {%- for level_1_link in linklists[navigation_linklist].links -%}
+
+      {%- comment -%} Is the link active {%- endcomment -%}
+      {%- assign link_active = ' link-active__' | append: level_1_link.active -%}
+
+      {%- comment -%} Is a child link active {%- endcomment -%}
+      {%- assign link_child_active = ' link-child-active__' | append: level_1_link.child_active -%}
+
+      {%- comment -%} If link has children {%- endcomment -%}
+      {%- if level_1_link.links != blank -%}
+        <li class="{{ navigation_class_prefix }}__list-item level-1 has-subnav{{ link_active }}{{ link_child_active }}"{{ collapsible_parent }}>
+          {%- assign element_1_start = 'span' -%}
+          {%- assign element_1_end = 'span' -%}
+          {%- if level_1_link.url != "#" -%}
+            {%- assign element_1_start = 'a href="' | append: level_1_link.url | append: '"' -%}
+            {%- assign element_1_end = 'a' -%}
+          {%- endif -%}
+          <{{ element_1_start }} class="{{ navigation_class_prefix }}__link level-1"{{ collapsible_trigger }}>
+            <span class="{{ navigation_class_prefix }}__link-title">
+              {%- render 'format-unprefix' with format: level_1_link.title -%}
+            </span>
+            {{ collapsible_trigger_icon }}
+          </{{ element_1_end }}>
+          {%- comment -%} Render children {%- endcomment -%}
+          <ol class="{{ navigation_class_prefix }}__list level-2 list-unstyled"{{ collapsible_target }}>
+            {%- for level_2_link in level_1_link.links -%}
+
+              {%- comment -%} Is the link active {%- endcomment -%}
+              {%- assign link_active = ' link-active__' | append: level_2_link.active -%}
+
+              {%- comment -%} Is a child link active {%- endcomment -%}
+              {%- assign link_child_active = ' link-child-active__' | append: level_2_link.child_active -%}
+
+              {%- comment -%} If link has children {%- endcomment -%}
+              {%- if level_2_link.links != blank -%}
+                <li class="{{ navigation_class_prefix }}__list-item level-2 has-subnav{{ link_active }}{{ link_child_active }}"{{ collapsible_parent }}>
+                  {%- assign element_2_start = 'span' -%}
+                  {%- assign element_2_end = 'span' -%}
+                  {%- if level_2_link.url != "#" -%}
+                    {%- assign element_2_start = 'a href="' | append: level_2_link.url | append: '"' -%}
+                    {%- assign element_2_end = 'a' -%}
+                  {%- endif -%}
+                  <{{ element_2_start }} class="{{ navigation_class_prefix }}__link level-2"{{ collapsible_trigger }}>
+                    <span class="{{ navigation_class_prefix }}__link-title">
+                      {%- render 'format-unprefix' with format: level_2_link.title -%}
+                    </span>
+                    {{ collapsible_trigger_icon }}
+                  </{{ element_2_end }}>
+                  {%- comment -%} Render children {%- endcomment -%}
+                  <ol class="{{ navigation_class_prefix }}__list level-3 list-unstyled"{{ collapsible_target }}>
+                    {%- for level_3_link in level_2_link.links -%}
+
+                      {%- comment -%} Is the link active {%- endcomment -%}
+                      {%- assign link_active = ' link-active__' | append: level_3_link.active -%}
+
+                      <li class="{{ navigation_class_prefix }}__list-item level-3{{ link_active }}">
+                        <a href="{{ level_3_link.url }}" class="{{ navigation_class_prefix }}__link level-3">
+                          <span>{%- render 'format-unprefix' with format: level_3_link.title -%}</span>
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ol>
+                </li>
+              {%- else -%}
+                <li class="{{ navigation_class_prefix }}__list-item level-2{{ link_active }}{{ link_child_active }}">
+                  <a href="{{ level_2_link.url }}" class="{{ navigation_class_prefix }}__link level-2">
+                    <span>{%- render 'format-unprefix' with format: level_2_link.title -%}</span>
+                  </a>
+                </li>
+              {%- endif -%}
+
+            {%- endfor -%}
+          </ol>
+        </li>
+      {%- else -%}
+        <li class="{{ navigation_class_prefix }}__list-item level-1{{ link_active }}{{ link_child_active }}">
+          <a href="{{ level_1_link.url }}" class="{{ navigation_class_prefix }}__link level-1">
+            <span>{%- render 'format-unprefix' with format: level_1_link.title -%}</span>
+          </a>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ol>
+{%- endif -%}

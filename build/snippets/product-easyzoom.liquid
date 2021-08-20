@@ -1,0 +1,23 @@
+{% unless easyzoom_image == blank %}
+  {% comment %} Image must be bigger then easyzoom_min_size to allow zooming {% endcomment %}
+  {%- assign easyzoom_min_size = 1000 -%}
+
+  {% comment %} Image will be zoomed to this size {% endcomment %}
+  {%- assign easyzoom_size = "2000x2000" -%}
+
+  {%- if easyzoom_image.height > easyzoom_min_size or easyzoom_image.width > easyzoom_min_size  -%}
+    {%- assign image_link = easyzoom_image | img_url: easyzoom_size -%}
+    <div class="easyzoom easyzoom--overlay" data-product-easy-zoom>
+      <a aria-label="Zoom" href="{{ image_link }}">
+        {%- render 'global-icon', icon_name: "search", icon_size: "lg" -%}
+        <span class="visibility-hidden">
+          {%- render 'format-translation',
+            namespace: "products.product",
+            key: "zoom",
+            fallback: "zoom"
+          -%}
+        </span>
+      </a>
+    </div>
+  {%- endif -%}
+{% endunless %}

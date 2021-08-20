@@ -1,0 +1,68 @@
+{%- comment %} Toggle minified javascript {%- endcomment -%}
+{%- assign minified = '' -%}
+{%- if settings.enable_minified_js -%}
+  {%- assign minified = '.min' -%}
+{%- endif -%}
+
+{%- comment %} Load global js, like jquery {% endcomment -%}
+<script src="{{ 'code-theme-global' | append: minified | append: '.js' | asset_url }}" defer="defer"></script>
+
+{%- comment %} Load the Shopify jquery api {% endcomment -%}
+<script src="{{ 'api.jquery.js' | shopify_asset_url }}" defer="defer" onload="setMoneyFormat()"></script>
+
+{%- if template contains 'customers' %}
+<script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+<script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+{%- endif -%}
+
+{%- comment %} Load global deferred js {% endcomment -%}
+<script src="{{ 'code-theme-global-defer' | append: minified | append: '.js' | asset_url }}" defer="defer"></script>
+
+{%- comment %} Load template specific js
+  Create a comma separated list of templates for which you have created a js file
+  The js file must be created in js/theme-template-[template-name].scss
+{% endcomment -%}
+
+{%- assign template_js_arr = 'addresses,collection,login,password,product' | split: ',' -%}
+
+{%- comment %} Loop the template names {%- endcomment -%}
+{%- for template_name in template_js_arr -%}
+
+  {%- assign script_url = 'code-theme-template-' | append: template_name | append: minified | append: '.js' | asset_url -%}
+
+  {%- comment -%} When on this template, call the js {%- endcomment -%}
+  {%- if template.name == template_name -%}
+    <script src="{{ script_url }}" defer="defer"></script>
+
+  {%- comment -%} Otherwise prefetch it {%- endcomment -%}
+  {%- else -%}
+    <link rel="prefetch" href="{{ script_url }}">
+  {%- endif -%}
+
+{%- endfor -%}
+
+<script>
+
+  {%- comment %} Set classes to define javascript and touch support, browser must refresh to detect touch-support changes {% endcomment -%}
+  document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+  if (!!("ontouchstart" in document)) {
+    document.documentElement.className = document.documentElement.className.replace("no-touch", "touch");
+  }
+
+  {%- comment %} Set Money format for Shopify jquery api {% endcomment -%}
+  function setMoneyFormat(){
+    Shopify.money_format = '{{ shop.money_format }}';
+  }
+
+  {%- comment %} Set theme translations {% endcomment -%}
+  window.theme = {
+    strings: {
+      addToCart: {{ 'products.product.add_to_cart' | t | json }},
+      soldOut: {{ 'products.product.sold_out' | t | json }},
+      unavailable: {{ 'products.product.unavailable' | t | json }}
+    },
+    moneyFormat: {{ shop.money_format | json }},
+    moneyCentsDelimiter: {{ 100 | money_without_currency | remove: "00" | split: '' | last | json }},
+    moneyThousandsDelimiter: {{ 123400 | money_without_currency | remove: "1" | split: '' | first | json }}
+  };
+</script>

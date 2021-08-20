@@ -1,0 +1,140 @@
+// site footer
+.footer {
+  border-top: 1px solid $color-border;
+  color: $footer-text-color;
+  background: $footer-background;
+  h2 {
+    font-size: rem($body-font-size);
+    font-weight: 400;
+    margin-bottom: 10px;
+    @include mqmin($bp-md) {
+      display: inline-block;
+      margin-right: 10px;
+    }
+  }
+  .fill {
+    fill: $footer-link-color;
+  }
+  .logo__wrapper {
+    max-width: 118px;
+    @include mqmin($bp-header) {
+      max-width: 134px;
+    }
+  }
+}
+.footer__row {
+  padding-top: $row-spacing;
+  padding-bottom: $row-spacing;
+  .row {
+    @include mqmax($bp-md) {
+      margin-top: 0;
+    }
+  }
+}
+
+// Footer navigation
+.footer-navigation {
+  margin-top: $body-element-spacing;
+  @include mqmin($bp-lg) {
+    margin-top: 0;
+  }
+}
+// Footer navigation list
+.footer-navigation__list {
+  &.level-1 {
+    @include mqmin($bp-md) {
+      display: flex;
+      margin: 0 -10px;
+      > li {
+        padding: 0 10px;
+      }
+    }
+  }
+  // Don't collapse on desktop
+  @include mqmin($bp-md) {
+    &[data-collapsible-target] {
+      display: block;
+    }
+    [data-collapsible-trigger] {
+      cursor: default;
+    }
+    [data-collapsible-trigger-icon] {
+      display: none;
+    }
+  }
+}
+// Footer navigation list items
+.footer-navigation__list-item {
+  &.level-1 {
+    flex-grow: 1;
+    flex-basis: 0;
+    max-width: 100%;
+    margin-top: $body-element-spacing;
+    @include mqmin($bp-lg) {
+      margin-top: 0;
+    }
+  }
+  &.level-2 {
+    margin-bottom: 10px;
+    line-height: 1.4em;
+  }
+}
+// Footer navigation links
+.footer-navigation__link {
+  &.level-1 {
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    min-width: 6em;
+  }
+  &.level-2 {
+    color: $body-text-color-light;
+  }
+}
+
+// Payment methods
+.footer__payments {
+  margin-top: $row-spacing;
+  @include mqmin($bp-lg) {
+    margin-top: 0;
+    .payment-icons {
+      vertical-align: middle;
+    }
+  }
+}
+
+// Social links
+.footer__social {
+  font-size: 2em;
+  order: -1;
+  margin-top: $row-spacing;
+  @include mqmin($bp-lg) {
+    text-align: right;
+    order: 2;
+    margin-top: 0;
+  }
+  .social-links {
+    vertical-align: middle;
+    display: inline-block;
+  }
+  li {
+    margin-left: 10px;
+    display: inline-block;
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+  a {
+    color: $body-text-color;
+  }
+}
+
+// Bottom text
+.footer__bottom {
+  text-align: center;
+  background: $body-background-accent;
+  padding: 10px 0;
+  a {
+    color: $body-text-color;
+  }
+}

@@ -1,0 +1,210 @@
+{%- comment -%} Get nr of columns from settings {%- endcomment -%}
+{%- assign items_per_row = section.settings.items_per_row | times: '1' -%}
+
+{%- comment -%} Get classes for responsive columns {%- endcomment -%}
+{%- render 'responsive-column-dimensions',
+  items_per_row = items_per_row
+-%}
+
+{%- assign link = '{{link}}' -%}
+{%- assign image = '{{image}}' -%}
+
+{%- capture image_template -%}
+  <a href="{{ link }}" target="_blank" rel="noopener" class="col {{ responsive_column_classes }} col--border img-wrapper">
+    <figure class="img img--responsive img-wrapper-image">
+      <picture>
+        <img src="{{ image }}">
+      </picture>
+    </figure>
+  </a>
+{%- endcapture -%}
+
+{%- assign resolution = 'standard_resolution' -%}
+{%- if items_per_row > 4 and section.settings.width_layout == 'site-center' -%}
+  {%- assign resolution = 'low_resolution' -%}
+{%- endif -%}
+
+{%- comment -%} create content {%- endcomment -%}
+{%- capture section_content -%}
+  {%- if section.settings.token != blank -%}
+    <div id="instafeed" class="instafeed row {% if section.settings.items_spacing %}row--gutter row--line-spacing {{ responsive_no_line_spacing }}{% endif %}" data-feed-options='{
+      "get": "user",
+      "userId": "{{ section.settings.token | split: "." | first }}",
+      "limit": {{ section.settings.items_total }},
+      "accessToken": "{{ section.settings.token }}",
+      "resolution": "{{ resolution }}",
+      "template": "{{ image_template | strip_newlines | replace: '"','\"' }}"
+    }'>
+    </div>
+  {%- else -%}
+    <div class="row {% if section.settings.items_spacing %}row--gutter row--line-spacing {{ responsive_no_line_spacing }}{% endif %}">
+      {%- for i in (1..section.settings.items_total) -%}
+        <div class="col {{ responsive_column_classes }} col--border">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  <script>
+
+    initFeed = function() {
+      var options = $('#instafeed').data('feed-options');
+      if (options) {
+        var userFeed = new Instafeed(options);
+        userFeed.run();
+      }
+    }
+
+    $(document).ready(function(){
+      initFeed();
+    })
+  </script>
+{%- endcapture -%}
+
+{%- capture container_classes -%}
+  {{ section.settings.section_background }}
+  {%- if section.settings.section_spacing %}
+    container--block
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} wrap and render content {%- endcomment -%}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_content_classes: section.settings.width_layout,
+  container_classes: container_classes,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Instagram feed",
+  "class": "instafeed-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Instagram feed",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "width_layout",
+    "label": "Section content width",
+    "default": "site-center",
+    "options": [
+    {
+      "value": "site-center",
+      "label": "Default"
+    },
+    {
+      "value": "container--wide",
+      "label": "Wide"
+    },
+    {
+      "value": "container--full",
+      "label": "Full width"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "checkbox",
+    "id": "section_spacing",
+    "label": "Remove vertical section spacing",
+    "default": false
+  },
+  {
+    "type": "header",
+    "content": "Instagram settings"
+  },
+  {
+    "type": "text",
+    "id": "token",
+    "label": "Instagram access token",
+    "default": "4935000675.1677ed0.7fa452c7d5d94e7e9e0e99e729b76322",
+    "info": "[Generate Instagram access token](http://instagram.pixelunion.net/)"
+  },
+  {
+    "type": "text",
+    "id": "items_total",
+    "label": "Total images displayed",
+    "default": "4"
+  },
+  {
+    "type": "select",
+    "id": "items_per_row",
+    "label": "Images per row",
+    "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        },
+        {
+          "value": "6",
+          "label": "6"
+        },
+        {
+          "value": "12",
+          "label": "12"
+        }
+    ],
+    "default": "4"
+  },
+  {
+    "type": "checkbox",
+    "id": "items_spacing",
+    "label": "Images spacing",
+    "default": true
+  } ],
+  "presets": [
+  {
+    "name": "Instagram feed",
+    "category": "Social",
+    "settings": {}
+  } ]
+}
+{% endschema %}

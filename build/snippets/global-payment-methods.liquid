@@ -1,0 +1,25 @@
+{%- unless settings.payment_icons == 'false' -%}
+  {%- assign payment_providers = 'afterpay,american_express,apple_pay,bancontact,belfius,bitcoin,diners_club,ideal,kbc,klarna,mastercard,maestro,paypal,sofort,visa' | split: ',' -%}
+  <span class="visually-hidden">{{ 'layout.footer.payment_methods' | t }}</span>
+  <ul class="payment-icons list-unstyled">
+    {%- for payment_provider in payment_providers -%}
+      {%- assign payment_icon = 'payment_icon_' | append: payment_provider  -%}
+        {% if settings[payment_icon] == true %}
+        <li>
+          {% if payment_icons == 'png' %}
+          {% assign icon_name = 'payment-' | append: payment_provider | append: '.png'  %}
+            <img src="{{ icon_name | asset_url }}" alt="{{ type }}">
+          {% else %}
+            {%- render 'global-icon', icon_name: payment_provider -%}
+          {% endif %}
+        </li>
+        {% endif %}
+    {%- endfor -%}
+  </ul>
+{%- endunless -%}
+
+{% comment %}
+{% for type in shop.enabled_payment_types %}
+  <img src="{{ type | payment_type_img_url }}" />
+{% endfor %}
+{% endcomment %}

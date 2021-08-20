@@ -1,0 +1,57 @@
+{% comment %} Set search type to product, page, article or collection {% endcomment %}
+{% assign search_type = 'product' %}
+
+{% comment %} Set unavailable_products to show, hide or last {% endcomment %}
+{% assign unavailable_products = 'last' %}
+
+{% comment %} Variable ID for different renderings {% endcomment %}
+{%- unless search_id -%}
+  {%- assign search_id = "search" -%}
+{%- endunless -%}
+
+<form action="{{ routes.search_url }}" method="get" role="search" class="form search__form" data-enhanced-search='{
+  "wildcard": true,
+  "predictiveSearch": {{ predictive | default: true }},
+  "show_all": "{{ "general.search.show_all" | t }}",
+  "type": "{{ search_type }}",
+  "limit": 10, {% comment %} Default: 10. Min: 1. Max: 10. {% endcomment %}
+  "options": {
+    "unavailable_products": "{{ unavailable_products }}",
+    "fields": "title,product_type,variants.title" {% comment %} Specifies the list of fields to search on. Valid fields are: author, body, product_type, tag, title, variants.barcode, variants.sku, variants.title, and vendor. The default fields searched on are: title, product_type, variants.title, and vendor. {% endcomment %}
+  }
+}'>
+
+  {%- comment %} Search products only (article,page,product) {%- endcomment -%}
+  <input type="hidden" name="type" value="{{ search_type }}" />
+
+  {%- comment %} Unavailable products: show / hide / last {% endcomment -%}
+  <input type="hidden" name="options[unavailable_products]" value="{{ unavailable_products }}" />
+
+  {%- comment %} Partial word matches: last / none {% endcomment -%}
+  <input type="hidden" name="options[prefix]" value="last" />
+
+  <div class="form__row">
+    <div class="form__label label--hidden">
+      <label for="{{ search_id }}" class="label--hidden">
+        {{ 'general.search.label' | t }}
+      </label>
+    </div>
+
+    <div class="form__input form__input--text">
+      <input type="search"
+        name="q"
+        id="{{ search_id }}"
+        role="searchbox"
+        value="{{ search.terms | escape | remove: '*' }}"
+        placeholder="{{ 'general.search.placeholder' | t }}"
+      >
+    </div>
+
+    <button type="submit" class="search-button" aria-label="{{ 'general.search.submit' | t }}">
+      <span class="visually-hidden">
+        {{- 'general.search.submit' | t -}}
+      </span>
+      {%- render 'global-icon', icon_name: 'search' -%}
+    </button>
+  </div>
+</form>

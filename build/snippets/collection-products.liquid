@@ -1,0 +1,74 @@
+{%- comment %} Set grid as default collection view (grid/list) {% endcomment -%}
+{%- unless collection_view -%}
+  {%- assign collection_view = 'grid' -%}
+{%- endunless -%}
+
+{%- comment -%} Get products per page from settings {%- endcomment -%}
+{%- assign products_per_page = settings.collection_prod_per_page | times: "1" | at_most: 50 -%}
+
+{%- comment -%} Start product pagination {%- endcomment -%}
+{%- paginate the_collection.products by products_per_page -%}
+
+  <div class="collection-products collection-view__{{collection_view}}" data-ajax-pagination>
+
+    <div class="row row--gutter row--line-spacing" data-ajax-pagination-target>
+
+      {%- comment %} Ajax pagination - previous page link {% endcomment -%}
+      {%- if paginate.previous.url != blank -%}
+        <div class="col col-xs-12 container__row pagination--ajax text-align-center" data-ajax-pagination-link-wrapper="-">
+          <a href="{{ paginate.previous.url }}" class="button" data-ajax-pagination-link="-">{{ 'collections.paging.load_previous' | t }}</a>
+        </div>
+      {%- endif -%}
+
+      {% comment %} Set classes for product columns {% endcomment %}
+      {% assign column_classes = ' col-xs-12' %}
+      {% unless collection_view == 'list' %}
+        {% assign column_classes = ' col-xs-6 col-md-4' %}
+      {% endunless %}
+
+      {% comment %} Loop the products from the collection {% endcomment %}
+      {%- for product in the_collection.products -%}
+
+        {% comment %} Turn of image lazy loading for the first x images {% endcomment %}
+        {%- assign lazyloading = false -%}
+        {%- if forloop.index > start_lazy_load -%}
+          {%- assign lazyloading = true -%}
+        {%- endif -%}
+
+        <div class="col{{ column_classes }}">
+          {%- render 'product-link',
+            pagination_link: true,
+            paginate: paginate,
+            the_product: product,
+            product_view: collection_view,
+            responsive_image_alt: product.title,
+            responsive_image_size: "325x325",
+            responsive_image_sizes_arr: "200x200|345x345",
+            responsive_image_breakpoints_arr: "480|768",
+            responsive_image_size_lazyload: "16x16",
+            responsive_image_class: 'img--cover img--contain img--4x4'
+          -%}
+        </div>
+      {%- endfor -%}
+
+      {%- comment %} Ajax pagination - next page link {% endcomment -%}
+      {%- if paginate.next.url != blank -%}
+        <div class="col col-xs-12 container__row pagination--ajax text-align-center" data-ajax-pagination-link-wrapper="+">
+          <a href="{{ paginate.next.url }}" class="button" data-ajax-pagination-link="+">
+            {{- 'collections.paging.load_next' | t -}}
+          </a>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    {%- comment -%} Render default paging {%- endcomment -%}
+    {%- if paginate.pages > 1 -%}
+      <div class="container__row collection-pagination">
+        {%- render 'global-pagination', paginate: paginate -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+
+{%- endpaginate -%}

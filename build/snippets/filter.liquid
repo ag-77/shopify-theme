@@ -1,0 +1,243 @@
+{%- comment -%} Init variables {% endcomment %}
+{%- assign delimiter = '~' -%}
+{%- assign collection_tags_filtered = '' -%}
+{%- assign active_tag_arr = "" -%}
+{%- assign tag = "" -%}
+{%- assign only_result_based = section.settings.filtersettings_result_based -%}
+
+{% comment %} create an array of ALL product tags in full collection (independent of filtering) {% endcomment %}
+{%- assign collection_tags_all = collection.all_tags -%}
+
+{% comment %} create an array of product tags in filtered collection {% endcomment %}
+{% paginate collection.products by 1000 %}
+  {%- for collection_tag in collection.tags -%}
+    {%- capture product_tag_handleized -%}{{ collection_tag | handleize }}{%- endcapture -%}
+    {%- comment -%} Only add if it is not is already in the array {%- endcomment -%}
+    {%- unless collection_tags_filtered contains product_tag_handleized -%}
+      {%- capture collection_tags_filtered -%}{{ collection_tags_filtered }}{{ delimiter }}{{ collection_tag }}{%- endcapture -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{% endpaginate %}
+
+{%- comment %} add delimiter so we can check for the whole ~tag~ in ~tag~anothertag~tagmore~ {%- endcomment -%}
+{%- assign collection_tags_filtered_check = collection_tags_filtered | append: delimiter -%}
+
+{%- comment %} Create arrays of key:value tags {%- endcomment -%}
+{%- for tag in collection_tags_all -%}
+  {%- if tag contains ":" -%}
+
+    {%- comment %} Create an array of all key:value tags from full collection {%- endcomment -%}
+    {%- capture key_value_tags_all %}{{ key_value_tags_all }}{{ delimiter }}{{tag}}{%- endcapture -%}
+
+    {%- comment %} If the filter should be hidden if it has no result {%- endcomment -%}
+    {%- if only_result_based -%}
+      {%- assign tag_check = tag | append: delimiter -%}
+      {%- if collection_tags_filtered_check contains tag_check -%}
+
+        {%- comment %} Create an array of key:value tags from filtered collection {%- endcomment -%}
+        {%- capture key_value_tags_filtered %}{{ key_value_tags_filtered }}{{ delimiter }}{{tag}}{%- endcapture -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment %} Create an array of all key:value tags from full collection {%- endcomment -%}
+{%- assign key_value_tags_all_arr = key_value_tags_all | remove_first: delimiter | split: delimiter -%}
+
+{%- comment %} If the filter should be hidden if it has no result {%- endcomment -%}
+{%- if only_result_based -%}
+
+  {%- comment %} Create the loop array of key:value tags from filtered collection {%- endcomment -%}
+  {%- assign key_value_tags_arr = key_value_tags_filtered | remove_first: delimiter | split: delimiter -%}
+{%- else -%}
+
+  {%- comment %} Create the loop array of key:value tags from all collection {%- endcomment -%}
+  {%- assign key_value_tags_arr = key_value_tags_all_arr -%}
+{%- endif -%}
+
+{%- comment -%} Gather the current active tags {%- endcomment -%}
+{%- for active_tag in current_tags -%}
+  {%- capture active_tags %}{{ active_tags }}{{ delimiter }}{{ active_tag | downcase | handleize }}{%- endcapture --%}
+{%- endfor -%}
+{%- assign active_tag_arr = active_tags | remove_first: delimiter | strip_newlines | split: delimiter -%}
+
+{%- comment -%} Set the current tags & collection in data for javascript {%- endcomment -%}
+
+{%- comment %} Show list of available keys {%- endcomment -%}
+{%- if section.settings.filtersettings_show_keys -%}
+  <div class="filter__textarea">
+    <p>Available filter keys</p>
+    <textarea>
+      {%- assign key_unique = '' -%}
+      {%- for tag in key_value_tags_all_arr -%}
+        {%- assign key_val = tag | split: ":" -%}
+        {%- assign key = key_val[0] -%}
+        {%- unless key == key_unique -%}
+          {%- assign key_unique = key -%}
+          {{ key }}
+        {%- endunless -%}
+      {% endfor -%}
+    </textarea>
+  </div>
+{%- endif -%}
+
+{% comment %} Loop section blocks {% endcomment %}
+{%- for block in section.blocks -%}
+
+  {%- comment -%} Get the filter tags for this key {% endcomment %}
+  {%- assign filter_key = block.settings.filtersettings_tag_key | downcase -%}
+  {%- if filter_key != blank -%}
+
+    {%- assign filter_tags = '' -%}
+    {%- for tag in key_value_tags_arr -%}
+      {%- assign key_val = tag | split: ":" -%}
+      {%- assign key = key_val[0] | downcase -%}
+      {%- if key == filter_key -%}
+        {%- comment -%} Add to array of filter tags for this filter/key {%- endcomment -%}
+        {%- capture filter_tags %}{{ filter_tags }}{{ delimiter }}{{ tag }}{%- endcapture -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment %} create array of filter tags {%- endcomment -%}
+    {%- assign filter_tags_arr = filter_tags | remove_first: delimiter | split: delimiter -%}
+
+    {%- comment %} if tags list is overrided by settings for this filters {%- endcomment -%}
+    {%- assign filter_tags_from_settings_arr = '' -%}
+    {%- assign filter_tags_from_settings = '' -%}
+    {%- if block.settings.filtersettings_sort_tags != blank -%}
+
+      {%- assign filter_tags_from_settings_arr = block.settings.filtersettings_sort_tags | newline_to_br | strip_newlines | split: '<br />' -%}
+      {%- for tag in filter_tags_from_settings_arr -%}
+
+        {%- comment %} add delimiter so we can check for the whole ~tag~ in ~tag~othertag~moretag~ {%- endcomment -%}
+        {%- assign tag_check = tag | prepend: delimiter -%}
+
+        {%- comment %} check if tag is also in set of visible tags for filtered collection {%- endcomment -%}
+        {%- if filter_tags contains tag_check -%}
+          {%- capture filter_tags_from_settings %}{{ filter_tags_from_settings }}{{ delimiter }}{{ tag }}{%- endcapture -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment %} create array of filter tags {%- endcomment -%}
+      {%- assign filter_tags_arr = filter_tags_from_settings | remove_first: delimiter | split: delimiter -%}
+    {%- endif -%}
+
+  {%- comment -%} If there is no filter key, but there are tags - {% endcomment %}
+  {%- elsif block.settings.filtersettings_sort_tags != blank -%}
+
+    {%- assign filter_tags_arr = block.settings.filtersettings_sort_tags | newline_to_br | strip_newlines | split: '<br />' -%}
+
+  {%- endif -%}
+
+  {%- comment -%} Set variables {% endcomment %}
+  {%- assign filters_list_html = '' -%}
+  {%- assign active_tags_collection = active_tag_arr -%}
+  {%- assign product_tags_collections = collection_tags_all -%}
+  {%- assign filtersettings_showmax = block.settings.filtersettings_showmax | plus: 0 -%}
+  {%- assign hideable = false -%}
+
+  {%- if filter_tags_arr.size > 0 -%}
+    {%- comment %} Show list of available tags {%- endcomment -%}
+    {%- capture filters -%}
+      <ol class="filter-pane__list level-1 list-unstyled" data-collapsible-parent data-filter-pane__list="{{block.settings.title}}-list"
+        {%- if block.settings.filtersettings_tag_key != blank %} data-key-filter{% endif -%}
+      >
+        {%- if section.settings.filtersettings_show_tags -%}
+          <li class="filter__textarea">
+            <p>Available tags for {{ block.settings.title }}</p>
+            <textarea>
+              {%- for tag in key_value_tags_all_arr -%}
+                {%- assign key_val = tag | split: ":" -%}
+                {%- assign key = key_val[0] | downcase -%}
+                {%- if key == filter_key -%}
+                  {{ tag | strip }}
+                {%- endif -%}
+              {%- endfor -%}
+            </textarea>
+          </li>
+        {%- endif -%}
+        {%- for filter_tag in filter_tags_arr -%}
+
+          {% comment %} If this is the color filter {% endcomment %}
+          {%- assign color_span = '' -%}
+          {%- assign color_class = '' -%}
+          {%- if block.settings.filtersettings_is_color -%}
+
+            {%- assign color_mapping_arr = settings.color_mappings | strip_newlines | split: ',' -%}
+            {%- assign filter_color = filter_tag | remove: filter_key | remove: ':' | strip | downcase -%}
+            {%- for color_from_map in color_mapping_arr -%}
+
+              {%- assign color_parts = color_from_map | split: '|' -%}
+              {%- assign color_name = color_parts[0] | downcase | strip -%}
+              {%- assign color_translation = color_parts[1] | downcase | strip -%}
+              {%- assign color_hex = color_parts[2] | downcase | strip | default: "#ccc" -%}
+              {%- if color_name == filter_color -%}
+
+                {%- if color_hex contains '#' -%}
+                  {%- capture style -%}
+                    background-color:{{ color_hex }}
+                  {%- endcapture -%}
+                {%- else -%}
+                  {%- capture style -%}
+                    background-image: url({{ color_hex }})
+                  {%- endcapture -%}
+                {%- endif -%}
+
+                {%- capture 'color_span' -%}
+                  <span class="filter__color" style="{{ style }}" title="{{ color_name }}"></span>
+                {%- endcapture -%}
+                {%- assign color_class = ' filter-pane__list-item--color' -%}
+
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+
+          {%- comment -%} Init and set variables {% endcomment %}
+          {%- assign checked = '' -%}
+          {%- capture filter_tag_handleized -%}{{ filter_tag | handleize }}{%- endcapture -%}
+          {%- assign filter_tag_low = filter_tag | downcase -%}
+
+          {%- comment -%} Check if the current tag/collection needs to be rendered as checked {% endcomment %}
+          {%- if active_tags_collection contains filter_tag_handleized -%}
+            {%- assign checked = 'checked="checked"' -%}
+          {%- endif -%}
+
+          {% comment %} Toggle hidability {% endcomment %}
+          {%- assign hideable = false -%}
+          {%- if forloop.index > filtersettings_showmax and block.settings.filtersettings_showmax != blank -%}
+            {%- assign hideable = true -%}
+          {%- endif -%}
+
+          {%- comment -%} Create html string with all li and delimiter {% endcomment %}
+          <li class="filter-pane__list-item filter-hideable__{{ hideable }}{{ color_class }}" data-filter-handle="{{ filter_tag_handleized }}">
+            <input type="checkbox" name="{{ block.settings.title | downcase | handleize }}" value="{{ filter_tag_handleized }}" id="checkbox_{{ filter_tag_handleized }}" {{ checked }} />
+            <label for="checkbox_{{ filter_tag_handleized }}">{{ color_span }}{{ filter_tag_low | remove: filter_key | remove: ':' | strip | capitalize }}</label>
+          </li>
+        {%- endfor -%}
+        {%- if hideable -%}
+          <li class="filter-pane__list-item filter__toggler" data-collapsible-trigger>
+            <span class="filter__less">{{ 'collections.filter.show_less' | t }}</span>
+            <span class="filter__more">{{ 'collections.filter.show_more' | t }}</span>
+          <li>
+        {%- endif -%}
+      </ol>
+    {% endcapture %}
+
+    {%- assign filter_data = block.settings.title | handleize -%}
+    {%- assign filter_class = filter_data | prepend: 'filter__' | append: ' filter-ajax' -%}
+
+    {%- comment %} If the filter pane should start open {% endcomment -%}
+    {%- if block.settings['filtersettings_open_block'] -%}
+      {%- assign filter_class = filter_class | append: ' collapsible--is-open' -%}
+    {%- endif -%}
+
+    {% comment %} Render {% endcomment %}
+    {{ filter_template
+      | replace: '[[title]]', block.settings.title
+      | replace: '[[filters]]', filters
+      | replace: '[[filter-class]]', filter_class
+      | replace: '[[shopify_attributes]]', block.shopify_attributes
+      | replace: '[[data_filter]]', filter_data
+    }}
+  {%- endif -%}
+{%- endfor -%}

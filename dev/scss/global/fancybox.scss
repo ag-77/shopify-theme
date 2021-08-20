@@ -1,0 +1,121 @@
+// Overwrite Fancy box CSS
+.fancybox-close-small {
+  &:focus,
+  &:focus,
+  &:active {
+    outline: none;
+    &:after {
+      outline: none;
+    }
+  }
+}
+.fancybox-container {
+  font-size: rem($body-font-size);
+}
+// Fancybox Gallery thumbs
+@media (min-width: 800px) {
+  .fancybox-thumbs > ul > li {
+    max-width: 100%;
+    padding: 0 0 100% 0;
+    margin: 0;
+    width: 100%;
+    height: 0;
+  }
+  .fancybox-thumbs {
+    width: 150px;
+  }
+  .fancybox-show-thumbs .fancybox-inner {
+    right: 150px;
+  }
+}
+// Fancybox navigation
+.fancybox-navigation {
+  .fancybox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    height: auto;
+    width: auto;
+    font-size: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.6);
+    color: #000;
+    transition: all 0.2s ease-in-out;
+    -webkit-tap-highlight-color: transparent;
+    &:before {
+      // @extend .la;
+      width: 2em;
+      line-height: 2em;
+      text-align: center;
+      transition: all 0.2s ease-in-out;
+      position: relative;
+      top: 0;
+    }
+    &:after {
+      content: none;
+    }
+    &:hover {
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    &[disabled] {
+      opacity: 0.3;
+      background: rgba(255, 255, 255, 0.6);
+    }
+  }
+  .fancybox-arrow--left {
+    left: 0;
+    &:before {
+      // @extend .la-angle-left;
+    }
+  }
+  .fancybox-arrow--right {
+    right: 0;
+    &:before {
+      // @extend .la-angle-right;
+    }
+  }
+}
+// Use fancybox for notifications
+.fancybox-container.fancybox-notification {
+  height: 0;
+  .fancybox-stage,
+  .fancybox-slide {
+    overflow: visible;
+  }
+  .fancybox-slide > div {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 20px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+  }
+}
+// Box-sizing fix needed for Fancybox
+body {
+  .fancybox-outer,
+  .fancybox-content,
+  .fancybox-bg,
+  .fancybox-inner,
+  .fancybox-slide,
+  .fancybox-stage {
+    box-sizing: border-box;
+  }
+  .fancybox-infobar,
+  .fancybox-toolbar,
+  .fancybox-navigation {
+    box-sizing: border-box;
+    * {
+      box-sizing: border-box;
+    }
+  }
+  .fancybox-content {
+    padding: $site-side-spacing;
+    @include mqmin($bp-md) {
+      padding: $site-side-spacing-md;
+    }
+  }
+}

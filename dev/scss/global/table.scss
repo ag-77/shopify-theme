@@ -1,0 +1,72 @@
+// Table defaults
+table {
+  border-collapse: collapse;
+  background: $table-background;
+  &.table__wide {
+    width: 100%;
+  }
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.7em;
+  }
+  .vertical-align__top {
+    vertical-align: top;
+  }
+  .vertical-align__middle {
+    vertical-align: middle;
+  }
+  .vertical-align__bottom {
+    vertical-align: bottom;
+  }
+  tbody {
+    tr:nth-child(odd) {
+      td {
+        background: $table-background-accent;
+      }
+    }
+  }
+  tfoot {
+    td {
+      font-weight: 600;
+    }
+  }
+}
+
+// Responsive tables
+@each $breakpoint in $mq-breakpoints {
+  $name: nth($breakpoint, 1);
+  $size: nth($breakpoint, 2);
+
+  @include mqmax($size) {
+    .table-#{$name}-responsive {
+      width: 100%;
+      thead {
+        display: none;
+      }
+      tr {
+        display: block;
+      }
+      // IE9 table layout fixes
+      tr,
+      td {
+        float: left;
+        clear: both;
+        width: 100%;
+      }
+      th,
+      td {
+        display: block;
+        text-align: right;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      td::before {
+        content: attr(data-label);
+        float: left;
+        text-align: center;
+        padding-right: 10px;
+      }
+    }
+  }
+}

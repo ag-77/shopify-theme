@@ -1,0 +1,71 @@
+{% comment %} Get Blog title {% endcomment %}
+{%- if current_tags.size -%}
+  {%- capture blogs_title -%}{{ blog.title | link_to: blog.url }} - <span class="tag">{{ current_tags.first }}</span>{%- endcapture -%}
+{%- else -%}
+  {%- assign blogs_title = blog.title -%}
+{%- endif -%}
+
+{%- comment -%} Capture the blog article links {%- endcomment -%}
+{%- capture page_content -%}
+
+  {%- comment -%} Blog tags {%- endcomment -%}
+  {%- if blog.all_tags.size > 0 -%}
+    <div class="container__row blog-tags">
+
+      <strong>{{ 'blogs.general.categories' | t }}</strong>
+      <ul class="article-tags list-inline">
+
+        {%- for tag in blog.all_tags -%}
+          {%- if current_tags contains tag -%}
+            <li class="active">
+              {{ tag | link_to_remove_tag: tag }}
+            </li>
+          {%- else -%}
+            <li>
+              {{ tag | link_to_add_tag: tag }}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+
+        </ul>
+    </div>
+  {%- endif -%}
+
+  {%- paginate blog.articles by settings.articles_per_page -%}
+    <div class="container__row blog-articles">
+
+      {%- comment -%} Blog articles {%- endcomment -%}
+      <div class="row row--gutter row--line-spacing">
+        {%- for article in blog.articles -%}
+          <div class="col col-xs-6 col-md-4">
+            {%- render 'article-link',
+              the_article: article,
+              responsive_image_alt: article.title,
+              responsive_image_class: 'img--cover img--contain img--4x3',
+              responsive_image_size: "708x531",
+              responsive_image_breakpoints_arr: "480|768",
+              responsive_image_sizes_arr: "420x315|708x531",
+              responsive_image_crop: 'center'
+            -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+    </div>
+
+    {%- if paginate.pages > 1 -%}
+      <div class="container__row blog-pagination">
+        {%- render 'global-pagination', paginate: paginate -%}
+      </div>
+    {%- endif -%}
+
+  {%- endpaginate -%}
+
+{%- endcapture -%}
+
+{% comment %} Wrap and render {% endcomment %}
+{%- render 'container',
+    container_content: page_content,
+    container_title: blogs_title,
+    container_header_element: 'h1'
+-%}

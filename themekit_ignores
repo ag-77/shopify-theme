@@ -1,0 +1,18 @@
+# Shopify data
+config/settings_data.json
+
+# Apps
+assets/algolia_config.js.liquid
+
+# Translation files
+locales/da.json
+locales/de.json
+locales/en.json
+locales/es.json
+locales/fr.json
+locales/nl.json
+
+# Images
+"assets/*.gif"
+"assets/*.jpg"
+"assets/*.png"

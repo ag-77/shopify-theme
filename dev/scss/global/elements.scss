@@ -1,0 +1,74 @@
+body,
+html {
+  height: 100%;
+}
+
+body {
+  background: $body-background;
+  color: $body-text-color;
+  font-family: $body-font-family;
+  font-weight: $body-font-weight;
+  font-style: $body-font-style;
+  font-size: 100%;
+  line-height: rem($body-line-height);
+}
+
+// Default links
+a {
+  text-decoration: none;
+  color: $body-link-color;
+  &:focus,
+  &:active,
+  &:hover {
+    text-decoration: underline;
+    outline: none;
+  }
+}
+
+// Set the same top margin for common content elements
+p,
+ul,
+ol,
+figure,
+table,
+dl,
+blockquote,
+q,
+form {
+  @include body-element-spacing;
+}
+
+// Remove top margins for nested elements
+li ul,
+li ol,
+table table {
+  margin-top: 0;
+}
+
+// Remove top margins for first element
+h1
+h2,
+h3,
+h4,
+h5,
+h6,
+li {
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+hr {
+  background-color: $color-lines;
+  border-width: 0;
+  color: $color-lines;
+  height: 1px;
+  line-height: 0;
+  margin: $body-element-spacing 0;
+  // page-break-after: always;
+}
+
+// Hide the badge from Recaptcha V3 at the bottom right
+.grecaptcha-badge {
+  visibility: hidden;
+}

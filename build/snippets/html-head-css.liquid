@@ -1,0 +1,40 @@
+{%- comment %}
+Split above the fold style and put it inline, keep it under 14kb
+{% endcomment -%}
+<style>
+  {%- render 'critical.css' -%}
+</style>
+
+{%- comment %} Load global css {% endcomment -%}
+<link rel="preload" as="style" href="{{ 'code-theme-global.css' | asset_url }}">
+<link rel="stylesheet" media="all" href="{{ 'code-theme-global.css' | asset_url }}">
+
+{%- comment %}
+  Create template specific css links here
+  1 Create scss files like this: scss/theme-[template-name].scss where [template-name] is the exact name of the template (product, page, blog, article, etc)
+  2 Create a comma separated array of the template names for which you have created a scss file
+{%- endcomment -%}
+
+{%- comment %} Comma separated array of the template names {%- endcomment -%}
+{%- assign template_css_arr = 'index,article,blog,cart,collection,giftcard,list-collections,page,password,product,search' | split: ',' -%}
+
+{%- comment %} Loop the template names {%- endcomment -%}
+{%- for template_name in template_css_arr -%}
+
+  {%- comment %} Create the scss filename {%- endcomment -%}
+  {%- assign template_css_name = 'code-theme-' | append: template_name | append: '.css' -%}
+
+  {%- comment -%} When on this template, call the css {%- endcomment -%}
+  {%- if template.name == template_name -%}
+    <link rel="preload" as="style" href="{{ template_css_name | asset_url }}">
+    <link rel="stylesheet" media="all" href="{{ template_css_name | asset_url }}">
+
+  {%- comment -%} Otherwise prefetch it {%- endcomment -%}
+  {%- else -%}
+    <link rel="prefetch" as="style" href="{{ template_css_name | asset_url }}">
+  {%- endif -%}
+
+{%- endfor -%}
+
+{%- comment -%} Link to print css {%- endcomment -%}
+<link rel="stylesheet" media="print" href="{{ 'print.scss.css' | asset_url }}">

@@ -1,0 +1,22 @@
+.product-badges {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+}
+.product-badge {
+  text-transform: uppercase;
+  padding: 5px;
+  text-align: center;
+  line-height: rem($body-line-height);
+  margin: 0 0 5px 0;
+}
+.product-badge--sale {
+  background: rgba($color-success, 0.5);
+  color: #fff;
+}
+.product-badge--soldout {
+  background: rgba($color-error, 0.5);
+  color: #fff;
+}

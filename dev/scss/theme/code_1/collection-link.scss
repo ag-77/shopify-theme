@@ -1,0 +1,10 @@
+.collection-link {
+  &__meta {
+    margin-top: $body-element-spacing;
+  }
+  &__title {
+    a {
+       color: inherit;
+    }
+  }
+}

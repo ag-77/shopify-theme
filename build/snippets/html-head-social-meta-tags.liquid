@@ -1,0 +1,94 @@
+{%- comment %} Check if we should block this page for SEO {% endcomment -%}
+{%- assign blacklist_handles = settings.seo_blocked_handles | newline_to_br | strip_newlines | split: "<br />" -%}
+{%- assign the_handle = request.path | split: '/' | last -%}
+
+{%- comment %} If page handle is on blacklist or this domain is still on myshopify.com {% endcomment -%}
+{%- if blacklist_handles contains the_handle or shop.domain contains ".myshopify.com" -%}
+  <meta name="robots" content="noindex,nofollow">
+{%- endif -%}
+
+{%- comment %}
+  Create social sharing Meta tags
+{% endcomment -%}
+{%- assign og_title = page_title -%}
+{%- assign og_url = canonical_url -%}
+{%- assign og_type = 'website' -%}
+{%- assign og_description = page_description | default: shop.description | default: settings.shop_name -%}
+{% if settings.shop_logo %}
+  {%- capture og_image_tags -%}
+    <meta property="og:image" content="http:{{ settings.shop_logo | img_url: 'master' }}">
+    <meta property="og:image:secure_url" content="https:{{ settings.shop_logo | img_url: 'master' }}">
+    <meta property="og:image:width" content="{{ settings.shop_logo.width }}">
+    <meta property="og:image:height" content="{{ settings.shop_logo.height }}">
+    <meta property="og:image:alt" content="{{ page_title | escape }}">
+  {%- endcapture -%}
+{% endif %}
+
+{% comment %} Template specific overides {% endcomment %}
+{%- if template.name == 'product' -%}
+  {%- assign og_title = product.title -%}
+  {%- assign og_type = 'product' -%}
+  {%- capture og_image_tags -%}
+    {%- for image in product.images limit: 3 -%}
+      <meta property="og:image" content="http:{{ image | product_img_url: 'master' }}">
+      <meta property="og:image:secure_url" content="https:{{ image | product_img_url: 'master' }}">
+      <meta property="og:image:width" content="{{ image.width }}">
+      <meta property="og:image:height" content="{{ image.height }}">
+      <meta property="og:image:alt" content="{{ image.alt | escape }}">
+    {%- endfor -%}
+  {%- endcapture -%}
+
+{%- elsif template.name == 'article' -%}
+  {%- assign og_title = article.title -%}
+  {%- assign og_type = 'article' -%}
+  {%- assign og_description = article.excerpt_or_content -%}
+  {%- if article.image -%}
+    {%- capture og_image_tags -%}
+      <meta property="og:image" content="http:{{ article.image | img_url: 'master' }}">
+      <meta property="og:image:secure_url" content="https:{{ article.image | img_url: 'master' }}">
+      <meta property="og:image:width" content="{{ article.image.width }}">
+      <meta property="og:image:height" content="{{ article.image.height }}">
+      <meta property="og:image:alt" content="{{ article.image.alt | escape }}">
+    {%- endcapture -%}
+  {%- endif -%}
+
+{%- elsif template.name == 'collection' -%}
+  {%- assign og_title = collection.title -%}
+  {%- assign og_type = 'product.group' -%}
+  {%- if collection.image -%}
+    {%- capture og_image_tags -%}
+      <meta property="og:image" content="http:{{ collection.image | img_url: 'master' }}">
+      <meta property="og:image:secure_url" content="https:{{ collection.image | img_url: 'master' }}">
+      <meta property="og:image:width" content="{{ collection.image.width }}">
+      <meta property="og:image:height" content="{{ collection.image.height }}">
+      <meta property="og:image:alt" content="{{ collection.image.alt | escape }}">
+    {%- endcapture -%}
+  {%- endif -%}
+
+{%- elsif template.name == 'password' -%}
+  {%- assign og_title = settings.shop_name -%}
+  {%- assign og_url = shop.url -%}
+  {%- assign og_description = shop.description | default: settings.shop_name -%}
+{%- endif -%}
+
+<meta property="og:site_name" content="{{ settings.shop_name | escape }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:type" content="{{ og_type | escape }}">
+<meta property="og:description" content="{{ og_description | strip_html | escape }}">
+{%- if template.name == 'product' -%}
+  {%- if product.available -%}
+    {%- assign og_product_availability = 'instock' -%}
+  {%- else -%}
+    {%- assign og_product_availability = 'oos' -%}
+  {%- endif -%}
+  <meta property="product:availability" content="{{ og_product_availability }}">
+  <meta property="product:price:amount" content="{{ product.selected_or_first_available_variant.price | money_without_currency | strip_html | escape }}">
+  <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
+{%- endif -%}
+{{ og_image_tags }}
+
+<meta name="twitter:site" content="{{ settings.social_twitter_link | split: 'twitter.com/' | last | prepend: '@' }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_description | strip_html | escape }}">

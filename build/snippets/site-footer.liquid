@@ -1,0 +1,73 @@
+{%- comment -%} Footer Navigation {%- endcomment -%}
+{%- capture footer_navigation -%}
+
+  {%- assign footer_linklist = 'footer' -%}
+  {%- if settings.footer_linklist != blank -%}
+    {%- assign footer_linklist = settings.footer_linklist -%}
+  {%- endif -%}
+
+  {%- render 'global-linklist',
+    navigation_linklist: footer_linklist,
+    navigation_class_prefix: 'footer-navigation',
+    navigation_collapsible: true
+  -%}
+{%- endcapture -%}
+
+{% comment %} Render Footer {% endcomment %}
+<footer class="footer">
+
+  <div class="footer__row site-center site-side-spacing">
+    <div class="row row--gutter">
+      <div class="col col-xs-12 col-lg footer-logo">
+
+        {% comment %} Logo {% endcomment %}
+        {% render 'global-logo' %}
+      </div>
+
+      {% comment %} Footer navigation {% endcomment %}
+      {%- if footer_navigation != blank -%}
+      <div class="col col-xs-12 col-lg-6 footer-navigation" data-collapsible-wrapper='{
+        "openOnHover": true
+      }'>
+        {{ footer_navigation }}
+      </div>
+      {%- endif -%}
+    </div>
+
+    <div class="row row--gutter">
+      <div class="col col-xs-12 col-lg-8 footer__payments">
+
+        {% if settings.payment_label != blank %}
+          <h2>
+            {{ settings.payment_label }}
+          </h2>
+        {% endif %}
+
+        {%- comment -%} Payment icons (as 'svg' or 'png') {%- endcomment -%}
+        {%- render 'global-payment-methods', payment_icons: 'svg' -%}
+
+      </div>
+      <div class="col col-xs-12 col-lg-4 footer__social">
+
+        {% if settings.social_label != blank %}
+          <h2>
+            {{ settings.social_label }}
+          </h2>
+        {% endif %}
+
+        {% comment %} Social links {% endcomment %}
+        {%- render 'global-social-links' -%}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="footer__bottom site-side-spacing">
+    <div class="site-center footer-copyright">
+
+        {% comment %} Copyright message {% endcomment %}
+        <small>{{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: "%Y" }}, {{ settings.shop_name | link_to: '/' }}. {{ powered_by_link | replace: '">', '/?ref=cia">' | replace: 'nofollow', 'noopener' }}</small>
+    </div>
+  </div>
+
+</footer>

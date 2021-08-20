@@ -1,0 +1,348 @@
+[{
+    "name": "theme_info",
+    "theme_name": "Code Base Theme",
+    "theme_author": "mark@code.nl",
+    "theme_version": "2.10.1",
+    "theme_documentation_url": "http://code.nl",
+    "theme_support_email": "commerce@code.nl"
+  },
+  {
+    "name": "Branding",
+    "settings": [
+      {
+        "type": "text",
+        "id": "shop_name",
+        "label": "Shop name",
+        "info": "The shop name is used in various visible and invisible (SEO) places."
+      },
+      {
+        "type": "image_picker",
+        "id": "shop_logo",
+        "label": "Shop logo",
+        "info": "The shop logo is used in various visible and invisible (SEO) places."
+      }
+    ]
+  },
+  {
+    "name": "Navigation",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "main_linklist",
+        "label": "Main menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_linklist",
+        "label": "Footer menu",
+        "default": "footer"
+      }
+    ]
+  },
+  {
+    "name": "Collection",
+    "settings": [
+      {
+        "type": "text",
+        "id": "collection_prod_per_page",
+        "label": "Products per page",
+        "default": "12"
+      },
+      {
+        "type": "checkbox",
+        "id": "hide_collections_page",
+        "label": "Show the 404 page on the [/collections](/collections) and [/products](/products) page",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "text",
+        "id": "search_prod_per_page",
+        "label": "Items per page",
+        "default": "12"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_search",
+        "label": "Show search form above search results",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Blog",
+    "settings": [
+      {
+        "type": "text",
+        "id": "articles_per_page",
+        "label": "Articles per page",
+        "default": "12"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_notes_enable",
+        "label": "Enable cart notes",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_terms_enable",
+        "label": "Enable legal terms",
+        "default": true
+      },
+      {
+        "type": "richtext",
+        "id": "cart_terms_text",
+        "label": "Terms and conditions text",
+        "default": "<p>By clicking the checkout button, you agree with the <a href=''>terms and conditions</a>.<p>",
+        "info": "For EU stores, a link to your terms and conditions page is required."
+      }
+    ]
+  },
+  {
+    "name": "Social media links",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social sharing options"
+      },
+      {
+        "type": "checkbox",
+        "id": "share_facebook",
+        "label": "Share on Facebook",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "share_twitter",
+        "label": "Tweet on Twitter",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "share_pinterest",
+        "label": "Pin on Pinterest",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Social links"
+      },
+      {
+        "type": "text",
+        "id": "social_label",
+        "label": "Social label",
+        "placeholder": "Stay connected"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook link",
+        "placeholder": "http://facebook.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "Twitter link",
+        "placeholder": "http://twitter.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest link",
+        "placeholder": "http://pinterest.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram link",
+        "placeholder": "http://instagram.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_snapchat_link",
+        "label": "Snapchat link",
+        "placeholder": "http://snapchat.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_tumblr_link",
+        "label": "Tumblr link",
+        "placeholder": "http://tumblr.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "Youtube link",
+        "placeholder": "http://youtube.com/your_url"
+      },
+      {
+        "type": "text",
+        "id": "social_vimeo_link",
+        "label": "Vimeo link",
+        "placeholder": "http://vimeo.com/your_url"
+      }
+    ]
+  },
+  {
+    "name": "Payment providers",
+    "settings": [
+      {
+        "type": "text",
+        "id": "payment_label",
+        "label": "Payment label",
+        "placeholder": "Payment methods"
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_afterpay",
+        "label": "Afterpay",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_american_express",
+        "label": "American Express",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_apple_pay",
+        "label": "Apple Pay",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_bancontact",
+        "label": "Bancontact",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_belfius",
+        "label": "Belfius",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_bitcoin",
+        "label": "Bitcoin",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_diners_club",
+        "label": "Dinersclub",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_ideal",
+        "label": "iDeal",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_kbc",
+        "label": "KBC",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_klarna",
+        "label": "Klarna",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_mastercard",
+        "label": "Mastercard",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_maestro",
+        "label": "Maestro",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_paypal",
+        "label": "Paypal",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_sofort",
+        "label": "Sofort",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_visa",
+        "label": "Visa",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "General Settings",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_minified_js",
+        "label": "Minify Javascript",
+        "info": "Use minified javascript files for faster page loading",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_plugin_country_popup",
+        "label": "Country Popup plugin",
+        "info": "Enable the Country Popup plugin to help visitors go to the site of their country",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "google_site_verification",
+        "label": "Google Site verification code",
+        "info": "The verification code of Google to verify your website. For multiple accounts create a comma separated list"
+      },
+      {
+        "type": "text",
+        "id": "mailchimp_action_url",
+        "label": "Newsletter Mailchimp action url",
+        "info": "When users subscribe to your newsletter they will be added to your Mailchimp database."
+      },
+      {
+        "type": "textarea",
+        "id": "seo_blocked_handles",
+        "label": "Seo blocked",
+        "info": "Handles (1 per line) for the pages that should be hidden for searchrobots. These pages will get a noindex,nofollow metatag",
+        "placeholder": "styles"
+      },
+      {
+        "type": "header",
+        "content": "Color mappings"
+      },
+      {
+        "type": "textarea",
+        "id": "color_mappings",
+        "label": "Color mappings",
+        "info": "Set up color mappings as a comma separated list of english|translation|#hexvalue",
+        "default": "blue|blauw|#68b7ff,\nred|rood|#ff0000,\norange|oranje|#ff6600,",
+        "placeholder": "blue|blauw|#68b7ff,\nred|rood|#ff0000,\norange|oranje|#ff6600,"
+      }
+    ]
+  }
+]

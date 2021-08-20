@@ -1,0 +1,6 @@
+{%- comment %} Returns a list of handles from the collection {% endcomment -%}
+{%- layout none -%}
+{%- comment %} Get tagged products from current collection (max 20) {% endcomment -%}
+{%- paginate collection.products by 1000 -%}
+{%- for product in collection.products -%}{{ collection.handle }}|{{ product.handle }}{%- unless forloop.last -%},{%- endunless -%}{% if forloop.index == 20 %}{% break %}{% endif %}{%- endfor -%}
+{%- endpaginate -%}

@@ -1,0 +1,166 @@
+{%- if section.settings.country_popup_enabled -%}
+  {%- comment -%} Country popup site-center {%- endcomment -%}
+  <div style="display:none;" {{ block.shopify_attributes }}>
+    <div id="country-popup" data-country-message-options='{
+      "location_api_url": "{{ section.settings.location_service_url }}",
+      "location_field_name": "{{ section.settings.location_field_name }}",
+      "expires_in_days": {{ section.settings.country_popup_days | plus: 0 }},
+      "current_country_code": "{{ section.settings.current_country_code  }}",
+      "popup_messages": {
+        {%- for block in section.blocks -%}
+          "{{ block.settings.title }}" : {
+            "country_title": "{{ block.settings.country_title | replace: '"','\"' | escape }}",
+            "country_name": "{{ block.settings.country_name | replace: '"','\"' | escape }}",
+            "country_body": "{{ block.settings.country_body | replace: '"','\"' | escape }}",
+            "country_url": "{{ block.settings.country_url | replace: '"','\"' | escape }}",
+            "country_button": "{{ block.settings.country_button | replace: '"','\"' | escape }}",
+            "country_stay": "{{ block.settings.country_stay | replace: '"','\"' | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+        }
+      }'>
+      <div class="country__wrapper">
+        <h2 class="country__message-title">
+          <span data-country-message-title></span>
+          <span data-country-message-name-title></span>
+        </h2>
+        <p class="country__message-text" data-country-message-text></p>
+        <p class="country__message-buttons">
+          <a href="#" class="button button--primary country__message-url" data-country-message-url>
+            <span data-country-message-label><span>
+          </a>
+          <input type="button" class="button country__message-stay" data-country-message-stay />
+        </p>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Country popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "country_popup_enabled",
+        "label": "Enable popup",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "location_service_url",
+        "label": "Location API URL",
+        "default": "https://extreme-ip-lookup.com/json/",
+        "placeholder": "https://",
+        "info": "The API url to the serviceprovider"
+      },
+      {
+        "type": "text",
+        "id": "location_field_name",
+        "label": "Location field name",
+        "default": "countryCode",
+        "placeholder": "countryCode",
+        "info": "The field name in the JSON response representing the country code"
+      },
+      {
+        "type": "text",
+        "id": "current_country_code",
+        "label": "Current Country code",
+        "default": "EN",
+        "placeholder": "EN",
+        "info": "Use the [2 digit country code](https://www.nationsonline.org/oneworld/country_code_list.htm)"
+      },
+      {
+        "type": "select",
+        "id": "country_popup_days",
+        "label": "Days until popup is displayed again",
+        "default": "0",
+        "options": [
+          {
+            "value": "0",
+            "label": "Test Mode"
+          },
+          {
+            "value": "2",
+            "label": "2 days"
+          },
+          {
+            "value": "7",
+            "label": "7 days"
+          },
+          {
+            "value": "14",
+            "label": "14 days"
+          },
+          {
+            "value": "30",
+            "label": "30 days"
+          },
+          {
+            "value": "90",
+            "label": "90 days"
+          },
+          {
+            "value": "365",
+            "label": "365 days"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "type": "country",
+        "name": "Country",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Country block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Country code",
+            "placeholder": "EN",
+            "info": "Use the [2 digit country code](https://www.nationsonline.org/oneworld/country_code_list.htm)"
+          },
+          {
+            "type": "text",
+            "id": "country_title",
+            "label": "Title",
+            "placeholder": "We think you're visiting us from"
+          },
+          {
+            "type": "text",
+            "id": "country_name",
+            "label": "Title country name",
+            "placeholder": "England"
+          },
+          {
+            "type": "textarea",
+            "id": "country_body",
+            "label": "Content",
+            "placeholder": "Maybe you want to visit our english site?"
+          },
+          {
+            "type": "text",
+            "id": "country_button",
+            "label": "Go-button label",
+            "placeholder": "Yes, go to..."
+          },
+          {
+            "type": "text",
+            "id": "country_url",
+            "label": "Go-button site url",
+            "placeholder": "http://"
+          },
+          {
+            "type": "text",
+            "id": "country_stay",
+            "label": "Stay-button label",
+            "placeholder": "Stay here"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

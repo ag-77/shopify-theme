@@ -1,0 +1,186 @@
+/*================ Helper Classes ================*/
+.text-align-left {
+  text-align: left;
+}
+.text-align-center {
+  text-align: center;
+}
+.text-align-right {
+  text-align: right;
+}
+
+.clearfix {
+  @include clearfix();
+}
+
+// unstyled list
+.list-unstyled {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// inline list
+.list-inline {
+  margin-left: 0;
+  padding: 0;
+  list-style: none;
+  @include clearfix();
+  li {
+    float: left;
+  }
+}
+
+// Hide elements
+.hidden {
+  display: none;
+}
+
+.js-focus-hidden:focus {
+  outline: none;
+}
+
+.label--hidden {
+  @include visually-hidden();
+
+  // No placeholders, so force show labels
+  .no-placeholder & {
+    @include visually-shown();
+  }
+}
+
+.visually-hidden {
+  @include visually-hidden();
+}
+
+.visually-shown {
+  @include visually-shown();
+}
+
+// Visibility toggles
+body {
+  .visibility-hidden {
+      display: none;
+  }
+  .visually-shown {
+      display: block;
+      &.row {
+        display: flex;
+      }
+  }
+  @each $breakpoint in $mq-breakpoints {
+    $name: nth($breakpoint, 1);
+    $size: nth($breakpoint, 2);
+
+    @include mqmin($size) {
+      .visibility-#{$name}--hidden {
+          display: none;
+      }
+      .visibility-#{$name}--visible {
+          display: block;
+          &.row {
+            display: flex;
+          }
+      }
+    }
+  }
+}
+
+// touch / no-touch
+.no-touch {
+  .touch { display: none; }
+}
+.touch {
+  .no-touch { display: none; }
+}
+
+// Cookie support
+.supports-no-cookies:not(html) {
+  display: none;
+
+  html.supports-no-cookies & {
+    display: block;
+  }
+}
+.supports-cookies {
+  html.supports-no-cookies & {
+    display: none;
+  }
+}
+
+// Skip to content button
+.skip-link:focus {
+  @include visually-shown(absolute);
+  color: $body-text-color;
+  background-color: $body-background;
+  padding: $gutter-md * 0.5;
+  z-index: 99999;
+  transition: none;
+}
+
+// When javascript is available
+.js {
+  // Hide the no-js elements
+  .no-js {
+    display: none;
+  }
+}
+
+// When javascript is not available
+.no-js {
+  // Hide any js dependant elements
+  .js,
+  [data-collapsible-trigger] {
+    display: none;
+  }
+}
+
+// collapsible functionality
+[data-collapsible-trigger] {
+  cursor: pointer;
+  padding-right: rem(24);
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  > [data-collapsible-trigger-icon] {
+    text-align: center;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform 0.2s ease-in-out;
+  }
+}
+[data-collapsible-parent] {
+  // If parent is open
+  &.collapsible--is-open {
+    // Show target, Css fallback
+    > [data-collapsible-target] {
+      display: block;
+    }
+    // Rotate icon
+    > [data-collapsible-trigger] {
+      [data-collapsible-trigger-icon] {
+        transform: translateY(-50%) rotate(180deg);
+      }
+    }
+  }
+}
+// Hide anything inside the collapsible target
+[data-collapsible-target] {
+  // Only when javascript is active
+  .js & {
+    display: none;
+  }
+}
+
+// Theme editor Preview bar styling
+#preview-bar-iframe {
+  height: 5px;
+  opacity: 0;
+  transition: all 0.4s ease-in-out;
+  &:hover {
+    opacity: 1;
+    height: 60px;
+  }
+}

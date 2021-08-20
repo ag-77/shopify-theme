@@ -1,0 +1,290 @@
+{%- comment -%}
+  RELATED PRODUCTS
+
+  This snippets prepares a wrapper to be filled with related products by ajax.
+
+  The wrapper will be filled with product links by:
+  - Metafield
+    From product.metafields.related.product_handles (default)
+    Should be set as comma separated list of product_handle or collection_handle|product_handle to create product links with collection included:
+    like this: dresses|red_dress,dresses|green_dress,belts|green_belt
+  - Tag filtering
+    - From a primary collection
+      Defaults to show products from the same collection, filtered by related_primary_grouper_tag
+      products with the same related_primary_grouper_tag
+      related_primary_grouper_tag can be overwritten by product.metafields.product.related_primary_tag for a specific product
+    - From a secondary collection
+      Can be used to show products from All products, filtered by relatsecond_grouper_tag
+      products with the same related_secondary_grouper_tag
+      related_secondary_grouper_tag can be overwritten by product.metafields.product.related_secondary_tag for a specific product
+  - From the same collection, unfiltered
+    "Random" products from the same collection
+    Random: Liquid gets the random nr from "now", but then the result is cached. So the random result may not be different on page refresh.
+    The result will be different on each page though. And the cache gets refreshed on "add to cart", "update a product in admin", "someone buys something", ....
+{%- endcomment -%}
+
+{%- comment -%}
+  OPTIONS / DEFAULTS
+  You can change these when including this snippet:
+  {%- render 'product-related',
+    show_related_by_metafield: 'true',                                  // show products related by the product metafield
+    related_meta_namespace: "related",                                // product.metafields.namespace
+    related_meta_key: "product_handles",                              // product.metafields.namespace.key
+    show_related_by_tag: 'true',                                        // Show products from primary/secondary collection, filtered by grouper_tag
+    related_primary_grouper_tag: "Related:",                          // The grouper_tag to filter the primary collection
+    related_primary_collection_handle: '{{ collection.handle }}',     // Handle of the primary collection
+    related_secondary_grouper_tag: "Related:",                        // The grouper_tag to filter the secondary collection
+    related_secondary_collection_handle: 'all',                       // Handle of the secondary collection
+    show_products_from_same_collection: 'true',                         // Just show some products from the same collection
+    related_wrapper: '[data-related-products-wrapper]',               // Wrapper of the related items, to hide-if-empty / show
+    related_products_max: 6,                                          // Max products to show ( max 20 )
+    related_products_as_slider: 'true',                                 // Show related products in a slider
+    related_products_columns_classes: 'col col-xs-6 col-md-3'         // Column classes in case of no Slider
+  -%}
+{%- endcomment -%}
+
+{%- comment -%} Show products related by metafield, metafield must be a comma separated list of product handles {%- endcomment -%}
+{%- if show_related_by_metafield != 'false' -%}
+  {%- assign show_related_by_metafield = 'true' -%}
+{%- endif -%}
+
+{%- comment -%} Show products related by grouper tag, products tagged with the same key:value tag will be shown {%- endcomment -%}
+{%- if show_related_by_tag != 'false' -%}
+  {%- assign show_related_by_tag = 'true' -%}
+{%- endif -%}
+
+{%- comment -%} Show products from the same collection to fill the related products {%- endcomment -%}
+{%- if show_products_from_same_collection != 'false' -%}
+  {%- assign show_products_from_same_collection = 'true' -%}
+{%- endif -%}
+
+{%- comment -%} Set the primary collection to get filtered products {%- endcomment -%}
+{%- unless related_primary_collection_handle -%}
+  {%- assign related_primary_collection_handle = collection.handle | default: the_product.collections.last.handle -%}
+{%- endunless -%}
+
+{%- comment -%} Set the secondary collection to get filtered products {%- endcomment -%}
+{%- unless related_secondary_collection_handle -%}
+  {%- assign related_secondary_collection_handle = "all" -%}
+{%- endunless -%}
+
+{%- comment -%} Set the secondary collection to get filtered products {%- endcomment -%}
+{%- unless related_secondary_collection -%}
+  {%- assign related_secondary_collection = '' -%}
+{%- endunless -%}
+
+{%- comment -%} Set the grouper tag for filtering collections {%- endcomment -%}
+{%- unless related_primary_grouper_tag -%}
+  {%- assign related_primary_grouper_tag = settings.product_related_tag | default: 'Related:' -%}
+{%- endunless -%}
+{%- unless related_secondary_grouper_tag -%}
+  {%- assign related_secondary_grouper_tag = settings.product_related_tag | default: 'Related:' -%}
+{%- endunless -%}
+
+{%- comment -%} If this product has a more specific grouper_tag in the metafields, use that one {%- endcomment -%}
+{%- if the_product.metafields.product.related_primary_tag != blank -%}
+  {%- assign related_primary_grouper_tag = the_product.metafields.product.related_tag -%}
+{%- endif -%}
+{%- if the_product.metafields.product.related_secondary_tag != blank -%}
+  {%- assign related_secondary_grouper_tag = the_product.metafields.product.related_tag -%}
+{%- endif -%}
+
+{%- assign related_primary_grouper_tag_lower = related_primary_grouper_tag | downcase -%}
+{%- assign related_secondary_grouper_tag_lower = related_secondary_grouper_tag | downcase -%}
+
+{%- comment -%} Set the metafield namespace and key {%- endcomment -%}
+{%- unless related_meta_namespace -%}
+  {%- assign related_meta_namespace = 'related' -%}
+{%- endunless -%}
+{%- unless related_meta_key -%}
+  {%- assign related_meta_key = 'product_handles' -%}
+{%- endunless -%}
+
+{%- comment -%} Set an identifier for the related products wrapper, which should be hidden by css {%- endcomment -%}
+{%- unless related_wrapper -%}
+  {%- assign related_wrapper = '[data-related-products-wrapper]' -%}
+{%- endunless -%}
+
+{%- comment -%} Show the related products in a slider {%- endcomment -%}
+{%- if related_products_as_slider != 'false' -%}
+  {%- assign related_products_as_slider = 'true' -%}
+{%- endif -%}
+
+{%- comment -%} Maximum nr of related products {%- endcomment -%}
+{%- unless related_products_max != blank -%}
+  {%- assign related_products_max = 6 -%}
+{%- endunless -%}
+
+{%- comment -%} Create column classes if not a swiper {%- endcomment -%}
+{%- unless related_products_columns_classes -%}
+  {%- assign related_products_columns_classes = "col col-xs-6 col-md-3" -%}
+{%- endunless -%}
+
+
+
+
+{%- comment -%}
+  Get related products from the related_metafield_handles
+{%- endcomment -%}
+
+{%- assign related_metafield_handles = the_product.metafields[related_meta_namespace][related_meta_key] | downcase | strip_newlines -%}
+{%- assign product_related_metafield_handle__str = '' -%}
+{%- assign product_related_metafield_handle__arr = '' -%}
+{%- if show_related_by_metafield == 'true' and related_metafield_handles != blank -%}
+
+  {%- assign metafield_handles_arr = related_metafield_handles | split: ',' -%}
+
+  {%- comment -%} Loop handles in metafield {%- endcomment -%}
+  {%- for handle in metafield_handles_arr -%}
+    {%- assign the_handle = handle | strip -%}
+
+    {%- comment -%} SKIP if loop product is current product {%- endcomment -%}
+    {%- if the_product.handle == the_handle -%}
+      {%- continue -%}
+    {%- endif -%}
+
+    {%- comment -%} add to product string {%- endcomment -%}
+    {%- assign product_related_metafield_handle__str = product_related_metafield_handle__str | append: ',' | append: the_handle -%}
+
+    {%- comment -%} create array from product string {%- endcomment -%}
+    {%- assign product_related_metafield_handle__arr = product_related_metafield_handle__str | remove_first: ',' | split: ',' | uniq -%}
+
+    {%- comment -%} Check length and stop if enough products {%- endcomment -%}
+    {%- if product_related_metafield_handle__arr.size == related_products_max -%}
+      {%- break -%}
+    {%- endif -%}
+
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%}
+  Get product handles from the same collection
+{%- endcomment -%}
+{%- assign product_related_collection_handle__str = '' -%}
+{%- assign product_related_collection_handle__arr = '' -%}
+
+{%- if show_products_from_same_collection == 'true' and collection.handle != blank -%}
+
+  {%- assign max_products = related_products_max | plus: 1 -%}
+  {%- paginate collection.products by max_products -%}
+
+    {% for product in collection.products %}
+      {%- assign product_related_collection_handle__str = product_related_collection_handle__str | append: ',' | append: collection.handle | append: '|' | append: product.handle -%}
+    {% endfor %}
+
+    {% assign product_related_collection_handle__arr = product_related_collection_handle__str | remove_first: ',' | split: ',' %}
+  {%- endpaginate -%}
+
+{%- endif -%}
+
+{%- comment -%}
+  Get the grouper tag for this product
+{%- endcomment -%}
+{%- assign related_primary_tag = '' -%}
+{%- if show_related_by_tag == 'true'-%}
+  {%- if product_related_metafield_handle__arr.size <= related_products_max -%}
+
+    {%- assign product_tags = the_product.tags | join: ',' -%}
+
+    {%- for tag in the_product.tags -%}
+      {%- assign tag_lower = tag | downcase -%}
+      {%- assign tag_lower_key = tag_lower | split: ':' | first | append: ':' -%}
+      {%- if tag_lower_key == related_primary_grouper_tag_lower -%}
+        {%- assign related_primary_tag = tag_lower | strip  -%}
+      {%- endif -%}
+      {%- if tag_lower_key == related_secondary_grouper_tag_lower -%}
+        {%- assign related_secondary_tag = tag_lower | strip  -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%}
+  Render
+{%- endcomment -%}
+<div class="related-products product-view__grid" data-related-products='{
+
+  {%- comment -%} Handle of the current product, to make sure it wil not show up in related products {%- endcomment -%}
+  "currentHandle" : "{{ the_product.handle }}",
+
+  {%- comment -%} Handles of the products related by metafield: the_product.metafields.related.product_handles {%- endcomment -%}
+  "relatedMetaHandles" : {{ product_related_metafield_handle__arr | json }},
+
+  {%- comment -%} The tag that is used to get products from the primary collection filtered by tag {%- endcomment -%}
+  {%- if show_related_by_tag == 'true' and related_primary_tag != blank -%}
+    "relatedPrimaryTag" : "{{ related_primary_tag | handle }}",
+  {%- endif -%}
+
+  {%- comment -%} Primary collection to look for products (usually the same collection) {%- endcomment -%}
+  "relatedPrimaryCollection" : "{{ related_primary_collection_handle }}",
+
+  {%- comment -%} The tag that is used to get products from the secondary collection filtered by tag {%- endcomment -%}
+  {%- if show_related_by_tag == 'true' and related_secondary_tag != blank -%}
+    "relatedSecondaryTag" : "{{ related_secondary_tag | handle }}",
+  {%- endif -%}
+
+  {%- comment -%} Secondary collection to look for products (optionally another collection or "all") {%- endcomment -%}
+  "relatedSecondaryCollection" : "{{ related_secondary_collection_handle }}",
+
+  {%- comment -%} Array of product handles from the same collection {%- endcomment -%}
+  "relatedSameCollectionHandles" : {{ product_related_collection_handle__arr | json }},
+
+  {%- comment -%} Max nr of related products {%- endcomment -%}
+  "max" : {{ related_products_max }}
+
+  {%- comment -%} Classes for the columns (if not a Slider) {%- endcomment -%}
+  {%- if related_products_as_slider == 'false' -%}
+    ,"columnClasses" : "{{ related_products_columns_classes }}"
+  {%- endif -%}
+
+  {%- comment -%} Related products wrapper to show/hide {%- endcomment -%}
+  {%- if related_wrapper != blank -%}
+    ,"wrapper": "{{ related_wrapper }}"
+  {%- endif -%}
+}'>
+
+  {%- comment -%} Display the related products {%- endcomment -%}
+  {%- if products.product.related_products != blank -%}
+    <h2>{{ 'products.product.related_products' | t }}</h2>
+  {%- endif -%}
+
+  {%- if related_products_as_slider == 'true' -%}
+    <div class="row row--gutter related-products-site-center"
+      data-swiper-options='{
+        "slidesPerView": 2,
+        "spaceBetween": 40,
+        "centeredSlides": false,
+        "centerInsufficientSlides": false,
+        "scrollbar": false,
+        "pagination": false,
+        "roundLengths": true,
+        "breakpointsInverse": true,
+        "breakpoints": {
+          "360": {
+            "slidesPerView": 1.3
+          },
+          "480": {
+            "slidesPerView": 2.3
+          },
+          "768": {
+            "slidesPerView": 3
+          },
+          "1024": {
+            "slidesPerView": 4
+          }
+        }
+      }'
+    >
+      <div class="swiper-container">
+        <div class="swiper-wrapper" data-related-products>
+  {%- else -%}
+
+    <div class="row row--gutter related-products" data-related-products>
+  {%- endif -%}
+
+  {%- if related_products_as_slider == 'true' -%}
+    </div></div>
+  {%- endif -%}
+  </div>
+</div>

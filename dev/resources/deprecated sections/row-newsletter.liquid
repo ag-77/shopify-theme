@@ -1,0 +1,68 @@
+{%- capture section_content -%}
+  {%- render 'global-newsletter' -%}
+{%- endcapture -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+  {
+    "name": "Newsletter",
+    "class": "newsletter-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section layout",
+        "info": "Control the look of this section"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Subscribe to our newsletter",
+        "info": "Always give this a good SEO value"
+      },
+      {
+        "type": "select",
+        "id": "hide_heading",
+        "label": "Heading visibility",
+        "default": "false",
+        "options": [
+        {
+          "value": "false",
+          "label": "Show heading"
+        },
+        {
+          "value": "true",
+          "label": "Hide heading"
+        } ]
+      },
+      {
+        "type": "select",
+        "id": "section_background",
+        "label": "Section background color",
+        "default": "",
+        "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "container--accent container--block",
+          "label": "Accent"
+        } ]
+      }
+    ],
+    "presets": [
+    {
+      "name": "Newsletter",
+      "category": "Social",
+      "settings":{}
+    } ]
+  }
+{% endschema %}

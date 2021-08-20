@@ -1,0 +1,160 @@
+{% comment %}
+https://dev.twitter.com/web/embedded-timelines
+{% endcomment %}
+
+{%- capture section_content -%}
+  <a class="twitter-timeline"
+    data-width="{{ section.settings.twitter_width }}"
+    data-height="{{ section.settings.twitter_height }}"
+    data-theme="{{ section.settings.twitter_theme }}"
+    data-link-color="{{ settings.color_body_link }}"
+    data-chrome="{% if section.settings.twitter_nofooter %} nofooter{% endif %}
+                 {% if section.settings.twitter_noborders %} noborders{% endif %}
+                 {% if section.settings.twitter_noheader %} noheader{% endif %}
+                 {% if section.settings.twitter_noscrollbar %} noscrollbar{% endif %}
+                 {% if section.settings.twitter_transparent %} transparent{% endif %}"
+    {% if section.settings.twitter_limit %}data-tweet-limit="{{ section.settings.twitter_limit }}"{% endif %}
+    href="{{ section.settings.twitter_url }}?ref_src=twsrc%5Etfw"
+  ></a>
+
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{%- endcapture -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+  {
+    "name": "Twitter feed",
+    "class": "twitterfeed-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section layout",
+        "info": "Control the look of this section"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Twitter feed",
+        "info": "Always give this a good SEO value"
+      },
+      {
+        "type": "select",
+        "id": "hide_heading",
+        "label": "Heading visibility",
+        "default": "false",
+        "options": [
+        {
+          "value": "false",
+          "label": "Show heading"
+        },
+        {
+          "value": "true",
+          "label": "Hide heading"
+        } ]
+      },
+      {
+        "type": "select",
+        "id": "section_background",
+        "label": "Section background color",
+        "default": "",
+        "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "container--accent container--block",
+          "label": "Accent"
+        } ]
+      },
+      {
+        "type": "header",
+        "content": "Twitter feed settings"
+      },
+      {
+        "type": "text",
+        "id": "twitter_url",
+        "label": "Twitter url",
+        "default": "https://twitter.com/code_nl"
+      },
+      {
+        "type": "text",
+        "id": "twitter_height",
+        "label": "Height",
+        "default": "800"
+      },
+      {
+        "type": "text",
+        "id": "twitter_width",
+        "label": "Width",
+        "default": "400",
+        "info": "Min width: 180, max width: 520. Do not add the 'px' unit."
+      },
+      {
+        "type": "select",
+        "id": "twitter_theme",
+        "label": "Theme",
+        "default": "light",
+        "options": [
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        } ]
+      },
+      {
+        "type": "checkbox",
+        "id": "twitter_transparent",
+        "label": "Disable background color",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "twitter_noheader",
+        "label": "Hide header",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "twitter_nofooter",
+        "label": "Hide footer",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "twitter_noborders",
+        "label": "Disable borders",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "twitter_noscrollbar",
+        "label": "Disable scrollbar",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "twitter_limit",
+        "label": "Limit tweets",
+        "info": "Set a number between 1 and 20 to specify the number of Tweets. The timeline will automatically adjust its height to display specified number of Tweets. The timeline is fixed after display; it will not poll for new Tweets."
+      }
+    ],
+    "presets": [
+    {
+      "name": "Twitter feed",
+      "category": "Social",
+      "settings":{}
+    } ]
+  }
+{% endschema %}

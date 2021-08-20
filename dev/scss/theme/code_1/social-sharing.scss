@@ -1,0 +1,43 @@
+.social-sharing {
+  margin-left: $body-element-spacing / -4;
+  margin-right: $body-element-spacing / -4;
+  margin-top: $body-element-spacing / 4;
+  a {
+    margin: $body-element-spacing / 4;
+    display: inline-block;
+    color: #fff;
+    background: #ccc;
+    padding: 0.1em 0.7em 0.1em 2em;
+    position: relative;
+    font-weight: 600;
+    border-radius: $button-border-radius;
+    .icon {
+      position: absolute;
+      left: 0.5em;
+      top: 50%;
+      transform: translateY(-50%);
+      transform-origin: center;
+      transition: all 0.2s ease-in-out;
+      .fill {
+        fill: #fff;
+      }
+    }
+    &:focus,
+    &:active,
+    &:hover {
+      text-decoration: none;
+    }
+    &.social-sharing__facebook {
+      background: $color-facebook;
+    }
+    &.social-sharing__twitter {
+      background: $color-twitter;
+    }
+    &.social-sharing__pinterest {
+      background: $color-pinterest;
+    }
+    &.social-sharing__google {
+      background: $color-google;
+    }
+  }
+}

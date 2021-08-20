@@ -1,0 +1,16 @@
+# Copy this file to config.yml for you personal configuration
+# Your config.yml will be ignored in the repository so it will not conflict with other developers
+
+###############################################################################
+# Keep config.yml.sample up to date when creating new themes or environments! #
+###############################################################################
+
+development:
+  directory: "build"
+  password: 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
+  store: anti-404-playground.myshopify.com
+  # ANTI 404
+  theme_id: "114329878681"
+  ignore_files:
+    # ignore files specific for development
+    - config/settings_data.json

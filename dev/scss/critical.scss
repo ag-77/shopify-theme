@@ -1,0 +1,28 @@
+/*================ This file can be up to 14bk ================*/
+/*================ This file with CSS needs to be standalone ================*/
+
+/*================ MIXINS ================*/
+@import url('mixins/mediaquery.scss');
+@import url('mixins/mixins.scss');
+
+/*================ SETTINGS ================*/
+@import url('settings.scss');
+
+/*================ CRITICAL IMPORTS ================*/
+
+@import url('normalize.css/normalize.css');
+@import url('ext/reset.scss');
+// @import url('fonts/fonts.scss');
+@import url('global/elements.scss');
+@import url('global/headings.scss');
+@import url('global/icon.scss');
+
+.visually-hidden {
+  @include visually-hidden();
+}
+
+@import url('theme/code_1/header.scss');
+@import url('theme/code_1/header-navigation.scss');
+@import url('theme/code_1/logo.scss');
+@import url('theme/code_1/cart-icon.scss');
+@import url('theme/code_1/account-nav.scss');

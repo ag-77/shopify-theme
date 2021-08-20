@@ -1,0 +1,14 @@
+.payment-icons {
+  display: inline-block;
+  @extend .list-unstyled;
+  margin: 0 -5px;
+  li {
+    display: inline-block;
+    margin: 5px;
+  }
+  img {
+    max-width: 50px;
+    height: auto;
+    display: block;
+  }
+}

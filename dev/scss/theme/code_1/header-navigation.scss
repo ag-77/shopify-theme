@@ -1,0 +1,229 @@
+// Desktop header primary navigation
+.header-navigation--primary {
+  font-family: $nav-fontfamily;
+  font-weight: $nav-fontweight;
+  font-style: $nav-fontstyle;
+  font-size: rem($nav-fontsize);
+  .header-navigation__list {
+    // Level 1 navigation
+    &.level-1 {
+      @include mqmin($bp-header) {
+        margin-left: -20px;
+      }
+    }
+    // Level 2 navigation
+    &.level-2 {
+      background: #fff;
+      @include mqmin($bp-header) {
+        border: 1px solid $color-lines;
+        border-top: 0;
+        position: absolute;
+        top: 100%;
+        min-width: 200px;
+      }
+    }
+    // Level 3 navigation
+    &.level-3 {
+      background: $body-background-accent;
+      @include mqmin($bp-header) {
+        background: #fff;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        border: 1px solid $color-lines;
+        min-width: 200px;
+      }
+    }
+  }
+}
+
+// Arrows
+.header-navigation__link-trigger {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  @include mqmin($bp-md) {
+    border-left: 0;
+  }
+  .icon {
+    transition: all 0.2s ease-in-out;
+    @include mqmin($bp-header) {
+      transform: rotateZ(-90deg);
+    }
+  }
+  &:before {
+    content: "";
+    border-left: 1px solid rgba(255, 255, 255, 0);
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    transition: all 0.2s ease-in-out;
+    @include mqmin($bp-header) {
+      content: none;
+    }
+  }
+}
+
+// .level 1 li
+.header-navigation__list-item.level-1 {
+  position: relative;
+  @include mqmin($bp-header) {
+    float: left;
+  }
+  &.has-subnav {
+    .header-navigation__list.level-2 {
+      display: none;
+      max-height: 1000px;
+      overflow: visible;
+    }
+    &.collapsible--is-open,
+    .no-touch &:hover {
+      .level-2 {
+        display: block;
+      }
+    }
+  }
+  // .header-navigation__link-trigger {
+  //   @include mqmin($bp-header) {
+  //     display: none;
+  //   }
+  // }
+}
+
+// .level 2 li
+.header-navigation__list-item.level-2 {
+  position: relative;
+  &.has-subnav {
+    .header-navigation__list.level-3 {
+      display: none;
+      max-height: 1000px;
+      overflow: visible;
+    }
+    &.collapsible--is-open,
+    .no-touch &:hover {
+      .header-navigation__list.level-3 {
+        display: block;
+      }
+    }
+  }
+}
+
+// .level 3 li
+.header-navigation__list-item.level-3 {
+  position: relative;
+}
+
+.header-navigation__link-wrapper {
+  position: relative;
+  display: block;
+  a {
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+  }
+  &.header-navigation__currency {
+    @include mqmax($bp-header) {
+      display: none;
+    }
+  }
+}
+// Header navigation links
+.header-navigation__link {
+  display: block;
+  position: relative;
+  padding: 15px 10px;
+  // .level 1 li > a
+  &.level-1 {
+    display: block;
+    background: rgba(255, 255, 255, 0);
+    text-transform: uppercase;
+    transition: background 0.1s ease-in-out;
+    padding: 10px 20px 10px 0;
+    @include mqmin($bp-header) {
+      padding: 10px 20px;
+    }
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+    .no-touch &:hover,
+    .no-touch &:focus,
+    .no-touch &:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  // .level 2 li > a
+  &.level-2 {
+    display: block;
+    padding: 10px;
+    color: $body-text-color;
+    background: #fff;
+    transition: background 0.1s ease-in-out;
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+    .no-touch &:hover,
+    .no-touch &:focus,
+    .no-touch &:active {
+      background: $body-background-accent;
+    }
+  }
+  // .level 3 li > a
+  &.level-3 {
+    display: block;
+    padding: 10px;
+    color: $body-text-color;
+    transition: background 0.1s ease-in-out;
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+    .no-touch &:hover,
+    .no-touch &:focus,
+    .no-touch &:active {
+      background: $body-background-accent;
+    }
+  }
+}
+
+// Desktop header secondary navigation
+.header-navigation--secondary {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  a, button.nav-toggle {
+    display: block;
+    padding: 12px;
+  }
+}
+
+// Mobile header drawer toggle
+.header-navigation__toggle {
+  @include mqmin($bp-header) {
+    display: none;
+  }
+  button {
+    appearance: none;
+    border: none;
+    background-color: transparent;
+    display: block;
+    margin: 0;
+    padding: 8px;
+    &:hover,
+    &:focus,
+    &:active {
+      outline: none;
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{% capture container_content %}
+  <div class="site-center site-center--narrow">
+      <div class="form-success hidden" id="ResetSuccess">
+      {{ 'customer.recover_password.success' | t }}
+    </div>
+
+    <div id="CustomerLoginForm">
+      {% form 'customer_login', class: 'form form__default form__centered' %}
+
+        {{ form.errors | default_errors }}
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2 form__label">
+            <label for="CustomerEmail">
+              {{ 'customer.login.email' | t }}
+            </label>
+          </div>
+          <div class="col col-xs-12 col-md form__input form__input--text">
+            <input type="email"
+                  name="customer[email]"
+                  id="CustomerEmail"
+                  class="{% if form.errors contains 'email' %}input-error{% endif %}"
+                  placeholder="{{ 'customer.login.email' | t }}"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  autofocus>
+          </div>
+        </div>
+
+        {% if form.password_needed %}
+          <div class="row form__row">
+            <div class="col col-xs-12 col-md-2 form__label">
+              <label for="CustomerPassword">
+                {{ 'customer.login.password' | t }}
+              </label>
+            </div>
+            <div class="col col-xs-12 col-md form__input form__input--text">
+              <input type="password"
+                    name="customer[password]"
+                    id="CustomerPassword"
+                    class="{% if form.errors contains 'password' %}input-error{% endif %}"
+                    placeholder="{{ 'customer.login.password' | t }}">
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="row form__row">
+          <div class="col-md-2">
+          </div>
+          <div class="col col-xs-12 col-md-10">
+            <p class="buttons">
+              <input type="submit" class="button button--primary" value="{{ 'customer.login.sign_in' | t }}">
+              <a href="/" class="button">
+                {{ 'customer.login.cancel' | t }}
+              </a>
+            </p>
+            <p>
+              <a href="{{ routes.account_register_url }}">
+                {{- 'layout.customer.create_account' | t -}}
+              </a>
+            </p>
+            {% if form.password_needed %}
+              <p>
+                <a href="#recover" id="RecoverPassword">
+                  {{- 'customer.login.forgot_password' | t -}}
+                </a>
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      {% endform %}
+
+    </div>
+
+    <div id="RecoverPasswordForm" class="hidden">
+
+      {% form 'recover_customer_password', class: 'form form__default form__centered' %}
+
+        <h2>{{ 'customer.recover_password.title' | t }}</h2>
+        <p>{{ 'customer.recover_password.subtext' | t }}</p>
+        {{ form.errors | default_errors }}
+
+        {% if form.posted_successfully? %}
+          <span class="hidden reset-password-success"></span>
+        {% endif %}
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2 form__label">
+            <label for="RecoverEmail">
+              {{ 'customer.recover_password.email' | t }}
+            </label>
+          </div>
+          <div class="col col-xs-12 col-md form__input form__input--text">
+            <input type="email"
+                  name="email"
+                  id="RecoverEmail"
+                  placeholder="{{ 'customer.recover_password.email' | t }}"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off">
+          </div>
+        </div>
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2">
+          </div>
+          <div class="col col-xs-12 col-md">
+            <p class="buttons">
+              <input type="submit" class="button button--primary" value="{{ 'customer.recover_password.submit' | t }}">
+              <span class="button" id="HideRecoverPasswordLink">
+                {{ 'customer.recover_password.cancel' | t }}
+              </span>
+            </p>
+          </div>
+        </div>
+
+      {% endform %}
+
+      {% if shop.checkout.guest_login %}
+        <h2>{{ 'customer.login.guest_title' | t }}</h2>
+
+        {% form 'guest_login', class: 'form form__default' %}
+          <div class="row form__row">
+            <div class="col col-xs-12">
+              <p class="buttons">
+                <input type="submit" class="button button--primary" value="{{ 'customer.login.guest_continue' | t }}">
+              </p>
+            </div>
+          </div>
+        {% endform %}
+      {% endif %}
+
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture title %}
+  {{ 'customer.login.title' | t }}
+{% endcapture %}
+
+{%- render 'container',
+    container_content: container_content,
+    container_title: title,
+    container_header_element: 'h1'
+-%}

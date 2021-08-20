@@ -1,0 +1,85 @@
+{%- comment %} Set title {%- endcomment -%}
+{%- assign news_title_str = 'general.newsletter_form.title' | t -%}
+{%- capture news_title %}<h2>{{ news_title_str }}</h2>{%- endcapture -%}
+
+{%- comment %} Set texts {%- endcomment -%}
+{%- assign news_description = 'general.newsletter_form.description' | t | prepend: '<p>' | append: '</p>' -%}
+{%- assign newsletter_button_text = 'general.newsletter_form.submit' | t -%}
+
+{%- comment %} Create the form input {%- endcomment -%}
+{%- capture newsletter_form_elements -%}
+  <div class="row form__row">
+    <div class="col-xs form__input form__input--text">
+      <label class="visually-hidden" for="ContactFormEmail">{{ 'contact.form.email' | t }}</label>
+      <input type="email"
+        {% if settings.mailchimp_action_url != blank %}
+          name="EMAIL"
+        {% else %}
+          name="contact[email]"
+        {% endif %}
+        id="ContactFormEmail"
+        placeholder="{{ 'general.newsletter_form.placeholder' | t }}"
+        value="{%- if form.email -%}{{ form.email }}{%- elsif customer -%}{{ customer.email }}{%- endif -%}"
+        spellcheck="false"
+        autocomplete="off"
+        autocapitalize="off"
+        required="required"
+        aria-required="true"
+      >
+    </div>
+  </div>
+  <div class="row form__row">
+    <div class="col-xs form-action">
+      <input type="submit" class="button {{ newsletter_button_type }}" value="{{ newsletter_button_text }}">
+    </div>
+  </div>
+
+{%- endcapture -%}
+
+{% comment %} Render the newsletter signup form {% endcomment %}
+<div class="newsletter">
+
+  {%- if settings.mailchimp_action_url != blank -%}
+
+    {%- comment -%} MailChimp Signup Form {%- endcomment -%}
+    <form action="{{ settings.mailchimp_action_url }}" method="post" name="mc-embedded-subscribe-form" class="form" target="_blank" rel="noopener" novalidate>
+      <div class="newsletter_elements">
+        {{ news_title }}
+        {{ news_description }}
+        {{ newsletter_form_elements }}
+      </div>
+    </form>
+
+  {%- else -%}
+  {%- comment -%} Regular form {%- endcomment -%}
+
+    {%- form 'customer' -%}
+
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="newsletter_elements">
+        {{ news_title }}
+
+        {% comment %} Form posting errors {% endcomment %}
+        {%- if form.errors -%}
+          <p data-scroll-here>{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+
+        {% comment %} Form posted succesfully {% endcomment %}
+        {%- if form.posted_successfully? -%}
+          <p class="form-success" data-scroll-here>
+            {{ 'general.newsletter_form.post_success' | t }}
+          </p>
+
+        {% comment %} Form elements for subscribing {% endcomment %}
+        {%- else -%}
+
+          {{ news_description }}
+          {{ newsletter_form_elements }}
+
+        {%- endif -%}
+      </div>
+
+    {%- endform -%}
+  {%- endif -%}
+
+</div>

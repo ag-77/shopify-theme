@@ -1,0 +1,38 @@
+<div class="tabs product__asset" data-tabs>
+  <div class="tabs__nav" data-tabs-nav>
+    <ol class="tabs__nav-list list-unstyled">
+      <li class="tabs__nav-item is-active" data-tabs-link="description"><span>Description</span></li>
+      <li class="tabs__nav-item" data-tabs-link="specifications"><span>Specifications</span></li>
+      <li class="tabs__nav-item" data-tabs-link="manual"><span>Manual</span></li>
+      <li class="tabs__nav-item" data-tabs-link="reviews"><span>Reviews</span></li>
+    </ol>
+  </div>
+  <div class="tabs-content" data-tabs-content>
+    <div class="tabs-content-link" data-tabs-link="description">
+      <span>description</span>
+    </div>
+    <div class="tabs-content-pane is-active" data-tabs-content-pane="description">
+      {%- render 'product-description', the_product: product -%}
+    </div>
+    <div class="tabs-content-link" data-tabs-link="specifications">
+      <span>specifications</span>
+    </div>
+    <div class="tabs-content-pane" data-tabs-content-pane="specifications">
+      {%- render 'product-specs', the_product: product -%}
+    </div>
+    <div class="tabs-content-link" data-tabs-link="manual">
+      <span>manual</span>
+    </div>
+    <div class="tabs-content-pane" data-tabs-content-pane="manual">
+      <h2>Manual</h2>
+      Qui in elit cupidatat nulla amet consectetur minim cillum ex dolor culpa vempor velit et veniam et sit ullamco magna esse occaecat irure in in.
+    </div>
+    <div class="tabs-content-link" data-tabs-link="reviews">
+      <span>reviews</span>
+    </div>
+    <div class="tabs-content-pane" data-tabs-content-pane="reviews">
+      <h2>Reviews</h2>
+      Qui in elit cupidatat nulla amet consectetur minim cillum ex dolor culpa velit dolore sed in aute sed consequat ut mollit eiusmod anim ad tempor velit et veniam et sit dolor velit exercitation velit aute laborum magna nisi ullamco magna esse occaecat irure in in anim fugiat eiusmod magna culpa et sunt excepteur ut sunt in culpa.
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+{% capture content %}
+  <div class="container__row">
+    {% paginate customer.orders by 20 %}
+      {% if customer.orders.size != 0 %}
+        <table class="table-md-responsive table__wide customer__orders">
+          <thead>
+            <tr>
+              <th>{{ 'customer.orders.order_number' | t }}</th>
+              <th>{{ 'customer.orders.date' | t }}</th>
+              <th>{{ 'customer.orders.payment_status' | t }}</th>
+              <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+              <th class="text-align-right">{{ 'customer.orders.total' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% assign customer_orders = customer.orders | sort: 'created_at' | reverse %}
+            {% for order in customer_orders %}
+              <tr class="table-sm-responsive-row">
+                <td data-label="{{ 'customer.orders.order_number' | t }}">{{ order.name | link_to: order.customer_url }}</td>
+                <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                <td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>
+                <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">{{ order.fulfillment_status_label }}</td>
+                <td class="text-align-right" data-label="{{ 'customer.orders.total' | t }}">
+                  {% render 'format-price', format_price: order.total_price %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>{{ 'customer.orders.none' | t }}</p>
+      {% endif %}
+
+      {% if paginate.pages > 1 %}
+        {%- render 'global-pagination', paginate: paginate -%}
+      {% endif %}
+    {% endpaginate %}
+  </div>
+{% endcapture %}
+
+{% capture page_title %}
+  {{ 'customer.orders.title' | t }}
+{% endcapture %}
+
+{% capture content_wrappers %}
+  <div class="row row--gutter">
+    <div class="col col-xs-12 col-md-3 account-nav__col">
+      {% render 'account-nav' %}
+    </div>
+    <div class="col col-xs-12 col-md">
+      {{ content }}
+    </div>
+  </div>
+{% endcapture %}
+
+{%- render 'container',
+    container_content: content_wrappers,
+    container_title: page_title,
+    container_header_element: 'h1'
+-%}

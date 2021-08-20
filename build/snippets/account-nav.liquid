@@ -1,0 +1,23 @@
+<ol class="account-nav-list list-unstyled">
+  <li class="account-nav-list--loggedin">
+    <span class="account-nav-list__link">
+      {{ 'layout.customer.logged_in_as_html' | t: name: customer.name }}
+    </span>
+  </li>
+  <li{% if template contains "account" or template contains "order" %} class="account-nav__active"{% endif %}>
+    <a class="account-nav-list__link" href="{{ routes.account_url }}">{{ 'customer.orders.title' | t }} ({{ customer.orders.size }})</a>
+  </li>
+  <li{% if template contains "addresses" %} class="account-nav__active"{% endif %}>
+    <a class="account-nav-list__link" href="{{ routes.account_addresses_url }}">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a>
+  </li>
+  {% if cart.item_count > 0 %}
+    <li class="account-nav-list__cart">
+      <a class="account-nav-list__link" href="{{ routes.cart_url }}">{{ 'cart.general.title' | t }} ({{ cart.item_count }})</a>
+    </li>
+  {% endif %}
+  <li class="account-nav-list--logout">
+    <a class="account-nav-list__link" href="{{ routes.account_logout_url }}">
+      <span class="icon-text">{{ 'layout.customer.log_out' | t }}</span>
+    </a>
+  </li>
+</ol>

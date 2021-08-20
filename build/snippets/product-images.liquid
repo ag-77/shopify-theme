@@ -1,0 +1,165 @@
+{% comment %} Configuration {% endcomment %}
+{%- assign product_image_size_max = "600x600" -%}
+{%- assign product_image_sizes_arr = "480x480|768x768" -%}
+{%- assign product_image_breakpoints_arr = "480|768" -%}
+{%- assign easyzoom_min_size = 1000 -%}
+{%- assign easyzoom_size = "2000x2000"  -%}
+{%- assign popupzoom_size = "2000x2000"  -%}
+
+{%- comment -%} Render product image(s) {%- endcomment -%}
+{%- if the_product.images.size == 0 -%}
+
+  {%- comment %} Render no product images {% endcomment -%}
+  {%- assign product_image = current_variant.featured_image | default: the_product.featured_image -%}
+  <div class="product-images product-no-image">
+    {%- render 'responsive-image',
+      responsive_image: product_image,
+      responsive_image_alt: product_image.alt,
+      responsive_image_crop: "center",
+      responsive_image_class: 'img--contain',
+      responsive_image_size: product_image_size_max,
+      responsive_image_sizes_arr: product_image_sizes_arr,
+      responsive_image_breakpoints_arr: product_image_breakpoints_arr,
+      responsive_image_lazy: true
+    -%}
+  </div>
+
+{%- elsif the_product.images.size == 1 -%}
+
+  {%- comment %} Render single product images {% endcomment -%}
+  {%- assign product_image = current_variant.featured_image | default: the_product.featured_image -%}
+  <div class="product-images product-single-image">
+    <a href="{{ product_image | img_url: popupzoom_size }}" data-fancybox="productGallery">
+      {%- render 'responsive-image',
+        responsive_image: product_image,
+        responsive_image_alt: product_image.alt,
+        responsive_image_crop: "center",
+        responsive_image_class: 'img--contain',
+        responsive_image_size: product_image_size_max,
+        responsive_image_sizes_arr: product_image_sizes_arr,
+        responsive_image_breakpoints_arr: product_image_breakpoints_arr
+      -%}
+    </a>
+
+    {%- comment -%} image zoom {%- endcomment -%}
+    {%- render 'product-easyzoom',
+      easyzoom_image: product_image,
+      easyzoom_min_size: easyzoom_min_size,
+      easyzoom_size: easyzoom_size
+    -%}
+  </div>
+
+{%- else -%}
+
+  {%- comment %} Render product image Swipers {% endcomment -%}
+
+  {%- comment -%} Capture the images for the Swiper {%- endcomment -%}
+  {%- capture product_images -%}
+
+    {%- for product_image in the_product.images -%}
+
+      {%- comment -%} Create an array of variants that have this image so the image will show when a variant changes {%- endcomment -%}
+      {%- assign variant_images = '' -%}
+      {%- capture variant_images -%}
+        {%- for variant in the_product.variants -%}
+          {%- if variant.featured_image.src == product_image.src -%}{{ variant_images }},{{ variant.id }}{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      <div class="swiper-slide"
+        {%- if variant_images != blank %} data-product-variant-image="[{{ variant_images | remove_first: ','}}]"{%- endif -%}
+      >
+
+        <a href="{{ product_image | img_url: popupzoom_size }}" data-fancybox="productGallery">
+          {%- render 'responsive-image',
+            responsive_image: product_image,
+            responsive_image_alt: product_image.alt,
+            responsive_image_crop: "center",
+            responsive_image_class: 'img--contain',
+            responsive_image_size: product_image_size_max,
+            responsive_image_sizes_arr: product_image_sizes_arr,
+            responsive_image_breakpoints_arr: product_image_breakpoints_arr
+          -%}
+        </a>
+
+        {%- comment -%} image zoom {%- endcomment -%}
+        {%- render 'product-easyzoom',
+          easyzoom_image: product_image,
+          easyzoom_min_size: easyzoom_min_size,
+          easyzoom_size: easyzoom_size
+        -%}
+      </div>
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- comment -%} Capture images for thumbnails {%- endcomment -%}
+  {%- capture product_thumbnails -%}
+    {%- for product_image in the_product.images -%}
+
+      {%- comment -%} Create an array of variants that have this image so the image will show when a variant changes {%- endcomment -%}
+      {%- assign variant_images = '' -%}
+      {%- capture variant_images -%}
+        {%- for variant in the_product.variants -%}
+          {%- if variant.featured_image.src == product_image.src -%}{{ variant_images }},{{ variant.id }}{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      <div class="product-thumbnail swiper-slide" data-product-thumb data-product-variant-image="[{{ variant_images | remove_first: ','}}]">
+        {%- render 'responsive-image',
+          responsive_image: product_image,
+          responsive_image_alt: product_image.alt,
+          responsive_image_crop: "center",
+          responsive_image_class: 'img--contain',
+          responsive_image_size: "125x125",
+          responsive_image_lazy: true
+        -%}
+      </div>
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- comment -%} Render image swiper {%- endcomment -%}
+  <div class="product-images product-images__slider" data-swiper-options='{
+    "threshold": 10 {% comment %} Minimum touch distance before sliding {% endcomment %}
+  }'>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+          {{ product_images }}
+      </div>
+    </div>
+
+    {% comment %}
+      Use these if navigation arrows should be outside the wrapper
+      <div class="swiper-custom-nav swiper-button-next" data-swiper-nav="next"></div>
+      <div class="swiper-custom-nav swiper-button-prev" data-swiper-nav="prev"></div>
+    {% endcomment %}
+  </div>
+
+  {%- comment -%} Render thumbnail swiper, remove all swiper stuff to render all images {%- endcomment -%}
+  <div class="product-images product-images__slider-nav" data-swiper-options='{
+    "scrollbar": false, {%- comment -%} Remove to show scrollbar {%- endcomment -%}
+    "pagination": false, {%- comment -%} Remove to show pagination {%- endcomment -%}
+    "roundLengths": true,
+    "watchSlidesVisibility": true, {%- comment -%} Required for thumbnail navigation {%- endcomment -%}
+    "threshold": 10, {% comment %} Minimum touch distance before sliding {% endcomment %}
+    "slidesPerView": 2,
+    "spaceBetween": 10,
+    "breakpointsInverse": true,
+    "breakpoints": {
+      "360": {
+        "slidesPerView": 3,
+        "spaceBetween": 10
+      },
+      "480": {
+        "slidesPerView": 4,
+        "spaceBetween": 23
+      }
+    }
+  }'>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        {{ product_thumbnails }}
+      </div>
+    </div>
+  </div>
+
+{%- endif -%}

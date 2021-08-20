@@ -1,0 +1,357 @@
+{%- capture slideshow_slides -%}
+  {%- if section.blocks.size > 0 -%}
+    {%- for block in section.blocks -%}
+      {%- if block.settings.slide_active -%}
+        {%- assign block_title = "" -%}
+        {% if block.settings.title != blank %}
+          {%- assign block_title = block.settings.title -%}
+        {% endif %}
+        <div class="swiper-slide" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            {%- render 'responsive-image',
+              responsive_image_breakpoints_arr: "320|375|425|768|1024|1440",
+              responsive_image_sizes_arr: "312x175|327x184|377x212|672x378|928x522|1200x675",
+              responsive_image_size: "1200x675",
+              responsive_image_size_lazyload: "16x9",
+              responsive_image_class: "img--contain img--cover img--16x9",
+              responsive_image_crop: "center",
+              responsive_image: block.settings.image,
+              responsive_image_alt: block_title
+            -%}
+          {% endif %}
+          <div class="swiper-slide-content slide_position__center">
+            {% if block_title != blank or block.settings.slide_content != blank or block.settings.slide_button_text != blank and block.settings.slide_button_url != blank %}
+              <div class="site-center site-side-spacing text-align-{{ block.settings.slide_align }} {{ block.settings.slide_position }}">
+                <div class="swiper-slide-content-pane">
+                  {% if block_title != blank %}
+                    <h2 class="swiper-slide-title">
+                      {{ block_title }}
+                    </h2>
+                  {% endif %}
+                  {% if block.settings.slide_content != blank %}
+                    <div class="swiper-slide-text">
+                      {{ block.settings.slide_content }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.slide_button_text != blank and block.settings.slide_button_url != blank %}
+                    <p class="swiper-slide-button">
+                      <a href="{{ block.settings.slide_button_url }}" class="button {{ block.settings.button_type }}">
+                        {{ block.settings.slide_button_text }}
+                      </a>
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture section_content -%}
+  <div data-swiper
+    data-swiper-options='{
+      "effect":	"{{ section.settings.swiper_effect }}",
+      "loop":	{{ section.settings.swiper_loop }},
+      {%- unless section.settings.swiper_navigation -%}
+      "navigation": false,
+      {%- endunless -%}
+      {%- unless section.settings.swiper_pagination -%}
+      "pagination": false,
+      {%- endunless -%}
+      {%- unless section.settings.swiper_scrollbar -%}
+      "scrollbar": false,
+      {%- endunless -%}
+      "breakpointsInverse": true,
+      "slidesPerView": 1
+    }'
+  >
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+
+        {% comment %} Render the slides {% endcomment %}
+        {% if slideshow_slides != blank %}
+          {{ slideshow_slides }}
+        {% else %}
+
+          {% comment %} Render some DEMO content {% endcomment %}
+          {%- for i in (1..4) -%}
+            {%- assign j = i -%}
+            {%- if j > 2 -%}
+              {%- assign j = j | minus: '2' -%}
+            {%- endif -%}
+
+            <div class="swiper-slide slide-demo">
+              {{ 'lifestyle-' | append: j | placeholder_svg_tag: 'placeholder-svg' }}
+              <div class="swiper-slide-content col-xs--center col-xs--middle">
+                <div class="site-center site-side-spacing">
+                  <div class="swiper-slide-content-pane">
+                    <h2 class="swiper-slide-title">Demo slide {{i}}</h2>
+                    <p class="swiper-slide-text">Demo elit do sint et cillum laboris tempor et velit consequat cillum aliqua non. Labore magna ex Lorem eiusmod cillum irure anim magna dolor non ullamco laborum. Exercitation aute ipsum quis non dolore sit anim nostrud.</p>
+                    <p class="swiper-slide-button">
+                      <a href="#" class="button">Go here</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture container_classes -%}
+  {{ section.settings.section_background }} {{ section.settings.width_layout }}
+{%- endcapture -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: '',
+  container_classes: container_classes,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "class": "section-slideshow swiper-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section layout",
+      "info": "Control the look of this section"
+    },
+    {
+      "type": "select",
+      "id": "width_layout",
+      "label": "Section content width",
+      "default": "",
+      "options": [
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "container--wide",
+          "label": "Wide"
+        },
+        {
+          "value": "container--full",
+          "label": "Full width"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_background",
+      "label": "Section background color",
+      "default": "container--block",
+      "options": [
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "container--block",
+          "label": "None"
+        },
+        {
+          "value": "container--accent container--block",
+          "label": "Accent"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Slider options"
+    },
+    {
+      "type": "checkbox",
+      "id": "swiper_navigation",
+      "label": "Show navigation",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "swiper_pagination",
+      "label": "Show pagination",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "swiper_scrollbar",
+      "label": "Show scrollbar",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "swiper_loop",
+      "label": "Loop slides",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "swiper_effect",
+      "label": "Effect",
+      "default": "slide",
+      "options": [{
+          "value": "slide",
+          "label": "Slide"
+        },
+        {
+          "value": "fade",
+          "label": "Fade"
+        },
+        {
+          "value": "cube",
+          "label": "Cube"
+        },
+        {
+          "value": "coverflow",
+          "label": "Coverflow"
+        },
+        {
+          "value": "flip",
+          "label": "Flip"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+    "type": "image",
+    "name": "slide",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "slide_active",
+        "label": "Enable slide",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image",
+        "info": "2000 x 1000px recommended"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "slide_content",
+        "label": "Body text"
+      },
+      {
+        "type": "url",
+        "id": "slide_button_url",
+        "label": "Button link"
+      },
+      {
+        "type": "text",
+        "id": "slide_button_text",
+        "label": "Button label"
+      },
+      {
+        "type": "select",
+        "id": "button_type",
+        "label": "Button type",
+        "default": "",
+        "options": [
+          {
+            "value": "",
+            "label": "Default"
+          },
+          {
+            "value": "button--primary",
+            "label": "Primary"
+          },
+          {
+            "value": "button--secondary",
+            "label": "Secondary"
+          },
+          {
+            "value": "button--funnel",
+            "label": "Funnel"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "slide_align",
+        "label": "Text align",
+        "default": "left",
+        "options": [{
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centered"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "slide_position",
+        "label": "Text position",
+        "default": "col-xs--middle col-xs--center",
+        "options": [
+          {
+            "value": "col-xs--top col-xs--start",
+            "label": "Top left"
+          },
+          {
+            "value": "col-xs--top col-xs--center",
+            "label": "Top center"
+          },
+          {
+            "value": "col-xs--top col-xs--end",
+            "label": "Top right"
+          },
+          {
+            "value": "col-xs--middle col-xs--start",
+            "label": "Left"
+          },
+          {
+            "value": "col-xs--middle col-xs--center",
+            "label": "Centered"
+          },
+          {
+            "value": "col-xs--middle col-xs--end",
+            "label": "Right"
+          },
+          {
+            "value": "col-xs--bottom col-xs--start",
+            "label": "Bottom left"
+          },
+          {
+            "value": "col-xs--bottom col-xs--center",
+            "label": "Bottom center"
+          },
+          {
+            "value": "col-xs--bottom col-xs--end",
+            "label": "Bottom right"
+          }
+        ]
+      }
+    ]
+  }
+  ],
+  "presets": [{
+    "name": "Slideshow",
+    "category": "Images"
+  }]
+}
+{% endschema %}

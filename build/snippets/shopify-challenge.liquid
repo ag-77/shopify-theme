@@ -1,0 +1,13 @@
+{%- comment %} Show the challenge {% endcomment -%}
+{%- render 'container',
+  container_content: content_for_layout
+-%}
+
+{%- comment %} Prevent scrolling to some #hashtag so the challenge stays visible {% endcomment -%}
+<script>
+ if (location.hash) {
+   setTimeout(function() {
+     window.scrollTo(0, 0);
+   }, 100);
+ }
+</script>

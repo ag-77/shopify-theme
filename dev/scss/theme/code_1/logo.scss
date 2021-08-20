@@ -1,0 +1,24 @@
+.logo__wrapper {
+  .logo__link {
+    // in IE11 svg's don't keep the ratio of their viewbox, use the responsive padding trick below to keep the ratio
+    padding-bottom: 13.45%;
+    height: 0;
+    position: relative;
+    display: block;
+    .logo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+  }
+  // Header logo
+  .header & {
+    max-width: 118px;
+    @include mqmin($bp-header) {
+      max-width: 134px;
+    }
+  }
+}

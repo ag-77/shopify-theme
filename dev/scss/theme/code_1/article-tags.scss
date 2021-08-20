@@ -1,0 +1,27 @@
+.article-tags {
+  li {
+    margin-right: rem(4);
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  a {
+    display: block;
+    background: $body-background-accent;
+    color: $body-text-color;
+    border: 1px solid $color-border;
+    padding: rem(5) rem(8);
+    font-size: rem(12);
+    line-height: rem(20);
+    white-space: nowrap;
+    border-radius: $button-border-radius;
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+      background-color: lighten($color-secondary, 24%);
+      border-color: lighten($color-secondary, 24%);
+      color: #fff;
+    }
+  }
+}

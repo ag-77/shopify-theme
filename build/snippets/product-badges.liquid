@@ -1,0 +1,84 @@
+{% comment %}
+  Badges can be displayed automatically or by tag.
+  If 'product_unavailable_tag' and 'product_on_sale_tag' are set below, those tags will be used to display the badges.
+  If not tags are set, 'soldout' will be shown when product.available is false and 'sale' will be shown if the product has variants with a compare_at price
+{% endcomment %}
+
+{%- comment -%} Use this (lowercase) tag if soldout is set by tag, leave empty to show the badge when the_product.available = false {%- endcomment -%}
+{%- assign product_unavailable_tag = '' -%}
+
+{%- comment -%} Use this (lowercase) tag if Sale is set by tag, leave empty to show the badge when the_product.compare_at_price_max > the_product.price {%- endcomment -%}
+{%- assign product_on_sale_tag = '' -%}
+
+{%- comment -%} Capture the product SOLDOUT badge {%- endcomment -%}
+{%- capture badge_soldout -%}
+  <div class="product-badge product-badge--soldout">
+    {%- render 'format-translation',
+        namespace: "products.badge",
+        key: "badge_sold_out",
+        fallback: "Sold out!"
+      -%}
+  </div>
+{%- endcapture -%}
+
+{%- comment -%} Capture the product SALE badge {%- endcomment -%}
+{%- capture badge_sale -%}
+  <div class="product-badge product-badge--sale">
+    {%- render 'format-translation',
+        namespace: "products.badge",
+        key: "badge_on_sale",
+        fallback: "On sale!"
+      -%}
+  </div>
+{%- endcapture -%}
+
+{%- comment %} Set default flags {% endcomment -%}
+{%- assign product_is_unavailable = false -%}
+{%- assign product_is_on_sale = false -%}
+
+{%- comment -%} If the soldout tag is set {%- endcomment -%}
+{%- if product_unavailable_tag != blank -%}
+
+  {% comment %} If this product has the soldout tag {% endcomment %}
+  {%- for tag in the_product.tags -%}
+    {%- assign tag_lower = tag | downcase -%}
+    {%- if tag_lower == product_unavailable_tag -%}
+      {%- assign product_is_unavailable = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+{%- comment -%} If the soldout tag is not set {%- endcomment -%}
+{%- else -%}
+
+  {% comment %} If the product is sold out {% endcomment %}
+  {%- unless the_product.available -%}
+    {%- assign product_is_unavailable = true -%}
+  {%- endunless -%}
+{%- endif -%}
+
+{%- comment -%} If the sale tag is set {%- endcomment -%}
+{%- if product_on_sale_tag != blank -%}
+
+  {% comment %} If this product has that sale tag {% endcomment %}
+  {%- for tag in the_product.tags -%}
+    {%- assign tag_lower = tag | downcase -%}
+    {%- if tag_lower == product_on_sale_tag -%}
+      {%- assign product_is_on_sale = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+{%- comment -%} If the sale tag is not set but the product has a compare_at price {%- endcomment -%}
+{%- elsif the_product.compare_at_price_max > the_product.price_min -%}
+  {%- assign product_is_on_sale = true -%}
+{%- endif -%}
+
+{% if product_is_on_sale or product_is_unavailable %}
+  <div class="product-badges">
+    {%- if product_is_on_sale -%}
+      {{ badge_sale }}
+    {%- endif -%}
+    {%- if product_is_unavailable -%}
+      {{ badge_soldout }}
+    {%- endif -%}
+  </div>
+{% endif %}

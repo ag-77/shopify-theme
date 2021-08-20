@@ -1,0 +1,252 @@
+{%- comment %} Create a filter pane template {% endcomment -%}
+{%- capture filter_template -%}
+  <div class="filter-pane [[filter-class]]" [[shopify_attributes]] data-filter="[[data_filter]]" data-collapsible-parent>
+    <p class="filter-pane__title" {% if section.settings.filtersettings_make_collapsible -%}data-collapsible-trigger{%- endif -%}>
+      [[title]]
+      {% if section.settings.filtersettings_make_collapsible -%}
+      <span class="filter-pane__trigger" data-collapsible-trigger-icon="">
+       {%- render 'global-icon', icon_name: 'expand', icon_size: 'sm' -%}
+      </span>
+      {%- endif -%}
+    </p>
+    <div class="filter-items" data-collapsible-target>
+      [[filters]]
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- comment %} When called by ajax, render filter results {%- endcomment -%}
+{%- if template.suffix == 'filters-ajax' -%}
+
+  {%- render 'filter', filter_template: filter_template -%}
+
+{%- comment %} else render filter title, current and wrappers {%- endcomment -%}
+{%- else -%}
+
+  {%- comment %} Get the current filters {% endcomment -%}
+  {%- capture current_filters -%}
+    {%- if section.settings.filtersettings_show_current == true and current_tags.size > 0 -%}
+      <ol class="filter-pane__list level-1 list-unstyled">
+        {%- for current_tag in current_tags -%}
+
+          {%- assign color_span = "" -%}
+          {%- assign key_val = current_tag | split: ":" -%}
+          {%- assign key = key_val[0] -%}
+          {%- assign value = key_val[1] -%}
+
+          {%- for block in section.blocks -%}
+            {%- if block.settings.filtersettings_tag_key == key and block.settings.filtersettings_is_color -%}
+
+              {%- assign color_mapping_arr = settings.color_mappings | strip_newlines | split: ',' -%}
+              {%- assign filter_color = value -%}
+              {%- for color_from_map in color_mapping_arr -%}
+
+                {%- assign color_class = ' ' -%}
+                {%- assign color_parts = color_from_map | split: '|' -%}
+                {%- assign color_name = color_parts[0] | downcase | strip -%}
+                {%- assign color_translation = color_parts[1] | downcase | strip -%}
+                {%- assign color_hex = color_parts[2] | downcase | strip | default: "#ccc" -%}
+                {%- if color_name == filter_color -%}
+
+                  {%- if color_hex contains '#' -%}
+                    {%- capture style -%}
+                      background-color:{{ color_hex }}
+                    {%- endcapture -%}
+                  {%- else -%}
+                    {%- capture style -%}
+                      background-image: url({{ color_hex }})
+                    {%- endcapture -%}
+                  {%- endif -%}
+
+                  {%- capture 'color_span' -%}
+                    <span class="filter__color" style="{{ style }}" title="{{ color_name }}"></span>
+                  {%- endcapture -%}
+                  {%- assign color_class = ' filter-pane__list-item--color' -%}
+                  {%- break -%}
+
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {% endfor %}
+
+          <li class="filter-pane__list-item{{ color_class }}">
+            <a href="#" title="{{ 'collections.filter.remove_filter' | t: filter: value }}" class="filter__remove-tag" data-remove-tag="{{ current_tag | downcase | handleize }}">
+              <span>
+                {%- if color_span != blank -%}
+                  {{- color_span -}}
+                {%- else -%}
+                  {{- key | capitalize -}}<span class="delimiter">: </span>
+                {%- endif -%}
+              {{- value | capitalize  -}}</span>
+              {%- render 'global-icon', icon_name: 'delete', icon_size: "sm" -%}
+            </a>
+          </li>
+        {%- endfor -%}
+        <li class="filter-pane__list-item filter-action">
+          <a href="{{ routes.all_products_collection_url }}" data-filter-clear_all class="clear-all">
+            {{- 'collections.filter.clear_all' | t -}}
+          </a>
+        </li>
+      </ol>
+
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- comment %} Render {% endcomment -%}
+  <div id="filters" class="filter" data-collapsible-wrapper data-collapsible-parent>
+
+    {%- comment %} Filter toggle button for mobile {% endcomment -%}
+    <div class="button filter__collapsible-button" data-collapsible-trigger>{{ 'collections.filter.filter_plural' | t }}</div>
+
+    {%- comment %} Filter header {% endcomment -%}
+    <p class="filter__heading">{{ 'collections.filter.filter_single' | t }}</p>
+
+    {%- comment %} Filter toggle pane for mobile {% endcomment -%}
+    <div class="filter__collapsible-wrapper filter-load-wrapper">
+
+      {%- comment %} Filters will be appended here by ajax {% endcomment -%}
+      <div class="filter__target" data-filter-wrapper>
+
+        {%- comment %} Current filters {% endcomment -%}
+        {%- if current_filters != blank -%}
+          {%- assign filter_title = 'collections.filter.current_filters' | t -%}
+          {{ filter_template
+            | replace: '[[title]]', filter_title
+            | replace: '[[filter-class]]', 'filter__current collapsible--is-open'
+            | replace: '[[filters]]', current_filters
+            | remove: '[[shopify_attributes]]'
+            | replace: '[[data_filter]]', 'current'
+          }}
+        {%- endif -%}
+
+        {%- comment %} Filter navigation {% endcomment -%}
+        {%- if section.settings.filter_nav != blank -%}
+          {% capture filter_nav %}
+            {% render 'global-linklist',
+              navigation_linklist: section.settings.filter_nav,
+              navigation_class_prefix: 'filter',
+              navigation_collapsible: true
+            -%}
+          {% endcapture %}
+          {%- assign filter_title = 'collections.filter.filter_navigation' | t -%}
+          {{ filter_template
+            | replace: '[[title]]', filter_title
+            | replace: '[[filter-class]]', 'filter__navigation collapsible--is-open'
+            | replace: '[[filters]]', filter_nav
+            | remove: '[[shopify_attributes]]'
+            | replace: '[[data_filter]]', 'navigation'
+          }}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection filters",
+  "class": "filter-section",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Filter settings",
+      "info": "Product tags must be in the format 'key: value' to be used in this filter."
+    },
+    {
+      "type": "checkbox",
+      "id": "filtersettings_show_current",
+      "label": "Show current filters",
+      "info": "Show the currently active filters and a button to clear them all at once.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "filtersettings_result_based",
+      "label": "Hide the filter options based on current results",
+      "info": "When enabled, the filter tags will only be shown if the current filtered products have that tag set. So there will never be filters that lead to an empty collection",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "filtersettings_make_collapsible",
+      "info": "Make the filter panes collapsible so the user can close it",
+      "label": "Create collapsible filter panes",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "filter_nav",
+      "label": "Filter navigation"
+    },
+    {
+      "type": "header",
+      "content": "Filter setup helpers",
+      "info": "Turn these off before saving!"
+    },
+    {
+      "type": "checkbox",
+      "id": "filtersettings_show_keys",
+      "label": "Show available keys",
+      "info": "Show all keys so you can define your filters.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "filtersettings_show_tags",
+      "label": "Show tags",
+      "info": "Show all available tags per key.",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Filter",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Filter heading"
+        },
+        {
+          "type": "text",
+          "id": "filtersettings_tag_key",
+          "label": "Tag key",
+          "info": "Use all tags starting with this key (for Key:Value tags)",
+          "placeholder": "Width"
+        },
+        {
+          "type": "textarea",
+          "id": "filtersettings_sort_tags",
+          "label": "Set and sort tags",
+          "info": "Change the order of the available tags. Missing tags or newly added tags will not be displayed in this filter! Leave empty to show all Key:Value tags in default order or set tags without key to use as filter.",
+          "placeholder": "Value1\nValue3\nValue2\n"
+        },
+        {
+          "type": "text",
+          "id": "filtersettings_showmax",
+          "label": "Nr of items",
+          "info": "Nr of visible items. The others will be hidden behind a show more button.",
+          "default": "4"
+        },
+        {
+          "type": "checkbox",
+          "id": "filtersettings_open_block",
+          "label": "Open Collapsible filter pane",
+          "info": "Show this filter pane opened by default",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "filtersettings_is_color",
+          "label": "Show as color filter",
+          "info": "Show this filter as a color filter",
+          "default": false
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

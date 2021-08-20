@@ -1,0 +1,72 @@
+<div class="article-link">
+
+  {%- comment %} Article title {% endcomment -%}
+  <div class="article-link__image">
+    <a href="{{ the_article.url }}">
+      {%- render 'responsive-image',
+        responsive_image: the_article.image,
+        responsive_image_alt: responsive_image_alt,
+        responsive_image_class: responsive_image_class,
+        responsive_image_size: responsive_image_size,
+        responsive_image_breakpoints_arr: responsive_image_breakpoints_arr,
+        responsive_image_sizes_arr: responsive_image_sizes_arr,
+        responsive_image_crop: responsive_image_crop
+      -%}
+    </a>
+  </div>
+
+  <div class="article-link__meta">
+
+    {%- comment %} Article title {% endcomment -%}
+    <h2 class="h3 article-link__title">
+      <a href="{{ the_article.url }}">{%- render 'format-unprefix', format: the_article.title -%}</a>
+    </h2>
+
+    {%- comment %} Article author and date {% endcomment -%}
+    <p class="article-link__author">
+      {%- assign date = the_article.published_at | time_tag: format: 'month_day_year' -%}
+      {{ 'blogs.article.author_on_date_html' | t: author: the_article.author, date: date }}
+    </p>
+
+    {%- comment %} Article excerpt or content {% endcomment -%}
+    <div class="content article-link__description">
+      {%- render 'format-content',
+        content: the_article.excerpt_or_content,
+        content_striptags: 'true',
+        content_truncate: 150
+      -%}
+    </div>
+
+    {%- comment %} Article comments {% endcomment -%}
+    {%- if blog.comments_enabled? -%}
+      <p class="article-comments">
+        {%- if the_article.comments_count > 0 -%}
+        <a href="{{ the_article.url }}#comments">
+        {%- endif -%}
+          {{ 'blogs.comments.with_count' | t: count: the_article.comments_count }}
+        {%- if the_article.comments_count > 0 -%}
+        </a>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+
+    {%- comment %} Article tags {% endcomment -%}
+    <ul class="list-inline article-tags">
+      {%- if the_article.tags.size > 0 -%}
+        {%- for tag in the_article.tags -%}
+          <li>
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+
+    {%- comment %} Article link button {% endcomment -%}
+    <p class="article-button">
+      <a href="{{ the_article.url }}" class="button button--wide button--primary">
+        {{ 'blogs.article.read_more' | t }}
+      </a>
+    </p>
+  </div>
+
+</div>

@@ -1,0 +1,63 @@
+.gift_card-template {
+  text-align: center;
+}
+.giftcard {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 10px solid $color-lines;
+  &__content {
+    margin-top: 20px;
+  }
+  &__balance {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    font-size: 1.2em;
+  }
+  &__image {
+    position: relative;
+    img {
+      display: block;
+      max-width: 100%;
+    }
+  }
+  &__code {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    span {
+      display: block;
+      margin: 0;
+      padding: 5px;
+      border: 1px dashed $color-lines;
+    }
+  }
+  &__qr {
+    margin-top: 20px;
+    img {
+      margin: 0 auto;
+      padding: 5px;
+      border: 1px solid $color-lines;
+    }
+  }
+  &__actions {
+    margin-top: 20px;
+    @include clearfix;
+    .button {
+      max-width: 45%;
+      min-width: 40%;
+      float: left;
+    }
+    .button--primary {
+      float: right;
+    }
+  }
+}

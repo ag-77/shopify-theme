@@ -1,0 +1,14 @@
+{%- capture seo_title -%}
+  {% if template contains "gift_card" %}
+    {%- assign formatted_initial_value = gift_card.initial_value | money_without_trailing_zeros: gift_card.currency -%}
+    {%- assign formatted_initial_value_stripped = formatted_initial_value | strip_html -%}
+    {{ 'gift_cards.issued.title' | t: value: formatted_initial_value_stripped, shop: settings.shop_name }}
+  {% else %}
+    {%- if search.performed -%}{{ page_title | remove: '*' }}{%- else -%}{{ page_title }}{%- endif -%}
+    {%- if current_tags -%}{%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}{%- endif -%}
+    {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{%- endif -%}
+    {%- assign escaped_page_title = page_title | escape -%}
+    {%- unless escaped_page_title contains settings.shop_name %} &ndash; {{ settings.shop_name }}{%- endunless -%}
+  {% endif %}
+{%- endcapture -%}
+<title>{%- render 'format-unprefix', format: seo_title -%}</title>

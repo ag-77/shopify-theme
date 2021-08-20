@@ -1,0 +1,11 @@
+{% capture container_content %}
+<div class="content">
+  {% render 'format-content', content: page.content %}
+</div>
+{% endcapture %}
+
+{%- render 'container',
+  container_content: container_content,
+  container_title: page.title,
+  container_header_element: 'h1'
+-%}

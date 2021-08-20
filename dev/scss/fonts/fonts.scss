@@ -1,0 +1,50 @@
+/**
+  Import google/exernal fonts by adding:
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  to html-head-css.liquid
+  
+  Use font-display: swap; when using @font-face
+
+  Import local fonts from /assets Like below
+**/
+
+// Assets fonts
+
+/*
+@font-face {
+  font-family: 'Line Awesome Free';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("la-regular-400.eot");
+  src: url("la-regular-400.eot?#iefix") format("embedded-opentype"),
+   url("la-regular-400.woff2") format("woff2"),
+   url("la-regular-400.woff") format("woff"),
+   url("la-regular-400.ttf") format("truetype"),
+   url("la-regular-400.svg#lineawesome") format("svg");
+}
+@font-face {
+  font-family: 'Line Awesome Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("la-solid-900.eot");
+  src: url("la-solid-900.eot?#iefix") format("embedded-opentype"),
+   url("la-solid-900.woff2") format("woff2"),
+   url("la-solid-900.woff") format("woff"),
+   url("la-solid-900.ttf") format("truetype"),
+   url("la-solid-900.svg#lineawesome") format("svg");
+}
+@font-face {
+  font-family: 'Line Awesome Brands';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url("la-brands-400.eot");
+  src: url("la-brands-400.eot?#iefix") format("embedded-opentype"),
+   url("la-brands-400.woff2") format("woff2"),
+   url("la-brands-400.woff") format("woff"),
+   url("la-brands-400.ttf") format("truetype"),
+   url("la-brands-400.svg#lineawesome") format("svg");
+}
+*/

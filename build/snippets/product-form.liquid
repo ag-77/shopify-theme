@@ -1,0 +1,91 @@
+<div class="product__asset" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+
+  <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+  <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
+  <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
+
+  {% comment %} Product price {% endcomment %}
+  <div class="product__asset product__price-wrapper" data-price-wrapper>
+    <span class="product__price" data-product-price>
+      {%- render 'format-price', format_price: current_variant.price -%}
+    </span>
+    {% if the_product.compare_at_price_max > the_product.price %}
+    <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+    <s class="product-compare-price" data-compare-price>
+      {% if current_variant.compare_at_price > current_variant.price %}
+        {%- render 'format-price', format_price: current_variant.compare_at_price -%}
+      {% endif %}
+    </s>
+    {% endif %}
+  </div>
+
+  {%- comment %} Product order form {%- endcomment -%}
+  <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="form product-form product__asset">
+
+    {%- comment -%} Multi variants selectors, split up per option {%- endcomment -%}
+    {%- render 'product-variants',
+      the_product: the_product,
+      render: 'select'
+    -%}
+
+    {%- comment -%} Product quantity {% endcomment %}
+    <div class="row form__row product-quantity-wrapper">
+      <div class="col-xs-12 col-md-2 form__label">
+        <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
+      </div>
+      <div class="col-xs-12 col-md form__input form__input--text">
+        <input type="number" id="Quantity" name="quantity" value="1" min="1" data-cart-drawer-quantity>
+      </div>
+    </div>
+
+    {% comment %} Master Shopify Variant Selector - DON'T REMOVE THIS {% endcomment %}
+    <div class="product__asset product-selector-wrapper selector__all-variants no-js">
+      <div class="row form__row">
+        <div class="col-xs-12 col-md-2 form__label">
+          <label>{{ 'products.product.variant' | t }}</label>
+        </div>
+        <div class="col-xs-12 col-md form__input form__input--select">
+          <select name="id" data-product-select>
+            {% for variant in the_product.variants %}
+            <option
+              {% if variant.id == current_variant.id %}selected="selected"
+              {% endif %}
+              {% unless variant.available %}disabled="disabled"
+              {% endunless %} value="{{ variant.id }}"
+            >
+              {{ variant.title }}
+              {% unless variant.available %} {{ 'products.product.sold_out' | t }}{% endunless %}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Product add-to-cart {% endcomment %}
+    <div class="row form__row product-form-action">
+      <div class="col-xs-12 col-md-2">
+      </div>
+      <div class="col-xs-12 col-md">
+        <button class="button button--funnel" type="submit" name="add" data-cart-drawer-add-button data-add-to-cart {% unless current_variant.available %}disabled="disabled" {% endunless %}>
+          <span data-add-to-cart-text>
+            {%- if current_variant.available -%}
+              {%- render 'format-translation',
+               namespace: 'products.product',
+               key: 'add_to_cart',
+               fallback: 'Add to cart'
+              -%}
+            {%- else -%}
+              {%- render 'format-translation',
+               namespace: 'products.product',
+               key: 'sold_out',
+               fallback: 'Sold out'
+              -%}
+            {%- endif -%}
+          </span>
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

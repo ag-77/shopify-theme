@@ -1,0 +1,4 @@
+{%- assign product_description = the_product.description | remove: '<meta charset="utf-8">' -%}
+{%- if product_description != blank -%}
+  {%- render 'format-content' with content: product_description -%}
+{%- endif -%}

@@ -1,0 +1,338 @@
+
+  {%- comment -%} create content {%- endcomment -%}
+  {%- capture section_content -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="slideshow owl-carousel owl-theme" data-slideshow data-slideshow-options='{
+        "autoplay": {{ section.settings.slideshow_autoplay }},
+        "autoplayTimeout": {{ section.settings.slideshow_autoplayTimeout }},
+        "loop": {{ section.settings.slideshow_loop }},
+        "rewind": {{ section.settings.slideshow_rewind }},
+        "smartSpeed": {{ section.settings.slideshow_smartSpeed }},
+        "items": 1,
+        "margin": 0,
+        "nav": {{ section.settings.slideshow_nav }},
+        "dots": {{ section.settings.slideshow_dots }},
+        "navText": ["&lsaquo;","&rsaquo;"]
+      }'>
+        {%- for block in section.blocks -%}
+          {% if block.settings.slide_active %}
+            {% assign elementStart = 'div class="slide"' %}
+            {% assign elementEnd = 'div' %}
+            {% if block.settings.slide_button_url != blank and block.settings.slide_button_text == blank %}
+              {% assign elementStart = 'a href="' | append: block.settings.slide_button_url | append: '" class="slide slide-link"' %}
+              {% assign elementEnd = 'a' %}
+            {% endif %}
+            <{{ elementStart }} {{ block.shopify_attributes }}>
+              {%- render 'responsive-image',
+                responsive_image_size: false
+                responsive_image: block.settings.image
+              -%}
+              {% if block.settings.title != blank or block.settings.slide_content != blank or block.settings.slide_button_text != blank %}
+                <div class="slide-content slide_position__{{ block.settings.slide_position }}">
+                  <div class="site-center site-side-spacing">
+                    <div class="slide-content-pane text-align-{{ block.settings.slide_align }}">
+                      {% if block.settings.title != blank %}
+                        <h3 class="slide-title container-heading">{{ block.settings.title }}</h3>
+                      {% endif %}
+                      {% if block.settings.slide_content != blank %}
+                        <div class="slide-text">
+                          {{ block.settings.slide_content }}
+                        </div>
+                      {% endif %}
+                      {% if block.settings.slide_button_url != blank and block.settings.slide_button_text != blank %}
+                        <p class="slide-button"><a href="{{ block.settings.slide_button_url }}" class="button">{{ block.settings.slide_button_text }}</a></p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </{{ elementEnd }}>
+          {% endif %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="slideshow owl-carousel owl-theme" data-slideshow data-slideshow-options='{
+        "autoplay": {{ section.settings.slideshow_autoplay }},
+        "autoplayTimeout": {{ section.settings.slideshow_autoplayTimeout }},
+        "loop": {{ section.settings.slideshow_loop }},
+        "rewind": {{ section.settings.slideshow_rewind }},
+        "smartSpeed": {{ section.settings.slideshow_smartSpeed }},
+        "items": 1,
+        "margin": 0,
+        "nav": {{ section.settings.slideshow_nav }},
+        "dots": {{ section.settings.slideshow_dots }},
+        "navText": ["&lsaquo;","&rsaquo;"]
+      }'>
+        {%- for i in (1..4) -%}
+          {%- assign j = i -%}
+          {%- if j > 2 -%}
+            {%- assign j = j | minus: '2' -%}
+          {%- endif -%}
+          <div class="slide">
+            {{ 'lifestyle-' | append: j | placeholder_svg_tag: 'placeholder-svg' }}
+            <div class="slide-content slide_position__center">
+              <div class="site-center site-side-spacing">
+                <div class="slide-content-pane">
+                  <h3 class="slide-title container-heading">Slide title</h3>
+                  <p class="slide-text">Lorem ipsum dolor ullamco est deserunt eiusmod culpa dolor mollit et pariatur.</p>
+                  <p class="slide-button"><a href="#" class="button">Buy now</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture container_classes -%}
+    {{ section.settings.section_background }}
+    {%- if section.settings.section_spacing %}
+      container--block
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- comment -%} wrap and render content {%- endcomment -%}
+  {%- render 'container',
+    container_content: section_content,
+    container_title: section.settings.title,
+    container_content_classes: section.settings.width_layout,
+    container_classes: container_classes,
+    container_title_hidden: section.settings.hide_heading
+   -%}
+
+  {% schema %}
+  {
+    "name": "Image slideshow",
+    "class": "image-slideshow-section",
+    "settings": [
+    {
+      "type": "header",
+      "content": "Section layout",
+      "info": "Control the look of this section"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Image slideshow",
+      "info": "Always give this a good SEO value"
+    },
+    {
+      "type": "select",
+      "id": "hide_heading",
+      "label": "Heading visibility",
+      "default": "false",
+      "options": [
+      {
+        "value": "false",
+        "label": "Show heading"
+      },
+      {
+        "value": "true",
+        "label": "Hide heading"
+      } ]
+    },
+    {
+      "type": "select",
+      "id": "width_layout",
+      "label": "Section content width",
+      "default": "site-center",
+      "options": [
+      {
+        "value": "site-center",
+        "label": "Default"
+      },
+      {
+        "value": "container--wide",
+        "label": "Wide"
+      },
+      {
+        "value": "container--full",
+        "label": "Full width"
+      } ]
+    },
+    {
+      "type": "select",
+      "id": "section_background",
+      "label": "Section background color",
+      "default": "",
+      "options": [
+      {
+        "value": "",
+        "label": "None"
+      },
+      {
+        "value": "container--accent container--block",
+        "label": "Accent"
+      } ]
+    },
+    {
+      "type": "checkbox",
+      "id": "section_spacing",
+      "label": "Remove vertical section spacing",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Slidehow options"
+    },
+    {
+      "type": "checkbox",
+      "id": "slideshow_nav",
+      "label": "Show previous/next navigation",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "slideshow_dots",
+      "label": "Show dots navigation",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "slideshow_autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slideshow_autoplayTimeout",
+      "label": "Select autoplay interval time",
+      "min": 1000,
+      "max": 9500,
+      "step": 500,
+      "unit": "ms",
+      "default": 5000
+    },
+    {
+      "type": "range",
+      "id": "slideshow_smartSpeed",
+      "label": "Select slide transition speed",
+      "min": 100,
+      "max": 950,
+      "step": 50,
+      "unit": "ms",
+      "default": 250
+    },
+    {
+      "type": "checkbox",
+      "id": "slideshow_loop",
+      "label": "Enable slideshow loop",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "slideshow_rewind",
+      "label": "Enable slideshow rewind",
+      "default": true,
+      "info": "Go backwards when the end is reached."
+    } ],
+    "blocks": [
+    {
+      "type": "image",
+      "name": "image",
+      "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image",
+        "info": "2000 x 1000px recommended"
+      },
+      {
+        "type": "checkbox",
+        "id": "slide_active",
+        "label": "Enable slide",
+        "default": true
+      },
+      {
+        "type": "url",
+        "id": "slide_button_url",
+        "label": "Slide link"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "slide_content",
+        "label": "Body text"
+      },
+      {
+        "type": "text",
+        "id": "slide_button_text",
+        "label": "Button label"
+      },
+      {
+        "type": "select",
+        "id": "slide_align",
+        "label": "Text align",
+        "default": "left",
+        "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centered"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        } ]
+      },
+      {
+        "type": "select",
+        "id": "slide_position",
+        "label": "Text position",
+        "default": "left",
+        "options": [
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centered"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        } ]
+      } ]
+    } ],
+    "presets": [
+    {
+      "name": "Image slideshow",
+      "category": "Image",
+      "settings": {}
+    } ]
+  }
+  {% endschema %}

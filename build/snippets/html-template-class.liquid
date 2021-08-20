@@ -1,0 +1,19 @@
+{%- comment %} Create body-class from template name: page.liquid => "page-template" {% endcomment -%}
+{%- assign template_name = template.name | append: "-template" -%}
+
+{%- if template.name == "404" -%}
+  {%- assign template_name = template_name | prepend: 'page-' -%}
+{%- endif -%}
+
+{%- comment %} Create suffix-class from template suffix: page.contact.liquid => "contact-page-template" {% endcomment -%}
+{%- if template.suffix -%}
+  {%- assign template_suffix = template.suffix | append: "-" |  append: template_name  -%}
+{%- endif -%}
+
+{%- comment %} Create body-class from app name {% endcomment -%}
+{%- if request.path contains 'apps' -%}
+  {%- assign path_arr = request.path | split: '/' -%}
+  {%- assign template_name = "template-" | append: path_arr[2] -%}
+{%- endif -%}
+
+{{- template_name }} {{ template_suffix }}

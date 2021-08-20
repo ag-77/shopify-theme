@@ -1,0 +1,268 @@
+/*============================================================================
+  # Flexbox scss
+==============================================================================*/
+@mixin flexboxgrid-sass-col-common {
+  box-sizing: border-box;
+  // split flex: 0 0 auto into individual props
+  flex-grow: 0;
+  flex-shrink: 0;
+  // we leave flex-basis: auto out of common because in some spots we need it and some we dont
+  // more why here: https://github.com/kristoferjoseph/flexboxgrid/issues/126
+}
+
+// Distribute columns over the row by default
+.col {
+  flex: 1 0 auto;
+}
+
+// create columns with gutter (horizontal spacing) - children must have class .col
+.row--gutter {
+  > .col {
+    padding-right: $gutter * 0.5;
+    padding-left: $gutter * 0.5;
+    @include mqmin($bp-md) {
+      padding-right: $gutter-md * 0.5;
+      padding-left: $gutter-md * 0.5;
+    }
+  }
+  > .col--border:before {
+    margin-right: $gutter * 0.5;
+    margin-left: $gutter * 0.5;
+    @include mqmin($bp-md) {
+      margin-right: $gutter-md * 0.5;
+      margin-left: $gutter-md * 0.5;
+    }
+  }
+}
+// create columns with line spacing (vertical spacing) for in a grid
+// <div class="row row--line-spacing col-md--no-line-spacing"><div class="col col-xs-12 col-md-4">
+.row--line-spacing {
+  margin-bottom: $gutter * -1;
+  > .col {
+    margin-bottom: $gutter;
+  }
+  @include mqmin($bp-md) {
+    margin-bottom: $gutter-md * -1;
+    > .col {
+      margin-bottom: $gutter-md;
+    }
+  }
+}
+// create classes to reset line-spacing per breakpoint
+// <div class="row col-sm__line-spacing col-md--no-line-spacing"><div class="col col-sm-12 col-md-4">
+$val:1;
+@each $breakpoint in $mq-breakpoints {
+  $name: nth($breakpoint, 1);
+  $size: nth($breakpoint, 2);
+  @include mqmin($size) {
+    .col-#{$name}__line-spacing {
+      margin-bottom: $gutter * -1;
+      > .col {
+        margin-bottom: $gutter-md * $val;
+      }
+    }
+    .col-#{$name}__no-line-spacing {
+      margin-bottom: 0 * $val;
+      > .col {
+        margin-bottom: 0 * $val;
+      }
+    }
+  }
+}
+// columns with border
+// <div class="row"><div class="col col-xs-12 col--border">
+.col--border {
+  position: relative;
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid $color-border;
+    z-index: -1;
+  }
+}
+// columns with accent background
+// <div class="row"><div class="col col-xs-12 col--accent">
+.col--accent {
+  position: relative;
+  padding-top: $gutter-md;
+  padding-bottom: $gutter-md;
+  &:before {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+    background: $body-background-accent;
+    margin-right: $gutter * 0.5;
+    margin-left: $gutter * 0.5;
+    @include mqmin($bp-md) {
+      margin-right: $gutter-md * 0.5;
+      margin-left: $gutter-md * 0.5;
+    }
+    .page-section-accent & {
+      background: #fff;
+    }
+  }
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+$name: xs;
+.col-#{$name} {
+  @include flexboxgrid-sass-col-common;
+  flex-basis: auto;
+}
+@for $i from 1 through $flex-columns {
+  .col-#{$name}-#{$i} {
+    @include flexboxgrid-sass-col-common;
+    flex-basis: 100% / $flex-columns * $i;
+    max-width: 100% / $flex-columns * $i;
+  }
+}
+@for $i from 0 through $flex-columns {
+  .col-#{$name}-offset-#{$i} {
+    @include flexboxgrid-sass-col-common;
+    @if $i==0 {
+      margin-left: 0;
+    }
+    @else {
+      margin-left: 100% / $flex-columns * $i;
+    }
+  }
+}
+.col-#{$name} {
+  flex-grow: 1;
+  flex-basis: 0;
+  max-width: 100%;
+}
+.col-#{$name}--no-wrap-spacing {
+  .col {
+    margin-top: 0;
+  }
+}
+.col-#{$name}--start {
+  justify-content: flex-start;
+  text-align: start;
+}
+.col-#{$name}--center {
+  justify-content: center;
+  text-align: center;
+}
+.col-#{$name}--end {
+  justify-content: flex-end;
+  text-align: end;
+}
+.col-#{$name}--top {
+  align-items: flex-start;
+}
+.col-#{$name}--middle {
+  align-items: center;
+}
+.col-#{$name}--bottom {
+  align-items: flex-end;
+}
+.col-#{$name}--around {
+  justify-content: space-around;
+}
+.col-#{$name}--between {
+  justify-content: space-between;
+}
+.col-#{$name}--first {
+  order: -1;
+}
+.col-#{$name}--last {
+  order: 1;
+}
+.col-#{$name}--hidden {
+  display: none;
+}
+.col-#{$name}--visible {
+  display: block;
+}
+@each $breakpoint in $mq-breakpoints {
+  $name: nth($breakpoint, 1);
+  $size: nth($breakpoint, 2);
+  // skip 'xs' as it is already the default styling
+  @if $name !='xs' {
+    @media (min-width: $size) {
+      .col-#{$name} {
+        @include flexboxgrid-sass-col-common;
+        flex-basis: auto;
+      }
+      @for $i from 1 through $flex-columns {
+        .col-#{$name}-#{$i} {
+          @include flexboxgrid-sass-col-common;
+          flex-basis: 100% / $flex-columns * $i;
+          max-width: 100% / $flex-columns * $i;
+        }
+      }
+      @for $i from 0 through $flex-columns {
+        .col-#{$name}-offset-#{$i} {
+          @include flexboxgrid-sass-col-common;
+          @if $i==0 {
+            margin-left: 0;
+          }
+          @else {
+            margin-left: 100% / $flex-columns * $i;
+          }
+        }
+      }
+      .col-#{$name} {
+        flex-grow: 1;
+        flex-basis: 0;
+        max-width: 100%;
+      }
+      .col-#{$name}--no-wrap-spacing {
+        .col {
+          margin-top: 0;
+        }
+      }
+      .col-#{$name}--start {
+        justify-content: flex-start;
+        text-align: start;
+      }
+      .col-#{$name}--center {
+        justify-content: center;
+        text-align: center;
+      }
+      .col-#{$name}--end {
+        justify-content: flex-end;
+        text-align: end;
+      }
+      .col-#{$name}--top {
+        align-items: flex-start;
+      }
+      .col-#{$name}--middle {
+        align-items: center;
+      }
+      .col-#{$name}--bottom {
+        align-items: flex-end;
+      }
+      .col-#{$name}--around {
+        justify-content: space-around;
+      }
+      .col-#{$name}--between {
+        justify-content: space-between;
+      }
+      .col-#{$name}--first {
+        order: -1;
+      }
+      .col-#{$name}--last {
+        order: 1;
+      }
+      .col-#{$name}--hidden {
+        display: none;
+      }
+      .col-#{$name}--visible {
+        display: block;
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html class="no-js no-touch supports-no-cookies" lang="{{ shop.locale }}">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    {% render 'html-head-title' %}
+    {% render 'html-head-description' %}
+    {% render 'html-head-prefetch' %}
+    {% render 'html-head-css' %}
+    {% render 'html-head-js' %}
+    {% render 'html-head-favicon' %}
+    {% render 'html-head-canonical' %}
+    {% render 'html-head-social-meta-tags' %}
+    {% render 'html-head-google' %}
+
+    <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer="defer"></script>
+    <script src="{{ 'giftcard.js' | asset_url }}" defer="defer"></script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="{% render 'html-template-class' %}">
+
+    <div class="site">
+      <main role="main" id="MainContent" class="site__main">
+        {{ content_for_layout }}
+      </main>
+    </div>
+
+  </body>
+</html>

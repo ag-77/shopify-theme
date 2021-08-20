@@ -1,0 +1,45 @@
+/*================ Mixins ================*/
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin visually-hidden() {
+  position: absolute !important;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
+@mixin visually-shown($position: inherit) {
+  position: $position !important;
+  overflow: auto;
+  clip: auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+@function em($pixels, $context: 16) {
+  @return #{$pixels/$context}em;
+}
+
+@function rem($pixels, $context: 16) {
+  @return #{$pixels/$context}rem;
+}
+
+// Default element styling
+@mixin body-element-spacing {
+  margin: $body-element-spacing 0 0 0;
+  &:first-child {
+    margin-top: 0;
+  }
+}  

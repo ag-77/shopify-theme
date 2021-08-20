@@ -1,0 +1,35 @@
+.fancybox-bg {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+#country-popup {
+  text-align: center;
+  .country__wrapper {
+    padding: 10px 20px;
+  }
+  .country__message-title {
+    span {
+      display: block;
+      color: #000;
+    }
+  }
+  .country__message-text {
+    margin: 0 0 15px;
+    font-style: normal;
+    line-height: 1.8em;
+  }
+  a.button {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+  }
+  .country__message-stay {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+    font-size: 11px;
+    padding: 0;
+    margin-top: 9px;
+    background: none;
+    border: none;
+  }
+}

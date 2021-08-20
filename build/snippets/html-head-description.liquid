@@ -1,0 +1,6 @@
+{%- if page_description -%}
+  {%- capture meta_description -%}
+    {%- render 'format-content', content: page_description, content_striptags: 'true' -%}
+  {%- endcapture -%}
+  <meta name="description" content="{{ meta_description | escape }}">
+{%- endif -%}

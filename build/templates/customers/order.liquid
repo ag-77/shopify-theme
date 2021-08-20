@@ -1,0 +1,139 @@
+{% capture content %}
+  <div class="container__row">
+
+    <p>{{ 'customer.order.date' | t: date: order.created_at | date: "%B %d, %Y %I:%M%p" }}</p>
+
+    {% if order.cancelled %}
+      {%- assign cancelled_at = order.cancelled_at | date: "%B %d, %Y %I:%M%p" -%}
+      <p>{{ 'customer.order.cancelled' | t: date: cancelled_at }}</p>
+      <p>{{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason }}</p>
+    {% endif %}
+
+    <table class="table-md-responsive table__wide customer__orders">
+      <thead>
+        <tr>
+          <th>{{ 'customer.order.product' | t }}</th>
+          <th>{{ 'customer.order.sku' | t }}</th>
+          <th class="text-align-right">{{ 'customer.order.price' | t }}</th>
+          <th class="text-align-right">{{ 'customer.order.quantity' | t }}</th>
+          <th class="text-align-right">{{ 'customer.order.total' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line_item in order.line_items %}
+          <tr id="{{ line_item.key }}" class="table-sm-responsive-row">
+            <td data-label="{{ 'customer.order.product' | t }}">
+              {{ line_item.title | link_to: line_item.product.url }}
+              {% if line_item.fulfillment %}
+                <div>
+                  {%- assign created_at = line_item.fulfillment.created_at | date: format: 'month_day_year' -%}
+                  {{ 'customer.order.fulfilled_at' | t: date: created_at }}
+                  {% if line_item.fulfillment.tracking_number %}
+                    <a href="{{ line_item.fulfillment.tracking_url }}">{{ line_item.fulfillment.tracking_company }} #{{ line_item.fulfillment.tracking_number}}</a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </td>
+            <td data-label="{{ 'customer.order.sku' | t }}">{{ line_item.sku }}</td>
+            <td class="text-align-right" data-label="{{ 'customer.order.price' | t }}">{% render 'format-price', format_price: line_item.price %}</td>
+            <td class="text-align-right" data-label="{{ 'customer.order.quantity' | t }}">{{ line_item.quantity }}</td>
+            <td class="text-align-right" data-label="{{ 'customer.order.total' | t }}">
+              {%- assign line_price = line_item.quantity | times: line_item.price -%}
+              {%- render 'format-price', format_price: line_price -%}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="table-sm-responsive-row">
+          <td class="text-align-right visibility-xs-hidden" colspan="4">{{ 'customer.order.subtotal' | t }}</td>
+          <td class="text-align-right" data-label="{{ 'customer.order.subtotal' | t }}">
+            {% render 'format-price', format_price: order.subtotal_price %}
+          </td>
+        </tr>
+
+        {% for discount in order.discounts %}
+          <tr>
+            <td class="text-align-right visibility-xs-hidden" colspan="4">{{ discount.code }} {{ 'customer.order.discount' | t }}</td>
+            <td class="text-align-right" data-label="{{ 'customer.order.discount' | t }}">
+              {% render 'format-price', format_price: discount.savings %}
+            </td>
+          </tr>
+        {% endfor %}
+
+        {% for shipping_method in order.shipping_methods %}
+          <tr>
+            <td class="text-align-right visibility-xs-hidden" colspan="4">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</td>
+            <td class="text-align-right" data-label="{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})">
+              {% render 'format-price', format_price: shipping_method.price %}
+            </td>
+          </tr>
+        {% endfor %}
+
+        {% for tax_line in order.tax_lines %}
+          <tr>
+            <td class="text-align-right visibility-xs-hidden" colspan="4">{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</td>
+            <td class="text-align-right" data-label="{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)">
+              {% render 'format-price', format_price: tax_line.price %}
+            </td>
+          </tr>
+        {% endfor %}
+
+        <tr>
+          <td class="text-align-right visibility-xs-hidden" colspan="4">{{ 'customer.order.total' | t }}</td>
+          <td class="text-align-right" data-label="{{ 'customer.order.total' | t }}">
+            {% render 'format-price', format_price: order.total_price %}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="container__row">
+    <div class="row row--gutter row--line-spacing col-md--no-line-spacing">
+      <div class="col col-xs-12 col-md-6">
+
+        <h2>{{ 'customer.order.billing_address' | t }}</h2>
+        <p>{{ 'customer.order.payment_status' | t }}: {{ order.financial_status_label }}</p>
+        <div class="customer__address">
+          {{ order.billing_address | format_address }}
+        </div>
+
+      </div>
+      <div class="col col-xs-12 col-md-6">
+
+        <h2>{{ 'customer.order.shipping_address' | t }}</h2>
+        <p>{{ 'customer.order.fulfillment_status' | t }}: {{ order.fulfillment_status_label }}</p>
+        <div class="customer__address">
+          {% if order.shipping_address == blank %}
+            {{ order.billing_address | format_address }}
+          {% else %}
+            {{ order.shipping_address | format_address }}
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture page_title %}
+  {{ 'customer.order.title' | t: name: order.name }}
+{% endcapture %}
+
+{% capture content_wrappers %}
+  <div class="row row--gutter">
+    <div class="col col-xs-12 col-md-3 account-nav__col">
+      {% render 'account-nav' %}
+    </div>
+    <div class="col col-xs-12 col-md">
+      {{ content }}
+    </div>
+  </div>
+{% endcapture %}
+
+{%- render 'container',
+    container_content: content_wrappers,
+    container_title: page_title,
+    container_header_element: 'h1'
+-%}

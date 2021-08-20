@@ -1,0 +1,158 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+
+{%- comment -%} product content {%- endcomment -%}
+{%- capture product_content -%}
+  <div class="page-section product-detail-section"
+    itemscope
+    itemtype="http://schema.org/Product"
+    data-section-id="{{ section.id }}"
+    data-section-type="product"
+    data-enable-history-state="true"
+    data-product-options='{
+      "easyzoom": {
+        "loadingNotice": "{{ "products.product.zoom_loading" | t }}",
+        "errorNotice": "{{ "products.product.zoom_error" | t }}"
+      }
+    }'
+  >
+    <meta itemprop="name" content="{{ product.title }}{%- unless product.has_only_default_variant -%} - {{ current_variant.title }}{%- endunless -%}">
+    <meta itemprop="url" content="{{ shop.url }}{{ current_variant.url }}">
+    <meta itemprop="brand" content="{{ product.vendor }}">
+    <meta itemprop="image" content="{{ featured_image | img_url: '600x600' }}">
+    <meta itemprop="description" content="{{ product.description | strip_html | escape }}">
+
+    <div class="product__wrapper">
+      <div class="product__primary">
+
+        {% comment %} Product ordering column {% endcomment %}
+        <div class="product__col-order">
+
+          {%- comment -%} Product header {%- endcomment -%}
+          <header class="product-header">
+
+            {%- comment %} Product title {% endcomment -%}
+            <h1 class="container-heading">
+              {%- render 'format-unprefix', format: product.title -%}
+            </h1>
+
+            <div class="container-header-content">
+
+              {%- comment %} Product vendor {% endcomment -%}
+              <p class="product-vendor">{%- render 'format-unprefix', format: product.vendor -%}</p>
+
+              {%- comment %} Product type {% endcomment -%}
+              <p class="product-type">{%- render 'format-unprefix', format: product.type -%}</p>
+            </div>
+
+          </header>
+
+          {% comment %} Product ordering form {% endcomment %}
+          {%- render 'product-form',
+            the_product: product,
+            current_variant: current_variant
+          -%}
+
+        </div>
+
+        {% comment %} Product images column {% endcomment %}
+        <div class="product__col-images">
+          {%- render 'product-images', the_product: product -%}
+          {%- render 'product-tabs' -%}
+        </div>
+
+        {% comment %} Product meta column {% endcomment %}
+        <div class="product__col-meta product__asset">
+
+          {% comment %} Product description {% endcomment %}
+          {% if product.description != blank %}
+            <div class="product__asset product-description">
+
+              {%- assign prod_desc_title = 'products.product.description' | t -%}
+              {%- if prod_desc_title != blank -%}
+                <h2>{{ prod_desc_title }}</h2>
+              {%- endif -%}
+
+              <div class="content">
+                {%- render 'product-description', the_product: product -%}
+              </div>
+            </div>
+          {% endif %}
+
+          {% comment %} Product specs {% endcomment %}
+          <div class="product__asset product-specs" data-product-specs-wrapper>
+
+            {%- assign prod_spec_title = 'products.product.specifications' | t -%}
+            {%- if prod_spec_title != blank -%}
+              <h2>{{ prod_spec_title }}</h2>
+            {%- endif -%}
+
+            {%- render 'product-specs', the_product: product -%}
+          </div>
+
+          {% comment %} Social sharing {% endcomment %}
+          {%- render 'global-social-sharing',
+            share_title: product.title,
+            share_permalink: product.url,
+            share_image: product,
+            sharing_classes: 'product__asset product-sharing'
+          -%}
+
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Product.json is required for variants js {% endcomment %}
+    {%- unless product == empty -%}
+      <script type="application/json" data-product-json>
+        {{ product | json }}
+      </script>
+    {%- endunless -%}
+  </div>
+{%- endcapture -%}
+
+{%- comment %} Render {%- endcomment -%}
+{%- render 'container',
+  container_content: product_content
+-%}
+
+
+{%- comment %} Product recommendations {% endcomment -%}
+{% section 'product-recommendations' %}
+
+
+{%- comment %} Related products {% endcomment -%}
+{%- capture product_related -%}
+  {%- render 'product-related'
+    the_product: product,
+  -%}
+{%- endcapture -%}
+
+{%- render 'container',
+  container_title: 'Related products',
+  container_content: product_related,
+  container_classes: "related-products-wrapper js",
+  container_data: "data-related-products-wrapper"
+-%}
+
+
+{%- comment %} Complete the Look: products {% endcomment -%}
+{%- capture product_related_complementary -%}
+  {%- render 'product-related'
+    the_product: product,
+    related_wrapper: '#complementary-products',
+    related_primary_grouper_tag: 'look:',
+    related_primary_collection_handle: 'all',
+    related_secondary_collection_handle: '',
+    show_related_by_metafield: 'false',
+    show_products_from_same_collection: 'false'
+  -%}
+{%- endcapture -%}
+
+{%- render 'container',
+  container_title: 'Complete the Look',
+  container_id: 'complementary-products',
+  container_content: product_related_complementary,
+  container_classes: "related-products-wrapper js",
+  container_data: "data-related-products-wrapper"
+-%}

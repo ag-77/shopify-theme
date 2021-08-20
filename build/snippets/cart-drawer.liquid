@@ -1,0 +1,172 @@
+{% comment %}
+    Ajax cart Options
+{% endcomment %}
+
+{% comment %} Use the ajax cart drawer {% endcomment %}
+{%- assign render_cart = true -%}
+{% comment %} Show a notification when a product is added {% endcomment %}
+{%- assign on_add_show_notification = true -%}
+{% comment %} Open the cart drawer when a product is added {% endcomment %}
+{%- assign on_add_show_cart = false -%}
+
+{%- comment -%} Products template for ajax cart {%- endcomment -%}
+{%- capture ajax_cart_product_template -%}
+  {% if render_cart %}
+    <div class="cart-drawer__product-row" data-cart-drawer-template-element="row">
+      <div class="row">
+        <div class="col col-xs cart-drawer__product-image-col" data-cart-drawer-template-element="item-image">
+            <a href="" data-cart-drawer-template-element="item-link">
+              <figure class="cart-drawer__product-image" data-cart-drawer-template-element="image">
+                <img src="/" alt="{{ 'cart.label.product' | t }}" title="">
+              </figure>
+            </a>
+        </div>
+        <div class="col col-xs cart-drawer__product-meta-col" data-cart-drawer-template-element="item-meta">
+          <p class="cart-drawer__product-title">
+            <a href="" data-cart-drawer-template-element="item-link">
+              <span data-cart-drawer-template-element="title">Product title</span>
+            </a>
+          </p>
+          <p class="cart-drawer__product-quantity-price">
+            <span data-cart-drawer-template-element="quantity" class="cart-drawer__product-quantity">1</span> x
+            <span data-cart-drawer-template-element="price" class="cart-drawer__product-price">{{ 2995 | money }}</span>
+          </p>
+
+        <p class="cart-drawer__quantity-modifier" data-cart-drawer-quantity-modifiers>
+            <button type="button" class="button__minus" data-cart-drawer-quantity-modifier="-1"><i>-</i></button>
+            <label>
+              <span class="visually-hidden">{{ 'cart.general.item_quantity' | t }}</span>
+              <input data-cart-drawer-quantity-value type="number" min="1" autocomplete="off" name="quantity" value="" />
+            </label>
+            <input data-cart-drawer-quantity-id type="hidden" name="id" value="" />
+            <button type="button" class="button__plus" data-cart-drawer-quantity-modifier="1"><i>+</i></button>
+          </p>
+
+          <a href="" class="cart-remove cart-drawer__product-remove" data-cart-drawer-template-element="remove" title="{{ 'cart.general.remove' | t }}">
+            <span class="visually-hidden">
+              {{- 'cart.general.remove' | t -}}
+            </span>
+            {%- render 'global-icon', icon_name: 'delete', icon_size: 'md' -%}
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{%- endcapture -%}
+
+{%- comment -%} Warning template {%- endcomment -%}
+{%- capture ajax_cart_warnings_template -%}
+  <script type="text/template" data-cart-drawer-template="warnings">
+    <div class="cart-drawer__warning">
+      <p data-cart-drawer-template-element="warning"></p>
+    </div>
+  </script>
+{%- endcapture -%}
+
+{%- comment -%} Notifications template {%- endcomment -%}
+{%- capture ajax_cart_notifications_template -%}
+  {% if on_add_show_notification %}
+    <script type="text/template" data-cart-drawer-template="notifications">
+      <div class="cart-notification">
+
+        {%- comment -%} Notification header {%- endcomment -%}
+        <h2 class="cart-notification-heading">{{ 'cart.general.product_added' | t }}</h2>
+
+        {%- comment -%} Notification product {%- endcomment -%}
+        <div class="cart-notification-product-row" data-cart-drawer-template-element="row">
+          <div class="row">
+            <div class="col col-xs cart-notification-product-image-col" data-cart-drawer-template-element="item-image">
+              <figure class="cart-notification-product-image" data-cart-drawer-template-element="image">
+                <img src="/" alt="">
+              </figure>
+            </div>
+            <div class="col col-xs cart-notification-product-meta-col" data-cart-drawer-template-element="item-meta">
+              <p class="cart-notification-product-title">
+                <span data-cart-drawer-template-element="title">Product title</span>
+              </p>
+              <p class="cart-notification-product-quantity-price">
+                <span data-cart-drawer-template-element="quantity" class="cart-notification-product-quantity">1</span>&nbsp;x&nbsp;
+                <span data-cart-drawer-template-element="price" class="cart-notification-product-price">{{ 2995 | money }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {%- comment -%} Notification buttons {%- endcomment -%}
+        <p>
+          <a href="/cart" class="button button--funnel">{{ 'cart.general.view' | t }}</a>
+        </p>
+        <p>
+          <a href="javascript:$.fancybox.close();" class="button">{{ 'cart.general.continue_shopping' | t }}</a>
+        </p>
+      </div>
+    </script>
+  {% endif %}
+{%- endcapture -%}
+
+{%- comment -%} Totals template {%- endcomment -%}
+{%- capture ajax_cart_totals_template -%}
+  <p class="price-heading">
+    {{ 'cart.general.subtotal' | t }}
+    <span class="price-total" data-cart-drawer-template-element="total"></span>
+  </p>
+  <p class="price-discounts hidden">
+    {{ 'cart.general.savings' | t }}
+    <span class="price-total" data-cart-drawer-template-element="discounts"></span>
+  </p>
+{%- endcapture -%}
+
+{%- comment -%} Render {%- endcomment -%}
+<div class="cart-drawer compensate-for-scrollbar"
+  data-cart-drawer='{
+    "cart_image_size": "100x100_crop_center",
+    "notification_image_size": "100x",
+    "onAddShowNotification": {{ on_add_show_notification }},
+    "onAddShowCart": {{ on_add_show_cart }},
+    "renderCart": {{ render_cart }}
+  }'
+  data-toggle-element-class='{
+    "class": "cart-drawer--is-open"
+  }'>
+
+  {%- comment -%} Render Ajax cart wrappers {%- endcomment -%}
+  {% if render_cart %}
+    <form action="/cart/update" method="post" enctype="multipart/form-data" data-cart-drawer-form>
+      <div class="cart-drawer__wrapper" data-cart-drawer-wrapper>
+
+        <div class="cart-drawer__header-wrapper">
+          <p class="cart-drawer__header">
+            {{- 'cart.general.title' | t -}}
+          </p>
+          <div class="cart-drawer__close" data-toggle-element-class='{
+            "class": "cart-drawer--is-open"
+          }'>&times;</div>
+        </div>
+
+        <div class="cart-drawer__products-wrapper" data-cart-drawer-container="products">
+          {{ ajax_cart_product_template }}
+        </div>
+
+        <div class="cart-drawer__totals-wrapper" data-cart-drawer-container="totals">
+          {{ ajax_cart_totals_template }}
+        </div>
+
+        <div class="cart-drawer__actions-wrapper" data-cart-drawer-container="actions">
+          <button type="submit" class="button">
+            {{- 'cart.general.view' | t -}}
+          </button>
+          <a href="/checkout" class="button button--funnel">
+            {{- 'cart.general.checkout' | t -}}
+          </a>
+        </div>
+
+      </div>
+    </form>
+  {% endif %}
+
+  {%- comment -%} Render template for warning {%- endcomment -%}
+  {{ ajax_cart_warnings_template | replace: "  ","" | strip_newlines }}
+
+  {%- comment -%} Render template for notification {%- endcomment -%}
+  {{ ajax_cart_notifications_template | replace: "  ","" | strip_newlines }}
+</div>

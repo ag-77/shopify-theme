@@ -1,0 +1,28 @@
+// Default pagination
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  a,
+  .current,
+  .deco {
+    box-sizing: border-box;
+    display: block;
+    color: $body-text-color;
+    font-weight: 300;
+    font-size: rem(14);
+    line-height: rem(24);
+    padding: rem(12);
+    min-width: rem(48);
+    // min-height: rem(48);
+    &:hover,
+    &:active,
+    &:focus {
+      text-decoration: underline;
+    }
+    &.current {
+      font-weight: 700;
+    }
+  }
+}

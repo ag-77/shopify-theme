@@ -1,0 +1,143 @@
+{% comment %} Create allowed TAGS  {% endcomment %}
+{%- capture content_tags -%} PAGE-INTRO, PAGE-ROW, PAGE-ACCENT, PAGE-COL-ACCENT, PAGE-BORDER, PAGE-LINE {%- endcapture -%}
+
+{%- comment -%} strip rte junk html {%- endcomment -%}
+{%- if content != blank -%}
+  {%- assign the_content = content | remove: '<meta charset="utf-8">' | replace: ' ', ' ' | replace: '<span> [[', '[[' | replace: ']] </span>', ']]' | replace: '<span>[[', '[[' | replace: ']]</span>', ']]' | replace: '<p> [[', '[[' | replace: ']] </p>', ']]'  | replace: '<p>[[', '[[' | replace: ']]</p>', ']]' | replace: '<div>[[', '[[' | replace: ']]</div>', ']]' | replace: '<div> [[', '[[' | replace: ']] </div>', ']]' -%}
+{%- else -%}
+  {%- assign the_content = '' -%}
+{%- endif -%}
+
+{%- comment -%} Handle collapsible panes {%- endcomment -%}
+{%- if the_content contains '[[COLLAPSIBLE]]' -%}
+  {%- assign content_collapsible_rows = the_content | split: '[[COLLAPSIBLE-END]]' -%}
+  {%- capture new_content -%}
+
+    {%- for content_collapsible_row in content_collapsible_rows -%}
+
+      {%- if content_collapsible_row contains '[[COLLAPSIBLE]]' -%}
+        {%- assign collapsible = '' -%}
+        {%- assign uncollapsible = '' -%}
+
+        {%- assign content_collapsible_row_parts = content_collapsible_row | split: '[[COLLAPSIBLE]]' -%}
+        {%- assign uncollapsible = content_collapsible_row_parts[0] -%}
+        {%- assign collapsible = content_collapsible_row_parts[1] -%}
+
+        {%- comment -%} Render uncollapsible content {%- endcomment -%}
+        {{ uncollapsible }}
+
+        {%- assign collapsible_parts = collapsible | split: "<h2>" -%}
+        {%- for collapsible_part in collapsible_parts -%}
+          {%- if collapsible_part != blank -%}
+
+            {%- if collapsible_part contains '</h2>' -%}
+
+              {%- comment -%} Create collapsible pane {%- endcomment -%}
+              {%- assign collapsible_parts_1 = collapsible_part | split: "</h2>" -%}
+              {%- assign collapsible_parts_rest = collapsible_parts_1[0] | append: "</h2>" -%}
+              {%- assign collapsible_pane_content = collapsible_parts_1[1] -%}
+              {%- assign collapsible_title = collapsible_parts_1[0]  -%}
+              {%- assign collapsible_text = collapsible_parts_1[1] -%}
+              {%- assign is_open = '' -%}
+              {%- if collapsible_text contains '[[COLLAPSIBLE-OPEN]]' or collapsible_title contains '[[COLLAPSIBLE-OPEN]]' -%}
+                {%- assign is_open = ' collapsible--is-open' -%}
+              {%- endif -%}
+              <div class="container__row collapsible-wrapper{{is_open}}" id="{{ collapsible_title | handleize }}" data-collapsible-parent data-collapsible-wrapper='{
+                "jsAnimation": "true"
+              }'>
+                <div class="collapsible-trigger" data-collapsible-trigger>{{collapsible_title | remove: '[[COLLAPSIBLE-OPEN]]' | prepend: '<h2>' | append: '</h2>'}}</div>
+                <div class="collapsible-pane" data-collapsible-target><div class="collapsible-pane-content"><div class="row row--gutter row--line-spacing col-md--no-line-spacing"><div class="col col-xs-12 col-md">{{collapsible_text | remove: '[[COLLAPSIBLE-OPEN]]' | replace: '[[COL-BREAK]]', '</div><div class="col-xs-12 col-md">'}}</div></div></div></div>
+              </div>
+            {%- else -%}
+
+              {%- comment -%} Render some uncollapsible leftovers {%- endcomment -%}
+              {{ collapsible_part }}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+
+        {{ content_collapsible_row }}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+{%- assign the_content = new_content -%}
+{%- endif -%}
+
+{%- comment -%} handle page rows and columns {%- endcomment -%}
+{%- assign content_tags_arr = content_tags | strip | remove: ' ' | split: ',' -%}
+
+{%- assign mycontent = '' -%}
+
+{%- for tag_name in content_tags_arr -%}
+
+  {%- assign tag_start = tag_name | prepend: '[[' | append: ']]' -%}
+  {%- assign tag_end = tag_name | prepend: '[[' | append: '-END]]' -%}
+
+  {%- comment -%} Handle NAMED tags {%- endcomment -%}
+  {%- if the_content contains tag_start -%}
+    {%- assign content_parts = the_content | split: tag_start -%}
+    {%- for content_part in content_parts -%}
+      {%- if content_part contains tag_end -%}
+        {%- assign split_parts = content_part | split: tag_end -%}
+
+        {%- capture html_start -%}<div class="container__row content-{{ tag_name | strip | downcase }}"><div class="row row--gutter row--line-spacing col-md--no-line-spacing"><div class="col col-xs-12 col-md">{%- endcapture -%}
+        {%- comment -%} create Page intro {%- endcomment -%}
+        {%- capture the_content -%}{{ the_content
+        | replace: tag_start, html_start
+        | replace: tag_end, '</div></div></div>' }}{%- endcapture -%}
+
+        {%- comment -%} Handle columns through column tags (wiki style) {%- endcomment -%}
+        {%- if the_content contains '[[COL-BREAK]]' -%}
+          {%- assign the_content = the_content | replace: '[[COL-BREAK]]', '</div><div class="col col-xs-12 col-md">' -%}
+        {%- endif -%}
+
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Handle button tags {%- endcomment -%}
+{%- if the_content contains '[[BTN]]' -%}
+  {%- assign the_content = the_content | replace: '[[BTN]]', '<div class="button--wrapper">' | replace: '[[BTN-END]]', '</div>' -%}
+{%- endif -%}
+{%- if the_content contains '[[BTN-PRIMARY]]' -%}
+  {%- assign the_content = the_content | replace: '[[BTN-PRIMARY]]', '<div class="button--wrapper button--primary">' | replace: '[[BTN-PRIMARY-END]]', '</div>' -%}
+{%- endif -%}
+{%- if the_content contains '[[BTN-SECONDARY]]' -%}
+  {%- assign the_content = the_content | replace: '[[BTN-SECONDARY]]', '<div class="button--wrapper button--secondary">' | replace: '[[BTN-SECONDARY-END]]', '</div>' -%}
+{%- endif -%}
+
+{%- comment -%} Handle page snippets {%- endcomment -%}
+{%- if the_content contains '[[PAGE-SNIPPET]]' -%}
+  {%- unless page_snippet -%}
+    {%- assign page_snippet = '' -%}
+  {%- endunless -%}
+  {%- assign the_content = the_content | replace: '[[PAGE-SNIPPET]]', page_snippet -%}
+{%- endif -%}
+
+{%- comment -%} Replace _grande images by 710x710 size so they fit a 768 width screen {%- endcomment -%}
+{%- assign the_content = the_content | replace: '_grande.', '_710x710.' -%}
+
+{%- comment -%} Output stripped down version {%- endcomment -%}
+{%- if content_striptags == 'true' -%}
+  {%- if content_truncate -%}
+    {{ the_content | strip_html | strip_newlines | truncate: content_truncate }}
+  {%- else -%}
+    {{ the_content | strip_html | strip_newlines }}
+  {%- endif -%}
+
+{%- comment -%} If content has gallery tag {%- endcomment -%}
+{%- elsif the_content contains "[[GALLERY]]" -%}
+
+  {%- assign the_content_gallery_parts = the_content | split: '[[GALLERY]]' -%}
+
+  {%- comment -%} Output intro and content {%- endcomment -%}
+  {{ the_content_gallery_parts.first }}
+  {%- section 'content-gallery'  -%}
+  {{ the_content_gallery_parts[1] }}
+
+{%- comment -%} Output intro and content {%- endcomment -%}
+{%- else -%}
+  {{- the_content -}}
+{%- endif -%}

@@ -1,0 +1,4 @@
+// hide wrapper when js is active, will be shown by relatedProducts()
+.js [data-related-products-wrapper] {
+  display: none;
+}

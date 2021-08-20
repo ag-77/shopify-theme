@@ -1,0 +1,270 @@
+{%- comment -%} Unprefix title {%- endcomment -%}
+{%- capture article_title -%}
+{%- render 'format-unprefix', format: article.title  -%}
+{%- endcapture -%}
+
+{%- comment -%} append to header {%- endcomment -%}
+{%- capture container_header_append -%}
+  {%- capture date -%}{{ article.published_at | time_tag: format: 'month_day_year' }}{%- endcapture -%}
+  <p class="article-author">
+    {{ 'blogs.article.author_on_date_html' | t: author: article.author, date: date }}
+  </p>
+{%- endcapture -%}
+
+{%- comment %} ARTICLE CONTENT {% endcomment -%}
+{%- capture page_article_content -%}
+
+  {%- comment -%} article image {%- endcomment -%}
+  {%- if article.image -%}
+    <div class="container__row">
+      {%- render 'responsive-image',
+        responsive_image: article.image,
+        responsive_image_alt: article.title,
+        responsive_image_class: 'img--cover img--contain img--4x3',
+        responsive_image_size: "708x531",
+        responsive_image_breakpoints_arr: "480|768",
+        responsive_image_sizes_arr: "420x315|708x531",
+        responsive_image_crop: 'center'
+
+      -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} article content {%- endcomment -%}
+  <div class="container__row content" itemprop="articleBody">
+    {%- render 'format-content' with content: article.content -%}
+  </div>
+
+  {%- comment -%} article sharing {%- endcomment -%}
+  <div class="container__row">
+    <h3>
+      {{- 'blogs.navigation.share_this_article' | t -}}
+    </h3>
+    {%- render 'global-social-sharing',
+      share_title: article.title,
+      share_permalink: article.url,
+      share_image: article.image
+    -%}
+  </div>
+{%- endcapture -%}
+
+{%- comment %} ARTICLE META {% endcomment -%}
+{%- capture page_article_meta -%}
+
+  {%- comment -%} blog prev and next navigation {%- endcomment -%}
+  {%- if blog.previous_article or blog.next_article -%}
+    {%- for article in blog.articles -%}
+      {%- if article.url == blog.previous_article -%}
+        {%- capture prev_article -%}
+        <li>
+          <span class="article-nav-label">
+            {{ 'blogs.navigation.previous' | t }}
+          </span>
+          <a href="{{ blog.previous_article }}">
+            {{ article.title }}
+          </a>
+        </li>
+        {%- endcapture -%}
+      {%- endif -%}
+      {%- if article.url == blog.next_article -%}
+        {%- capture next_article -%}
+        <li>
+          <span class="article-nav-label">
+            {{ 'blogs.navigation.next' | t }}
+          </span>
+          <a href="{{ blog.next_article }}">
+            {{ article.title }}
+          </a>
+        </li>
+        {%- endcapture -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    <div class="container__row">
+      <h3>
+        {{- 'blogs.navigation.nav_title' | t -}}
+      </h3>
+      <ul class="article-nav list-unstyled">
+        {{next_article}}
+        {{prev_article}}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} blog tags {%- endcomment -%}
+  {%- if article.tags.size > 0 -%}
+  <div class="container__row">
+    <h3>
+      {{- 'blogs.general.categories' | t -}}
+    </h3>
+    <ul class="article-tags list-inline">
+      {%- for tag in article.tags -%}
+        <li>
+          <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  {%- endif -%}
+
+
+  {%- if blog.comments_enabled? -%}
+
+    {%- comment -%}
+      When a comment is submitted, the browser is redirected to a page that includes
+      the new comment id in its URL.
+      #comments is a required ID and is used as an anchor link by Shopify.
+    {%- endcomment -%}
+    {%- assign number_of_comments = article.comments_count -%}
+
+    {%- comment -%}
+      If a comment was just submitted but requires moderation, we have an extra comment to count.
+    {%- endcomment -%}
+    {%- if comment and comment.status != 'published' -%}
+      {%- assign number_of_comments = article.comments_count | plus: 1 -%}
+    {%- endif -%}
+
+    {%- unless comment.status -%}
+      <div class="container__row">
+        {%- form 'new_comment', article, class: "form form__labels-invisible" -%}
+          <h3>{{ 'blogs.comments.title' | t }}</h3>
+
+          {{ form.errors | default_errors }}
+
+          <div class="row form__row">
+            <div class="col col-xs-12 col-md-2 form__label">
+              <label for="CommentAuthor">
+                {{ 'blogs.comments.name' | t }}
+              </label>
+            </div>
+            <div class="col col-xs-12 col-md form__input form__input--text">
+              <input type="text"
+                name="comment[author]"
+                id="CommentAuthor"
+                class="{%- if form.errors contains 'author' -%}input-error{%- endif -%}"
+                placeholder="{{ 'blogs.comments.name' | t }}"
+                value="{{ form.author }}"
+                autocapitalize="words"
+              >
+            </div>
+          </div>
+          <div class="row form__row">
+            <div class="col col-xs-12 col-md-2 form__label">
+              <label for="CommentEmail">
+                {{ 'blogs.comments.email' | t }}
+              </label>
+            </div>
+            <div class="col col-xs-12 col-md form__input form__input--text">
+              <input type="email"
+                name="comment[email]"
+                id="CommentEmail"
+                class="{%- if form.errors contains 'email' -%}input-error{%- endif -%}"
+                placeholder="{{ 'blogs.comments.email' | t }}"
+                value="{{ form.email }}"
+                spellcheck="false"
+                autocomplete="off"
+                autocapitalize="off"
+              >
+            </div>
+          </div>
+          <div class="row form__row">
+            <div class="col col-xs-12 col-md-2 form__label">
+              <label for="CommentBody">
+                {{ 'blogs.comments.message' | t }}
+              </label>
+            </div>
+            <div class="col col-xs-12 col-md form__input form__input--textarea">
+              <textarea
+                name="comment[body]"
+                id="CommentBody"
+                class="{%- if form.errors contains 'body' -%}input-error{%- endif -%}"
+                placeholder="{{ 'blogs.comments.message' | t }}"
+              >
+                {{- form.body -}}
+              </textarea>
+            </div>
+          </div>
+
+          <div class="row form__row form-actions">
+            <div class="col col-xs-12 col-md-2 form__label">
+            </div>
+            <div class="col col-xs-12 col-md">
+              {%- if blog.moderated? -%}
+                <p>{{ 'blogs.comments.moderated' | t }}</p>
+              {%- endif -%}
+              <p class="buttons">
+                <input type="submit" class="button" value="{{ 'blogs.comments.post' | t }}">
+              </p>
+            </div>
+          {%- endform -%}
+        </div>
+      </div>
+    {%- endunless -%}
+
+    {%- paginate article.comments by 5 -%}
+
+      <div id="comments" class="container__row article-comments__wrapper">
+
+        <h3>{{ 'blogs.comments.with_count' | t: count: number_of_comments, title: article_title }}</h3>
+
+        {%- if comment and comment.status and paginate.current_page == 1 -%}
+          <p class="form-success">
+            {%- if blog.moderated? and comment.status != 'published' -%}
+              {{ 'blogs.comments.success_moderated' | t }}
+            {%- else -%}
+              {{ 'blogs.comments.success' | t }}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+
+        {%- if number_of_comments > 0 -%}
+          <ul class="article-comments__list">
+            {%- comment -%}
+              Display comment from URL parameters if it is waiting moderation
+            {%- endcomment -%}
+            {%- if comment and comment.status != 'published' -%}
+              <li id="{{ comment.id }}" class="article-comment article-comment--unpublished">
+                <div class="content">
+                  {{ comment.content }}
+                </div>
+                {%- capture date -%}{{ comment.created_at | time_tag: format: 'month_day_year' }}{%- endcapture -%}
+                <p class="article-comment__meta">{{ 'blogs.article.comment_meta_html' | t: author: comment.author, date: date }}</p>
+              </li>
+            {%- endif -%}
+
+            {%- for comment in article.comments -%}
+              <li id="{{ comment.id }}" class="article-comment">
+                <div class="content">
+                  {{ comment.content }}
+                </div>
+                {%- capture date -%}{{ comment.created_at | time_tag: format: 'month_day_year' }}{%- endcapture -%}
+                <p class="article-comment__meta">{{ 'blogs.article.comment_meta_html' | t: author: comment.author, date: date }}</p>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {%- if paginate.pages > 1 -%}
+            {%- render 'global-pagination', paginate: paginate -%}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    {%- endpaginate -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+<article itemscope itemtype="http://schema.org/Article">
+  {%- render 'container',
+      container_content: page_article_content,
+      container_header_append: container_header_append,
+      container_title: article_title,
+      container_content_classes: 'site-center--narrow',
+      container_header_classes: 'site-center--narrow'
+      container_header_element: 'h1'
+  -%}
+  {%- render 'container',
+      container_content: page_article_meta,
+      container_classes: 'container--accent',
+      container_content_classes: 'site-center--narrow',
+      container_header_classes: 'site-center--narrow'
+  -%}
+</article>

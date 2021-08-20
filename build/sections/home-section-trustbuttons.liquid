@@ -1,0 +1,209 @@
+{% comment %} create content {% endcomment %}
+{%- capture section_content -%}
+  {% if section.blocks.size > 0 %}
+    <div class="row row--gutter">
+      {% for block in section.blocks %}
+        <div class="col col-xs-12 col-md trustbuttons__col" {{ block.shopify_attributes }}>
+          {% if block.settings.url != blank and block.settings.button == blank %}
+            <a class="trustbuttons__link" href="{{ block.settings.url }}">
+          {% endif %}
+          {% if block.settings.icon != blank %}
+            <p class="trustbuttons__icon">
+              {%- render 'global-icon', icon_name: block.settings.icon, icon_size: 'lg' -%}
+            </p>
+          {% endif %}
+          {% if block.settings.title != blank %}
+            <p class="trustbuttons__title">{{ block.settings.title }}</p>
+          {% endif %}
+          {% if block.settings.content != blank %}
+            <div class="trustbuttons__content">
+              {{ block.settings.content }}
+            </div>
+          {% endif %}
+          {% if block.settings.url != blank and block.settings.button != blank  %}
+            <p>
+              <a href="{{ block.settings.url }}" class="button {{ block.settings.button_type }}">
+                {{ block.settings.button }}
+              </a>
+            </p>
+          {% endif %}
+          {% if block.settings.url != blank and block.settings.button == blank %}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{%- endcapture -%}
+
+{%- capture container_classes -%}
+  {{ section.settings.section_background }} {{ section.settings.width_layout }}
+{%- endcapture -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: "",
+  container_classes: container_classes
+-%}
+
+{% schema %}
+{
+  "name": "Trustbuttons",
+  "class": "trustbuttons",
+  "settings": [{
+      "type": "header",
+      "content": "Section layout",
+      "info": "Control the look of this section"
+    },
+    {
+      "type": "select",
+      "id": "width_layout",
+      "label": "Section content width",
+      "default": "",
+      "options": [{
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "container--wide",
+          "label": "Wide"
+        },
+        {
+          "value": "container--full",
+          "label": "Full width"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_background",
+      "label": "Section background color",
+      "default": "container--accent container--block",
+      "options": [{
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "container--block",
+          "label": "None"
+        },
+        {
+          "value": "container--accent container--block",
+          "label": "Accent"
+        },
+        {
+          "value": "container--primary container--block",
+          "label": "Primary color"
+        },
+        {
+          "value": "container--secondary container--block",
+          "label": "Secondary color"
+        }
+      ]
+    }
+  ],
+  "blocks": [{
+    "type": "trustbutton",
+    "name": "Trustbutton",
+    "settings": [
+      {
+        "type": "select",
+        "id": "icon",
+        "label": "Icon name",
+        "options": [
+          {
+          "value": "heart",
+          "label": "Heart"
+          },
+          {
+          "value": "search",
+          "label": "Search"
+          },
+          {
+          "value": "giftcard",
+          "label": "Giftcard"
+          }
+        ],
+        "default": "heart"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "content",
+        "label": "Body text"
+      },
+      {
+        "type": "url",
+        "id": "url",
+        "label": "Link to"
+      },
+      {
+        "type": "text",
+        "id": "button",
+        "label": "Button label"
+      },
+      {
+        "type": "select",
+        "id": "button_type",
+        "label": "Button type",
+        "default": "",
+        "options": [
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "button--primary",
+          "label": "Primary"
+        },
+        {
+          "value": "button--secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "button--funnel",
+          "label": "Funnel"
+        } ]
+      }
+    ]
+  }],
+  "presets": [{
+    "name": "Trustbuttons",
+    "category": "Text",
+    "settings": {},
+    "blocks": [{
+        "type": "trustbutton",
+        "settings": {
+          "icon": "truck",
+          "title": "Free delivery",
+          "content": "<p>If you buy two products or more.</p>",
+          "url": "#"
+        }
+      },
+      {
+        "type": "trustbutton",
+        "settings": {
+          "icon": "heart",
+          "title": "We love products",
+          "content": "<p>We give back that love to you.</p>",
+          "url": "#",
+          "button": "Read more"
+        }
+      },
+      {
+        "type": "trustbutton",
+        "settings": {
+          "icon": "gift",
+          "title": "Buying a gift?",
+          "content": "<p>We wrap it to make the best gift ever.</p>"
+        }
+      }
+    ]
+  }]
+}
+{% endschema %}

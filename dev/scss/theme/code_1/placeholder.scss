@@ -1,0 +1,22 @@
+// default vars
+$color-blankstate: rgba($body-text-color, 0.35) !default;
+$color-blankstate-border: rgba($body-text-color, 0.2) !default;
+$color-blankstate-background: rgba($body-text-color, 0.1) !default;
+
+.placeholder-svg {
+  display: block;
+  fill: $color-blankstate;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+// Mimic a background image by wrapping the placeholder svg with this class
+.placeholder-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}

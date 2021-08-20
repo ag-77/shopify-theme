@@ -1,0 +1,124 @@
+{% comment %} Render google map {% endcomment %}
+{%- section 'google-maps'  -%}
+
+{%- capture container_content -%}
+<div class="content">
+  {%- render 'format-content' with content: page.content -%}
+</div>
+{%- endcapture -%}
+
+{%- capture contact_form -%}
+  {%- form 'contact', class: 'form form__default' -%}
+
+    {%- if form.posted_successfully? -%}
+
+      <p class="form-success">
+      {{ 'contact.form.post_success' | t }}
+      </p>
+
+    {%- else -%}
+
+      <div class="form__rows">
+        {%- if form.errors -%}
+          {{ form.errors | default_errors }}
+        {%- endif -%}
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2 form__label">
+            <label for="ContactFormName">{{ 'contact.form.name' | t }}</label>
+          </div>
+          <div class="col col-xs-12 col-md form__input form__input--text">
+
+              <input type="text"
+                name="contact[name]"
+                required="required"
+                id="ContactFormName"
+                placeholder="{{ 'contact.form.name' | t }}"
+                value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}"
+              >
+
+          </div>
+        </div>
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2 form__label">
+            <label for="ContactFormEmail">{{ 'contact.form.email' | t }}</label>
+          </div>
+          <div class="col col-xs-12 col-md form__input form__input--text">
+
+              <input type="email"
+                name="contact[email]"
+                id="ContactFormEmail"
+                placeholder="{{ 'contact.form.email' | t }}"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                spellcheck="false"
+                autocomplete="off"
+                autocapitalize="off"
+                required="required"
+              >
+
+          </div>
+        </div>
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2 form__label">
+            <label for="ContactFormPhone">{{ 'contact.form.phone' | t }}</label>
+          </div>
+          <div class="col col-xs-12 col-md form__input form__input--text">
+
+              <input type="tel"
+                name="contact[phone]"
+                id="ContactFormPhone"
+                placeholder="{{ 'contact.form.phone' | t }}"
+                value="{% if form[phone] %}{{ form[phone] }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                pattern="[0-9\-]*"
+              >
+
+          </div>
+        </div>
+
+        <div class="row form__row">
+          <div class="col col-xs-12 col-md-2 form__label">
+            <label for="ContactFormMessage">{{ 'contact.form.message' | t }}</label>
+          </div>
+          <div class="col col-xs-12 col-md form__input form__input--textarea">
+
+              <textarea rows="10"
+                name="contact[body]"
+                id="ContactFormMessage"
+                placeholder="{{ 'contact.form.message' | t }}">{%- if form.body -%}{{- form.body -}}{%- endif -%}
+              </textarea>
+
+          </div>
+        </div>
+
+        <div class="row form-actions">
+          <div class="col col-xs-12 col-md-2 form__label">
+          </div>
+          <div class="col col-xs-12 col-md form__input form-actions">
+            <p class="buttons">
+              <input type="submit" class="button button--primary" value="{{ 'contact.form.send' | t }}">
+            </p>
+          </div>
+        </div>
+
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+{%- endcapture -%}
+
+{% comment %} Render text {% endcomment %}
+{%- render 'container',
+  container_content: container_content,
+  container_title: page.title,
+  container_content_classes: 'site-center--narrow',
+  container_header_classes: 'site-center--narrow'
+  container_header_element: 'h1'
+-%}
+
+{% comment %} Render contact form {% endcomment %}
+{%- render 'container',
+  container_content: contact_form,
+  container_content_classes: 'site-center--narrow',
+  container_header_classes: 'site-center--narrow'
+-%}

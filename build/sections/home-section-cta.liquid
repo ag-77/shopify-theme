@@ -1,0 +1,179 @@
+{%- capture section_content -%}
+  {%- if section.settings.title != blank or section.settings.cta_content != blank or section.settings.cta_button_text != blank -%}
+    <div class="cta-wrapper">
+      {%- if section.settings.title != blank -%}
+      <h2 class="cta-heading">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.cta_content != blank -%}
+      <div class="cta__text">{{ section.settings.cta_content }}</div>
+      {%- endif -%}
+      {%- if section.settings.cta_button_text != blank -%}
+      <p><a href="{{ section.settings.cta_button_link }}" class="button {{ section.settings.cta_button_type }}">{{ section.settings.cta_button_text }}</a></p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture container_classes -%}
+  {{ section.settings.section_background }} {{ section.settings.width_layout }} text-align-{{ section.settings.cta_text_align }}
+{%- endcapture -%}
+
+{% comment %} Add background image as inline style behind the classes {% endcomment %}
+{%- if section.settings.cta_background != blank -%}
+  {%- assign background_url = section.settings.cta_background | img_url: '2500x' -%}
+  {%- assign container_classes = container_classes | append: '" style="background-image:url(' | append: background_url | append: ')' -%}
+{%- endif -%}
+
+{% comment %} wrap and render content {% endcomment %}
+{%- render 'container',
+  container_content: section_content,
+  container_title: '',
+  container_classes: container_classes,
+  container_content_classes: 'site-center--narrow',
+  container_header_classes: 'site-center--narrow',
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Call To Action",
+  "class": "section-cta",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "select",
+    "id": "width_layout",
+    "label": "Section content width",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "Default"
+    },
+    {
+      "value": "container--wide",
+      "label": "Wide"
+    },
+    {
+      "value": "container--full",
+      "label": "Full width"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "container--accent container--block",
+    "options": [
+    {
+      "value": "",
+      "label": "Default"
+    },
+    {
+      "value": "container--block",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    },
+    {
+      "value": "container--primary container--block",
+      "label": "Primary color"
+    },
+    {
+      "value": "container--secondary container--block",
+      "label": "Secondary color"
+    }
+    ]
+  },
+  {
+    "type": "image_picker",
+    "id": "cta_background",
+    "label": "Background image"
+  },
+  {
+    "type": "header",
+    "content": "Section content"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Call to action"
+  },
+  {
+    "type": "richtext",
+    "id": "cta_content",
+    "label": "Body text"
+  },
+  {
+    "type": "text",
+    "id": "cta_button_text",
+    "label": "Button label",
+    "default": "Go here"
+  },
+  {
+    "type": "url",
+    "id": "cta_button_link",
+    "label": "Button link"
+  },
+  {
+    "type": "select",
+    "id": "cta_button_type",
+    "label": "Button type",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "Default"
+    },
+    {
+      "value": "button--primary",
+      "label": "Primary"
+    },
+    {
+      "value": "button--secondary",
+      "label": "Secondary"
+    },
+    {
+      "value": "button--funnel",
+      "label": "Funnel"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "cta_text_align",
+    "label": "Text align",
+    "default": "center",
+    "options": [
+    {
+      "value": "left",
+      "label": "Left"
+    },
+    {
+      "value": "center",
+      "label": "Centered"
+    },
+    {
+      "value": "right",
+      "label": "Right"
+    } ]
+  } ],
+  "presets": [
+  {
+    "name": "Call To Action",
+    "category": "Text",
+    "settings": {
+      "title": "Call to Action!",
+      "cta_content": "<p>Lorem ipsum amet fugiat nulla culpa consequat cupidatat et dolor velit tempor velit cillum ullamco veniam anim aliquip dolor et.</p>",
+      "cta_button_text": "Buy here!",
+      "cta_button_link": "#"
+    }
+  } ]
+}
+{% endschema %}

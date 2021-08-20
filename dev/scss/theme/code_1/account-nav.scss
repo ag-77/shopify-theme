@@ -1,0 +1,34 @@
+.account-nav__col {
+  .account-nav-list {
+    margin-bottom: $container-row-spacing-md;
+  }
+}
+.account-nav-list {
+  li {
+    .account-nav-list__link {
+      display: block;
+      padding: 5px 0;
+      color: $body-text-color;
+      text-decoration: none;
+    }
+    a.account-nav-list__link {
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: underline;
+      }
+    }
+    &.account-nav__active {
+      font-weight: 600;
+    }
+    &.account-nav-list--loggedin {
+      margin-bottom: $body-element-spacing;
+      span {
+        display: inline-block;
+      }
+    }
+    &.account-nav-list--logout {
+      margin-top: $body-element-spacing;
+    }
+  }
+}

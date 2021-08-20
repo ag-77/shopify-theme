@@ -1,0 +1,169 @@
+{% if section.settings.enable_click_discount %}
+  {% if section.settings.discount_image != blank %}
+    <a href="{{ section.settings.discount_url }}?redirect={{ section.settings.discount_page }}" class="click_discount" id="click_discount">
+      {{ section.settings.discount_image | img_url: section.settings.discount_image_size | img_tag }}
+    </a>
+    <style type="text/css">
+      #click_discount {
+        position: fixed;
+        z-index: 99999;
+        margin: 10px;
+        display: none;
+        {%- if section.settings.discount_image_v == 'center' -%}
+        top: 50%;
+        transform: translateY(-50%);
+        {%- else -%}
+        {{ section.settings.discount_image_v }}: 0;
+        {%- endif -%}
+        {%- if section.settings.discount_image_h == 'center' -%}
+        left: 50%;
+        transform: translateX(-50%);
+        {%- else -%}
+        {{ section.settings.discount_image_h }}: 0;
+        {%- endif -%}
+        {%- if section.settings.discount_image_h == 'center' and section.settings.discount_image_v == 'center' -%}
+        transform: translate3d(-50%, -50%, 0);
+        {%- endif -%}
+      }
+    </style>
+    <script>
+        function customDiscount(){
+
+          var $click_discount = $( '#click_discount' );
+          var minClicks = {{ section.settings.discount_min }};
+
+          // get pageLoads from local storage
+          var pageLoads = localStorage.getItem( 'page_loads' );
+
+          // increment pageLoads
+          if ( typeof pageLoads === 'undefined' || !pageLoads ) {
+            i = 1;
+          } else if (pageLoads == 'done') {
+            return;
+          } else {
+            i = parseInt(pageLoads) + 1;
+          }
+
+          // store the pageLoads
+          localStorage.setItem( 'page_loads', i );
+
+          // if pageLoads > minClicks
+          if ( i > minClicks) {
+
+            // show the discount
+            $click_discount.fadeIn();
+          }
+
+          // on click
+          $click_discount.on('click', function(event) {
+
+            // store
+            localStorage.setItem( 'page_loads', 'done' );
+          });
+        }
+
+        setTimeout(function() {
+          customDiscount();
+        }, 1000);
+    </script>
+  {% endif %}
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Click discount",
+    "class": "click-discount",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_click_discount",
+        "label": "Enable discount",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "discount_min",
+        "label": "Discount minimum pages",
+        "default": "10",
+        "info": "Show the discount after a minimum of pages (enter a number)"
+      },
+      {
+        "type": "text",
+        "id": "discount_url",
+        "label": "Discount url",
+        "info": "Paste the url of your Shopify discount"
+      },
+      {
+        "type": "url",
+        "id": "discount_page",
+        "label": "Discount redirect",
+        "info": "Where to go when the discount image is clicked"
+      },
+      {
+        "type": "image_picker",
+        "id": "discount_image",
+        "label": "Discount image",
+        "info": "Transparent png preferred"
+      },
+      {
+        "type": "select",
+        "id": "discount_image_size",
+        "label": "Discount image size",
+        "options": [
+          {
+            "value": "2000x2000",
+            "label": "Don't resize"
+          },
+          {
+            "value": "100x100",
+            "label": "Max 100x100"
+          },
+          {
+            "value": "200x200",
+            "label": "Max 200x200"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "discount_image_h",
+        "label": "Horizontal image position",
+        "default": "right",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "discount_image_v",
+        "label": "Vertical image position",
+        "default": "bottom",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

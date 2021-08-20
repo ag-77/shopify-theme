@@ -1,0 +1,73 @@
+.h1, h1,
+.h2, h2,
+.h3, h3,
+.h4, h4,
+.h5, h5,
+.h6, h6 {
+  font-family: $body-heading-font-family;
+  font-weight: $body-heading-font-weight;
+  font-style: $body-heading-font-style;
+  font-size: rem($body-font-size);
+  line-height: rem($body-line-height);
+  margin: 0;
+}
+
+h1,
+.h1 {
+  font-size: rem(32);
+  line-height: rem(40);
+  @include mqmin($bp-md) {
+    font-size: rem(40);
+    line-height: rem(48);
+  }
+}
+
+h2,
+.h2 {
+  font-size: rem(24);
+  line-height: rem(32);
+  @include mqmin($bp-md) {
+    font-size: rem(32);
+    line-height: rem(40);
+  }
+}
+
+h3,
+.h3 {
+  font-size: rem(20);
+  line-height: rem(28);
+  @include mqmin($bp-md) {
+    font-size: rem(24);
+    line-height: rem(32);
+  }
+}
+
+h4,
+.h4 {
+  font-size: rem(18);
+  line-height: rem(26);
+  @include mqmin($bp-md) {
+    font-size: rem(20);
+    line-height: rem(28);
+  }
+}
+
+h5,
+.h5 {
+  font-size: rem(16);
+  line-height: rem(24);
+  @include mqmin($bp-md) {
+    font-size: rem(18);
+    line-height: rem(26);
+  }
+}
+
+h6,
+.h6 {
+  font-size: rem(14);
+  line-height: rem(20);
+  @include mqmin($bp-md) {
+    font-size: rem(16);
+    line-height: rem(24);
+  }
+}

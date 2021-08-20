@@ -1,0 +1,84 @@
+{%- comment -%} Render the collection image {%- endcomment -%}
+{%- if collection.image != blank -%}
+  {%- render 'responsive-image',
+    responsive_image: collection.image,
+    responsive_image_size: '2000x',
+    responsive_image_sizes_arr : "319x|409x|767x|1020x|1200x",
+    responsive_image_breakpoints_arr : "319|409|767|1020|1200",
+    responsive_image_class: 'img--fill'
+  -%}
+{%- endif -%}
+
+{%- comment -%} Capture the collection products and filters {%- endcomment -%}
+{%- capture collection_content -%}
+
+  {%- comment %} Lazy load images from row X {% endcomment -%}
+  {%- assign start_lazy_load = items_per_row | times: 2 -%}
+
+  {%- comment -%} Product description row {%- endcomment -%}
+  {%- if collection.description != blank -%}
+    <div class="container__row collection-description content ">
+      {%- render 'format-content' with content: collection.description -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Collection and filters row {%- endcomment -%}
+  <div class="container__row collection-wrapper">
+
+    <div class="row row--gutter">
+
+      {%- comment -%} Collection product links and navigation {%- endcomment -%}
+      <div class="col col-xs-12 col-md collection-column-products">
+
+        {%- if collection.products_count > 0 -%}
+
+          {%- comment -%} Collection navigation {%- endcomment -%}
+          <div class="container__row collection__nav">
+            <div class="row row--gutter middle-sm">
+
+              <div class="col col-xs-12 col-md-6">
+                {%- comment -%} Collection view selector {%- endcomment -%}
+                {%- render 'collection-view' -%}
+              </div>
+
+              <div class="col col-xs-12 col-md-6">
+                {%- comment -%} Collection sorting selector {%- endcomment -%}
+                {%- render 'collection-sorting' -%}
+              </div>
+
+            </div>
+          </div>
+
+          <div class="container__row collection-productlinks">
+            {%- render 'collection-products',
+              the_collection: collection,
+              collection_view: collection_view,
+              start_lazy_load: start_lazy_load
+            -%}
+          </div>
+
+        {%- else -%}
+
+          {%- comment -%} No Products {%- endcomment -%}
+          <p>{{ 'collections.general.no_matches' | t }}</p>
+
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Filters {%- endcomment -%}
+      <div class="col col-xs-12 col-md-3 col-xs--first collection-column-filter">
+        {%- section 'collection-filters' -%}
+      </div>
+
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- comment -%} Render the collection {%- endcomment -%}
+{%- render 'container',
+  container_content: collection_content,
+  container_title: collection.title,
+  container_classes: 'collection-page',
+  container_header_append: collection_header_append,
+  container_header_element: 'h1'
+-%}

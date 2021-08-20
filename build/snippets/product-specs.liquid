@@ -1,0 +1,95 @@
+{%- assign divider = '|||' -%}
+{%- assign divider2 = '###' -%}
+{%- assign variant_ids_str = '' -%}
+{%- assign variant_specs_str = '' -%}
+{%- assign product_metafields_data_str = '' -%}
+
+{%- comment -%} capture specs from product metafields {%- endcomment -%}
+{%- for field in the_product.metafields.specification -%}
+  {%- if field[1] != '-' -%}
+    {%- capture product_metafields_data_str -%}{{product_metafields_data_str}}{{divider}}{{ field[0] }}:::{{ field[1] }}{%- endcapture -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{% comment %} loop variants to capture specifications per variant {% endcomment %}
+{%- for variant in the_product.variants  -%}
+
+  {%- assign prod_specs_barcode_str = "" -%}
+  {%- if variant.barcode != blank -%}
+    {%- capture prod_specs_barcode_str -%}{{divider}}{{ 'products.product.ean' | t }}:::{{ variant.barcode }}{%- endcapture -%}
+  {%- endif -%}
+
+  {%- assign prod_specs_sku_str = "" -%}
+  {%- if variant.sku != blank -%}
+    {%- capture prod_specs_sku_str -%}{{divider}}{{ 'products.product.article_number' | t }}:::{{ variant.sku }}{%- endcapture -%}
+  {%- endif -%}
+
+  {%- comment -%} capture specifications from product variant metafields {%- endcomment -%}
+  {%- assign product_metafields_specs_str = '' -%}
+  {%- if variant.metafields.specification.size > 0 -%}
+    {%- for field in variant.metafields.specification -%}
+      {%- if field[1] != blank -%}
+        {%- capture product_metafields_specs_str -%}{{product_metafields_specs_str}}{{divider}}{{ field[0] }}:::{{ field[1] }}{%- endcapture -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+
+  {%- comment -%} Concat all specs to 1 string {%- endcomment -%}
+  {%- capture spec_str -%}
+    variant_id:::{{ variant.id }}
+    {{- prod_specs_barcode_str -}}
+    {{- prod_specs_sku_str -}}
+    {{- product_metafields_data_str -}}
+    {{- product_metafields_specs_str -}}
+  {%- endcapture -%}
+
+  {% comment %} if this variant is currently shown {% endcomment %}
+  {%- if variant.id == the_product.selected_or_first_available_variant.id -%}
+    {% assign render_specs = spec_str | strip_newlines | strip | split: divider %}
+  {%- endif -%}
+
+  {% comment %} Collect all specs per variant into 1 string {% endcomment %}
+  {% assign all_specs_str = all_specs_str | append: divider2 | append: spec_str | strip_newlines %}
+
+{%- endfor -%}
+
+{%- comment %} Create html element for spec rows {%- endcomment -%}
+{%- capture spec_row_template -%}
+  <dt class="spec_key">[key]:</dt>
+  <dd class="spec_value">[value]</dd>
+{%- endcapture -%}
+
+{%- comment %} Create an array {% endcomment -%}
+{%- assign all_specs_arr = all_specs_str | remove_first: divider2 | replace: '"', '\"' | replace: "'", "\'" | split: divider2 -%}
+
+{%- comment %} Render as array (without | json translation of html tags) {% endcomment -%}
+{%- capture all_specs_arr_output -%}
+  {%- for spec in all_specs_arr -%}
+    ,"{{ spec }}"
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- comment %} Create html element for specs wrapper {%- endcomment -%}
+{%- capture spec_wrapper_template -%}
+  <dl class="spec" data-product-specs='{
+    "specs": [{{ all_specs_arr_output | remove_first: ',' }}],
+    "divider": "{{ divider }}",
+    "row_template": "{{ spec_row_template | strip_newlines | replace: '"', "'" | escape }}"
+  }'>
+    [spec_rows]
+  </dl>
+{%- endcapture -%}
+
+{%- comment %} Capture rows html with spec_row_template {% endcomment -%}
+{% capture spec_rows %}
+  {% for spec_str in render_specs %}
+    {% assign spec = spec_str | split: ':::' %}
+    {% if spec[0] == 'variant_id' %}
+      {% continue %}
+    {% endif %}
+    {{ spec_row_template | replace: '[key]', spec[0] | replace: '[value]', spec[1] }}
+  {% endfor %}
+{% endcapture %}
+
+{% comment %} Render rows in specs wrapper {% endcomment %}
+{{ spec_wrapper_template | replace: '[spec_rows]', spec_rows }}

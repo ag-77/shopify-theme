@@ -1,0 +1,49 @@
+
+// product detail wrapper
+.product__wrapper {
+  @include clearfix;
+}
+.product__primary {
+  @include clearfix;
+}
+
+// Column gutter for desktop
+$product-page-gutter: $gutter-md * 2;
+
+// product columns
+.product__col-order {
+  @include mqmin($bp-md) {
+    float: right;
+    width: 50%;
+    box-sizing: border-box;
+    padding-left: $product-page-gutter * 0.5;
+  }
+}
+.product__col-images {
+  @include mqmin($bp-md) {
+    float: left;
+    width: 50%;
+    min-height: 1px;
+    box-sizing: border-box;
+    padding-right: $product-page-gutter * 0.5;
+  }
+}
+.product__col-meta {
+  @include mqmin($bp-md) {
+    float: right;
+    width: 50%;
+    box-sizing: border-box;
+    padding-left: $product-page-gutter * 0.5;
+  }
+}
+// product assets
+.product__asset {
+  margin-top: $body-element-spacing;
+  &:first-child {
+    margin-top: 0;
+  }
+}
+// Price
+.product__price-wrapper {
+  font-size: 2rem;
+}

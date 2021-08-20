@@ -1,0 +1,64 @@
+{%- comment %} Set minimum price {%- endcomment -%}
+{%- assign product_price_min = the_product.price_min -%}
+{%- assign product_compare_at_price_min = the_product.compare_at_price_min -%}
+
+{%- capture product_price_min_render -%}
+  {%- render 'format-price', format_price: product_price_min -%}
+{%- endcapture -%}
+
+<p class="product__price">
+
+  {%- comment -%} SALE PRICES {%- endcomment -%}
+  {%- if product_compare_at_price_min > product_price_min -%}
+
+    {%- comment -%} on sale from $ {%- endcomment -%}
+    {%- if the_product.price_varies -%}
+
+      {%- render 'format-translation',
+        namespace: "products.price",
+        key: "on_sale_from_html",
+        html: product_price_min_render,
+        fallback: "on sale from {{ html }}"
+      -%}
+
+    {%- comment -%} on sale $ {%- endcomment -%}
+    {%- else -%}
+      {%- render 'format-translation',
+        namespace: "products.price",
+        key: "on_sale",
+        fallback: "on sale"
+      %}
+      {{ product_price_min_render }}
+    {%- endif -%}
+
+    {%- comment -%} Compare_at_price strikethrough {%- endcomment -%}
+    <span class="visually-hidden">
+      {%- render 'format-translation',
+        namespace: "products.price",
+        key: "regular_price",
+        fallback: "regular price"
+      -%}
+    </span>
+    <s>
+      {%- render 'format-price', format_price: product_compare_at_price_min -%}
+    </s>
+
+  {%- comment -%} REGULAR PRICES {%- endcomment -%}
+  {%- else -%}
+
+    {%- comment -%} from $ {%- endcomment -%}
+    {%- if the_product.price_varies -%}
+
+      {%- render 'format-translation',
+        namespace: "products.price",
+        key: "from_html",
+        html: product_price_min_render,
+        fallback: "from {{ html }}"
+      -%}
+
+    {%- comment -%} $ {%- endcomment -%}
+    {%- else -%}
+      {{ product_price_min_render }}
+    {%- endif -%}
+  {%- endif -%}
+</p>

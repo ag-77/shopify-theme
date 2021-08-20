@@ -1,0 +1,89 @@
+.product-images {
+  position: relative;
+
+  // product detail image gallery
+  &.product-images__slider {
+    .swiper-slide {
+      position: relative;
+      height: auto;
+      &:hover {
+        .easyzoom {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // product detail image gallery navigation thumbnails
+  &.product-images__slider-nav {
+    margin-top: $body-element-spacing;
+    .swiper-slide {
+      box-sizing: border-box;
+      .img {
+        img {
+          display: block;
+        }
+      }
+    }
+  }
+
+  // Easyzoom icon and pane
+  .easyzoom {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    opacity: 0.5;
+    transition: opacity 0.2s ease-in-out;
+    .touch & {
+      display: none;
+    }
+    a {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: block;
+      font-size: 2rem;
+      width: 2rem;
+      line-height: 2rem;
+      padding: 0.3rem;
+      margin: 0.3rem;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      .la,
+      .lar {
+        margin: 0 auto;
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
+    &:hover {
+      text-decoration: none;
+      left: 0;
+      bottom: 0;
+      opacity: 1;
+      a {
+        display: none;
+      }
+    }
+  }
+  .easyzoom--overlay {
+    .easyzoom-flyout {
+      box-sizing: border-box;
+      &:before {
+        content: "";
+        box-shadow: 0 0 30px inset rgba(0,0,0,0.1);
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+      }
+      img {
+        width: auto;
+      }
+    }
+  }
+}

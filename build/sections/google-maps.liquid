@@ -1,0 +1,180 @@
+{% comment %} capture content {% endcomment %}
+{%- capture section_content -%}
+  <div id="map" style="height: {{ section.settings.gm_height | strip }}px"></div>
+  <script>
+    // Initialize the map.
+    function initMap() {
+      var placeId = '{{ section.settings.gm_placeId | strip }}';
+      var geocoder = new google.maps.Geocoder;
+      var zoom = 11;
+      var showInfoWindow = {{ section.settings.gm_showinfowindow }};
+
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 52.017020, lng: 4.346476},
+        zoom: 4,
+        zoomControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false
+      });
+
+      // a geocode of a place ID.
+      geocoder.geocode({'placeId': placeId}, function(results, status) {
+        if (status === 'OK') {
+          map.setZoom(zoom);
+          map.setCenter(results[0].geometry.location);
+
+          var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+          });
+
+          if (showInfoWindow) {
+            // content for infowindow
+            var contentString = '<div>{% if section.settings.gm_infocontent != blank %}{{ section.settings.gm_infocontent }}{% else %}'+results[0].formatted_address+'{% endif %}</div>';
+
+            var infowindow = new google.maps.InfoWindow({
+              content: contentString
+            });
+
+            marker.addListener('click', function() {
+              infowindow.open(map, marker);
+            });
+          }
+        } else {
+          window.alert('Geocoder failed due to: ' + status);
+        }
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ section.settings.gm_apiKey | strip }}&libraries=places&callback=initMap" async defer></script>
+{%- endcapture -%}
+
+{% comment %} merge page row classes {% endcomment %}
+{%- capture container_classes -%}
+  {{- section.settings.section_background -}}
+  {%- if section.settings.section_spacing -%}
+    container--block
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} wrap and render content {%- endcomment -%}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_content_classes: section.settings.width_layout,
+  container_classes: container_classes,
+  container_title_hidden: section.settings.hide_heading
+-%}
+
+{% schema %}
+{
+  "name": "Google map",
+  "class": "google-map-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "width_layout",
+    "label": "Section content width",
+    "default": "site-center",
+    "options": [
+    {
+      "value": "site-center",
+      "label": "Default"
+    },
+    {
+      "value": "container--wide",
+      "label": "Wide"
+    },
+    {
+      "value": "container--full",
+      "label": "Full width"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "checkbox",
+    "id": "section_spacing",
+    "label": "Remove vertical section spacing",
+    "default": false
+  },
+  {
+    "type": "header",
+    "content": "Google map settings"
+  },
+  {
+    "type": "text",
+    "id": "gm_apiKey",
+    "label": "Google Maps API key",
+    "info": "Get your API key on [developers.google.com](https://developers.google.com/maps/documentation/javascript/adding-a-google-map#key)"
+  },
+  {
+    "type": "text",
+    "id": "gm_placeId",
+    "label": "Google Maps PlaceId",
+    "info": "Get your PlaceId on [developers.google.com](https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder)"
+  },
+  {
+    "type": "text",
+    "id": "gm_height",
+    "label": "Google Maps Height",
+    "default": "400",
+    "info": "Set height of map in px"
+  },
+  {
+    "type": "checkbox",
+    "id": "gm_showinfowindow",
+    "label": "Show info window",
+    "default": true,
+    "info": "Show an info window when visitors click on the marker"
+  },
+  {
+    "type": "richtext",
+    "id": "gm_infocontent",
+    "label": "Info window content",
+    "info": "If left empty, the infowindow will show the address of the PlaceId"
+  } ]
+}
+{% endschema %}

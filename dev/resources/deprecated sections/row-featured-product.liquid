@@ -1,0 +1,375 @@
+{%- if section.settings.feat_product != blank -%}
+
+  {%- assign product = all_products[section.settings.feat_product] -%}
+
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+
+  {%- capture product_vendor -%}
+  <p class="product-vendor">{{ product.vendor }}</p>
+  {%- endcapture -%}
+
+  {%- capture section_content -%}
+    <div class="page-section product-detail-section"
+      data-section-id="{{ section.id }}"
+      data-section-type="product"
+      data-enable-history-state="true"
+      itemscope
+      itemtype="http://schema.org/Product"
+      data-easyzoom-options='{
+        "loadingNotice": "{{ "products.product.zoom_loading" | t }}",
+        "errorNotice": "{{ "products.product.zoom_error" | t }}"
+      }'
+      data-fancybox-options='{
+        "thumbs" : {
+          "autoStart"   : true,
+          "hideOnClose" : true
+        }
+      }'>
+
+      <meta itemprop="name" content="{{ product.title }}{%- unless product.has_only_default_variant -%} - {{ current_variant.title }}{%- endunless -%}">
+      <meta itemprop="url" content="{{ shop.url }}{{ current_variant.url }}">
+      <meta itemprop="brand" content="{{ product.vendor }}">
+      <meta itemprop="image" content="{{ featured_image | img_url: '600x600' }}">
+      <meta itemprop="description" content="{{ product.description | strip_html | escape }}">
+
+      <div class="product__wrapper">
+        <div class="product__primary">
+
+          {%- if section.settings.feat_product_price or section.settings.feat_product_title or section.settings.feat_product_vendor -%}
+            <div class="product__col-order">
+
+              {%- if section.settings.feat_product_title or section.settings.feat_product_vendor -%}
+                {%- comment -%} product title {%- endcomment -%}
+                {%- if product.title != blank or product.vendor != blank -%}
+                  <header class="container-header product-header">
+                    {%- if product.title != blank and section.settings.feat_product_title -%}
+                      <h2 class="container-heading"><a href="{{ product.url }}">{{ product.title }}</a></h2>
+                    {%- endif -%}
+
+                    {%- comment -%} product vendor {%- endcomment -%}
+                    {%- if product.vendor != blank and section.settings.feat_product_vendor -%}
+                      <div class="container-header-content">
+                        {{ product_vendor }}
+                      </div>
+                    {%- endif -%}
+                  </header>
+                {%- endif -%}
+              {%- endif -%}
+
+              {%- comment -%} Product price {%- endcomment -%}
+              {%- if section.settings.feat_product_price -%}
+              <div class="product__asset product-form">
+                <div class="product__asset product__price-wrapper" data-price-wrapper>
+                  <span class="product__price" data-product-price>
+                    {%- render 'format-price', format_price: current_variant.price -%}
+                  </span>
+                  {%- if product.compare_at_price_max > product.price -%}
+                    <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+                    <s class="product-compare-price" data-compare-price>
+                      {%- if current_variant.compare_at_price > current_variant.price -%}
+                        {%- render 'format-price', format_price: current_variant.compare_at_price -%}
+                      {%- endif -%}
+                    </s>
+                  {%- endif -%}
+                </div>
+              </div>
+              {%- endif -%}
+
+            </div>
+          {%- endif -%}
+
+          {% comment %} product images {% endcomment %}
+          <div class="product__col-images">
+            {%- assign block_image_size_max = "750x750" -%}
+            {%- assign block_image_sizes_arr = "440x440|708x708" -%}
+            {%- assign block_image_breakpoints_arr = "480|768" -%}
+            {%- if section.settings.feat_product_img -%}
+
+              {%- assign featured_image = product.featured_image -%}
+              <div class="product-image product-single-image">
+                <a href="{{ product.url }}">
+                  {%- render 'responsive-image',
+                    responsive_image: featured_image,
+                    responsive_image_data: 'data-product-featured-image',
+                    responsive_image_alt: featured_image.alt
+                  -%}
+                </a>
+
+                {%- if section.settings.feat_product_zoom -%}
+                  {%- comment -%} image zoom {%- endcomment -%}
+                  {%- assign zoom_min_size = image_size | times: '1.2' -%}
+                  {%- if featured_image.height > zoom_min_size -%}
+                    {%- assign image_size = 600 -%}
+                    {%- assign zoom_size = image_size | times: '2' -%}
+                    {%- assign zoom_dimensions = zoom_size | append: 'x' | append: zoom_size  -%}
+                    <div class="easyzoom easyzoom--overlay" data-easy-zoom>
+                      <a href="{{ featured_image | img_url: zoom_dimensions }}">
+                        <i class="la la-search"></i>
+                      </a>
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+
+              </div>
+            {%- else -%}
+              {%- render 'product-images' -%}
+            {%- endif -%}
+          </div>
+
+          {%- if section.settings.feat_product_description or section.settings.feat_product_button != blank -%}
+          <div class="product__col-meta">
+
+            {% comment %} product description {% endcomment %}
+            {%- if section.settings.feat_product_description -%}
+              {%- render 'product-description' -%}
+              {%- render 'product-specs' -%}
+            {%- endif -%}
+
+            {%- comment -%} product link {%- endcomment -%}
+            {%- if section.settings.feat_product_button != blank -%}
+            <p class="product__asset">
+              <a href="{{ product.url }}" class="button">{{ section.settings.feat_product_button }}</a>
+            </p>
+            {%- endif -%}
+
+          </div>
+          {%- endif -%}
+
+        </div>
+      </div>
+
+    {%- unless product == empty -%}
+      <script type="application/json" data-product-json>
+        {{ product | json }}
+      </script>
+    {%- endunless -%}
+
+    </div>
+  {%- endcapture -%}
+
+
+{%- else -%}
+
+  {%- capture section_content -%}
+    <div class="page-section product-detail-section">
+      <div class="product__wrapper">
+        <div class="product__primary">
+
+          {%- if section.settings.feat_product_price or section.settings.feat_product_title or section.settings.feat_product_vendor -%}
+            {%- comment -%} Product ordering column {%- endcomment -%}
+            <div class="product__col-order">
+
+              {%- if section.settings.feat_product_title or section.settings.feat_product_vendor -%}
+                {%- comment -%} product title {%- endcomment -%}
+                <header class="container-header product-header">
+                  {%- if section.settings.feat_product_title -%}
+                    <h2 class="container-heading"><a href="{{ product.url }}">{{ 'homepage.onboarding.product_title' | t }}</a></h2>
+                  {%- endif -%}
+                </header>
+              {%- endif -%}
+
+              {%- comment -%} Product price {%- endcomment -%}
+              {%- if section.settings.feat_product_price -%}
+              <div class="product__asset product-form">
+                <div class="product__asset product__price-wrapper" data-price-wrapper>
+                  <span class="product__price" data-product-price>
+                    {%- render 'format-price', format_price: '1995' -%}
+                  </span>
+                </div>
+              </div>
+              {%- endif -%}
+
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Product images column {%- endcomment -%}
+          <div class="product__col-images">
+            <div class="product-image product-single-image">
+              <a href="{{ product.url }}">
+                {{ 'product-6' | placeholder_svg_tag: 'placeholder-svg' }}
+              </a>
+            </div>
+          </div>
+
+          {%- comment -%} Product meta column {%- endcomment -%}
+          {%- if section.settings.feat_product_description or section.settings.feat_product_button != blank -%}
+          <div class="product__col-meta">
+
+            {%- if section.settings.feat_product_description -%}
+            <div class="product__asset product-description content">
+
+              {%- assign prod_desc_title = 'products.product.description' | t -%}
+              {%- if prod_desc_title != blank -%}
+                <h2 class="title-product-small">{{  }}</h2>
+              {%- endif -%}
+              <p>Irure adipisicing aliqua deserunt in aliqua sunt mollit amet magna aute sit ut minim in cupidatat dolore culpa ex reprehenderit velit minim exercitation eu reprehenderit ut enim fugiat aliquip.</p>
+
+            </div>
+            {%- endif -%}
+
+            {%- comment -%} product link {%- endcomment -%}
+            {%- if section.settings.feat_product_button != blank -%}
+            <p class="product__asset">
+              <a href="#" class="button">{{ section.settings.feat_product_button }}</a>
+            </p>
+            {%- endif -%}
+
+          </div>
+          {%- endif -%}
+
+
+        </div>
+      </div>
+
+    {%- unless product == empty -%}
+      <script type="application/json" data-product-json>
+        {{ product | json }}
+      </script>
+    {%- endunless -%}
+
+    </div>
+  {%- endcapture -%}
+
+
+{%- endif -%}
+
+{%- comment -%} render {%- endcomment -%}
+{%- if product_header_in_column -%}
+  {%- render 'container',
+      container_content: product_content
+  -%}
+{%- else -%}
+  {%- render 'container',
+      container_content: section_content,
+      container_title: section.settings.title,
+      container_classes: section.settings.section_background,
+      container_title_hidden: section.settings.hide_heading
+  -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Featured product",
+  "class": "product-featured-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Featured product",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "width_layout",
+    "label": "Section content width",
+    "default": "site-center",
+    "options": [
+    {
+      "value": "site-center",
+      "label": "Default"
+    },
+    {
+      "value": "container--wide",
+      "label": "Wide"
+    },
+    {
+      "value": "container--full",
+      "label": "Full width"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "header",
+    "content": "Section content"
+  },
+  {
+    "type": "product",
+    "id": "feat_product",
+    "label": "Product"
+  },
+  {
+    "type": "checkbox",
+    "id": "feat_product_title",
+    "label": "Show product title",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "feat_product_vendor",
+    "label": "Show product vendor",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "feat_product_img",
+    "label": "Show only 1 product image",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "feat_product_zoom",
+    "label": "Show product zoom",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "feat_product_price",
+    "label": "Show product price",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "feat_product_description",
+    "label": "Show product description",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "feat_product_button",
+    "label": "Link to product button",
+    "default": "View product"
+  } ],
+  "presets": [
+  {
+    "name": "Featured product",
+    "category": "Product",
+    "settings": {}
+  } ]
+}
+{% endschema %}

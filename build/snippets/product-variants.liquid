@@ -1,0 +1,53 @@
+{%- comment %} Render product variants as select or as radio {% endcomment -%}
+
+{%- if render == 'select' -%}
+
+    {%- comment %} Render as select {%- endcomment -%}
+    {%- for option in the_product.options_with_values -%}
+      <div class="row form__row product-selector-wrapper js">
+        <div class="col-xs-12 col-md-2 form__label">
+          <label {% if option.name=='default' %}class="label--hidden" {% endif %} for="SingleOptionSelector-{{ forloop.index0 }}">
+            {{ option.name }}
+          </label>
+        </div>
+        <div class="col-xs-12 col-md form__input form__input--select">
+          <select id="SingleOptionSelector-{{ forloop.index0 }}" data-single-option-selector data-index="option{{ forloop.index }}">
+            {%- for value in option.values -%}
+              <option value="{{ value | escape }}"{% if option.selected_value == value %} selected="selected" {% endif %}>
+                {{- value -}}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      </div>
+    {%- endfor -%}
+
+{%- elsif render == 'radio' -%}
+
+  {%- comment %} Render as radio inputs {%- endcomment -%}
+  {%- for option in the_product.options_with_values -%}
+    {%- assign index = forloop.index -%}
+    {%- assign id = "SingleOptionSelector-" | append: forloop.index0 -%}
+    <div class="row form__row product-selector-wrapper js">
+      <div class="col-xs-12 col-md-2 form__label">
+        <label {% if option.name=='default' %}class="label--hidden" {% endif %} for="{{ id }}-0">
+          {{ option.name }}
+        </label>
+      </div>
+      <div class="col-xs-12 col-md form__input form__input--radio">
+        {%- for value in option.values -%}
+          <label class="variant{%- if option.selected_value == value %} checked{%- endif -%}">
+            <input type="radio" value="{{ value | escape }}"
+            name="{{ id }}"
+            id="{{ id }}-{{ forloop.index0 }}"
+            data-single-option-selector
+            data-index="option{{ index }}"
+            {%- if option.selected_value == value %} checked="checked"{%- endif -%}
+            >
+            <span>{{ value }}</span>
+          </label>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endfor -%}
+{%- endif -%}

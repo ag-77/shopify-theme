@@ -1,0 +1,294 @@
+// filter vars
+$filter-pane_side-padding: 10px;
+$filter-lines: $color-lines;
+$filter-primary: $color-primary;
+$filter-secondary: $color-secondary;
+$filter-body-accent: $body-background-accent;
+$filter-text-body: $body-text-color;
+
+// Filter wrapper
+.filter {
+  position: relative;
+  margin-bottom: $body-element-spacing * 0.5;
+  .js & .filter-load-wrapper {
+    display: none;
+  }
+  // Make horizontal filters
+  &.filter__horizontal {
+    .filter__target {
+      @include mqmin($bp-md) {
+        display: flex;
+        background: $body-background-accent;
+        z-index: 1000;
+        .filter-pane {
+          flex-grow: 1;
+          padding: 10px;
+        }
+      }
+      .filter__heading {
+        display: none;
+      }
+    }
+  }
+  .js & .filter__target [data-collapsible-trigger] {
+    display: block;
+  }
+}
+// Button to collapse the whole filter on mobile
+.js .filter__collapsible-button[data-collapsible-trigger] {
+  display: block;
+  @include mqmin($bp-md) {
+    display: none;
+  }
+}
+// Filter tag helpers, should be only visible in the Theme editor
+.filter__textarea {
+  display: none;
+  .theme-editor & {
+    display: block;
+  }
+  textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+}
+// Make filter collapsible on mobile
+.filter__collapsible-wrapper {
+  display: none;
+  .collapsible--is-open & {
+    display: block;
+  }
+  @include mqmin($bp-md) {
+    display: block;
+  }
+}
+// The filter heading
+.filter__heading {
+  // @extend .h2;
+  margin-bottom: 10px;
+  display: none;
+  @include mqmin($bp-md) {
+    display: block;
+  }
+}
+// Filter panes
+.filter-pane {
+  margin: $body-element-spacing 0;
+  box-sizing: border-box;
+  a {
+    display: block;
+    position: relative;
+    color: #000;
+  }
+}
+// Filter pane titles
+.filter-pane__title {
+  // @extend .h3;
+  margin-bottom: 5px;
+  position: relative;
+  display: block;
+  .filter-pane__trigger {
+    right: 10px;
+  }
+}
+// Collapsible trigger
+.filter-pane__trigger {
+  position: absolute;
+  right: 0;
+  font-size: 16px;
+}
+// Filter list level 1
+.filter-pane__list.level-1 {
+  background: $filter-body-accent;
+  padding: 10px $filter-pane_side-padding;
+  border-radius: $form-borderradius;
+}
+// Filter list li
+.filter-pane__list-item {
+  position: relative;
+  input {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  label {
+    word-break: break-all;
+    padding-left: 26px;
+    display: block;
+    cursor: pointer;
+    user-select: none;
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+      color: #000;
+      &:before {
+        text-decoration: none;
+      }
+    }
+    // Custom checkboxes
+    &:before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      z-index: 5;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      border-radius: $form-borderradius;
+    }
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      border: 1px solid $filter-lines;
+      background: #fff;
+      transition: background 0.1s ease-in-out;
+      z-index: 1;
+      border-radius: $form-borderradius;
+    }
+  }
+  input[type="checkbox"] {
+    // when checked
+    &:checked + label {
+      // Show as checked
+      &:before {
+        background-color: #000;
+      }
+    }
+  }
+  &.filter-pane__list-item--color {
+    overflow: hidden;
+    position: relative;
+    label {
+      &:after,
+      &:before {
+        content: none;
+      }
+    }
+    input {
+      left: -100%;
+      // Checked
+      &:checked + label .filter__color {
+        box-shadow: 0 0 0 1px inset $color-border;
+      }
+    }
+    .filter__color {
+      display: block;
+      width: 14px;
+      height: 14px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 1px solid $color-border;
+      border-radius: $form-borderradius;
+    }
+  }
+}
+// Filter list item link
+.filter__link {
+  &.level-2 {
+    padding-left: 20px;
+  }
+  &.level-3 {
+    padding-left: 40px;
+  }
+}
+// Toggle nr of visible filters
+.filter-pane__list.level-1[data-collapsible-parent] {
+  .filter__less,
+  .filter-hideable__true {
+    display: none;
+  }
+  &.collapsible--is-open {
+    .filter__less,
+    .filter-hideable__true {
+      display: block;
+    }
+    .filter__more {
+      display: none;
+    }
+  }
+}
+// Toggler
+.js .filter__toggler[data-collapsible-trigger] {
+  cursor: pointer;
+  font-size: 80%;
+  color: $body-text-color-light;
+  text-transform: uppercase;
+  padding: 0;
+  border-top: 1px solid $color-border;
+}
+// Remove filter
+.filter__remove-tag {
+  padding-left: 25px;
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #000;
+    transition: background 0.1s ease-in-out;
+    z-index: 2;
+    border-radius: $form-borderradius;
+  }
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border: 1px solid $filter-lines;
+    background: #fff;
+    transition: background 0.1s ease-in-out;
+    z-index: 1;
+    border-radius: $form-borderradius;
+  }
+  .icon {
+    position: absolute;
+    right: 0;
+    top:  50%;
+    transform: translateY(-50%);
+  }
+}
+// Mobile collapsible filter button
+.filter__collapsible-button {
+  .collapsible--is-open > & {
+    border-radius: $form-borderradius $form-borderradius 0 0;
+  }
+}
+// Mobile collapsible filter pane
+.filter__collapsible-wrapper {
+  @include mqmax($bp-md) {
+    border: 1px solid $color-border;
+    padding: 0 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 0 0 $form-borderradius $form-borderradius;
+    box-shadow: 0px 2px 7px 1px rgba(0, 0, 0, 0.2);
+  }
+}

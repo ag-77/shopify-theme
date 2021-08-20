@@ -1,0 +1,91 @@
+// Page header
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  // svg icons
+  .fill {
+    fill: $header-link-color;
+  }
+  // Header links
+  a {
+    color: $header-link-color;
+  }
+  &__wrapper {
+    background: $header-background;
+    color: $header-text-color;
+    box-shadow: 0 0 32px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid $color-lines;
+    left: 0;
+    right: 0;
+    z-index: 9010;
+  }
+  &__container {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  &__bottom {
+    padding-top: 8px;
+    // Mobile Navigation drawer
+    @include mqmax($bp-header) {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: -50%;
+      width: 50%;
+      overflow: auto;
+      background: #fff;
+      z-index: 9006;
+      transition: left 0.2s ease-in-out;
+      padding: 8px;
+      margin: 0;
+      &.row.row--gutter {
+        margin: 0;
+      }
+      .header-navigation--is-open & {
+        left: 0;
+        align-content: flex-start;
+        .col-search {
+          order: -1;
+        }
+      }
+    }
+  }
+
+  // Mobile dropdown menu
+  &__dropdown {
+    overflow: hidden;
+    text-align: left;
+    max-height: 0;
+    position: absolute;
+    top: 100%;
+    background: #fff;
+    width: 240px;
+    right: 0;
+    box-sizing: border-box;
+    .collapsible--is-open & {
+      border: 1px solid $color-lines;
+      max-height: 900px;
+      padding: 8px;
+    }
+  }
+  // Mobile shadow
+  &__wrapper-shadow {
+    @include mqmax($bp-header) {
+      background: #000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      z-index: 9000;
+    }
+    .header-navigation--is-open & {
+      opacity: 0.3;
+      bottom: 0;
+    }
+  }
+}

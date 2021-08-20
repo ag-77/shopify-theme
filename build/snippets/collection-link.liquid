@@ -1,0 +1,50 @@
+{%- comment -%} Set default responsive image type and alt text {%- endcomment -%}
+{%- assign responsive_image_type = '' -%}
+{%- assign responsive_image_alt = collection.title -%}
+
+{%- comment -%} Find the image to show for this collection {%- endcomment -%}
+{%- if collection.image != blank -%}
+
+  {%- comment -%} Use the Collection image {%- endcomment -%}
+  {%- assign collection_image = collection.image.src -%}
+
+{%- elsif collection.products.first != blank and collection.products.first.images.size > 0 -%}
+
+  {%- comment -%} Else use the first image of the first product of this collection (if it exists) {%- endcomment -%}
+  {%- assign collection_image = collection.products.first -%}
+
+{%- else -%}
+
+  {%- comment -%} Use the custom 'No image' image from the assets with no alt-text {%- endcomment -%}
+  {%- assign collection_image = "no-image.gif" -%}
+  {%- assign responsive_image_type = 'asset' -%}
+  {%- assign responsive_image_alt = 'general.accessibility.no_image' | t -%}
+{%- endif -%}
+
+{%- comment -%} Render the collection link {%- endcomment -%}
+<div class="collection-link">
+
+  {%- comment -%} Collection image {%- endcomment -%}
+  <a class="collection-link-image" href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: title }}">
+    {%- render 'responsive-image',
+      responsive_image: collection_image,
+      responsive_image_type: responsive_image_type,
+      responsive_image_alt: responsive_image_alt,
+      responsive_image_size_lazyload: responsive_image_size_lazyload,
+      responsive_image_class: responsive_image_class,
+      responsive_image_size: responsive_image_size,
+      responsive_image_breakpoints_arr: responsive_image_breakpoints_arr,
+      responsive_image_sizes_arr: responsive_image_sizes_arr,
+      responsive_image_crop: responsive_image_crop
+    -%}
+  </a>
+
+  {%- comment -%} Collection meta {%- endcomment -%}
+  <div class="collection-link__meta">
+    <p class="h4 collection-link__title">
+      <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection.title }}">
+        {%- render 'format-unprefix', format: collection.title -%}
+      </a>
+    </p>
+  </div>
+</div>

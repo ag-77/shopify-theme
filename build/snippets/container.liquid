@@ -1,0 +1,115 @@
+{%- comment -%}
+
+  A Generic container for consistent html header and content wrapping
+
+  ## EXAMPLE:
+
+  {%- render 'container',
+    container_title: 'De titel'
+    container_content: 'De content'
+  -%}
+
+  ## VARIABLES:
+  Pass these vars when including this snippet to change the appearance of the row wrapper
+
+    container_id              = add an id to the wrapper
+    container_title           = the title, leave empty to NOT RENDER the title element
+    container_title_hidden    = set to 'true' to HIDE the title element
+
+    container_classes         = add classes to the container (like 'container--accent', 'container--block')
+    container_element         = change the html element (default is div)
+    container_data            = data attributes to append to the container
+
+    container_header_classes  = add classes to the title wrapper (like 'container--full', 'container--wide')
+    container_header_element  = change the header element (default is h2)
+    container_header_append   = extra html to append to the header
+
+    container_content         = the content to show inside the container
+    container_content_classes = add classes to the content wrapper (like 'container--full', 'container--wide')
+
+
+  ## RESULT:
+
+  <div class="container">
+
+    <header class="container-header">
+      <h2 class="container-heading">{{ container_title }}</h2>
+    </header>
+
+    <div class="container-content">
+      {{ container_content }}
+    </div>
+
+  </div>
+
+{%- endcomment -%}
+
+{%- comment %} Set default container-element {%- endcomment -%}
+{%- unless container_element -%}
+  {%- assign container_element = 'div' -%}
+{%- endunless -%}
+
+{%- comment %} Set default container-header-element {%- endcomment -%}
+{%- unless container_header_element -%}
+  {%- assign container_header_element = 'h2' -%}
+{%- endunless -%}
+
+{%- comment %} Set id {%- endcomment -%}
+{%- if container_id -%}
+  {%- capture the_container_id %}id="{{ container_id }}"{%- endcapture -%}
+{%- endif -%}
+
+{%- comment %} Render Container {%- endcomment -%}
+<{{ container_element }} class="container
+  {%- if container_classes != blank -%}
+    {{- container_classes | prepend: ' ' -}}
+  {%- endif -%}
+  "
+  {%- if the_container_id != blank -%}
+    {{- the_container_id | prepend: ' ' -}}
+  {%- endif -%}
+  {%- if container_data != blank -%}
+    {{- container_data | prepend: ' ' -}}
+  {%- endif -%}
+  {%- if block.shopify_attributes != blank -%}
+    {{- block.shopify_attributes | prepend: ' '  -}}
+  {%- endif -%}
+>
+
+  {%- comment %} Container header {%- endcomment -%}
+  {%- if container_title != blank or container_header_append != blank -%}
+    <header class="container-header
+      {%- if container_header_classes != blank -%}
+        {{- container_header_classes | prepend: ' ' -}}
+      {%- endif -%}
+      {%- if container_title_hidden == 'true' %} hidden{% endif -%}
+    ">
+
+      {%- if container_title != blank -%}
+        <{{ container_header_element }} class="container-heading">
+          {%- render 'format-unprefix', format: container_title -%}
+        </{{ container_header_element }}>
+      {%- endif -%}
+
+      {%- if container_header_append != blank -%}
+        <div class="container-header-content">
+          {{ container_header_append }}
+        </div>
+      {%- endif -%}
+
+    </header>
+  {%- endif -%}
+
+  {% comment %} Container content {% endcomment %}
+  {%- if container_content != blank -%}
+    <div class="container-content
+      {%- if container_content_classes != blank -%}
+        {{- container_content_classes | prepend: ' ' -}}
+      {%- endif -%}
+      {%- if container_title_hidden == 'true' %} hidden-title{% endif -%}
+    ">
+      {{ container_content | strip }}
+    </div>
+  {%- endif -%}
+
+</{{ container_element }}>

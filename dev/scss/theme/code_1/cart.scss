@@ -1,0 +1,238 @@
+$cart-card-spacing: 10px;
+// Cart page
+.cart-template {
+  @include mqmax($bp-md) {
+    background: $body-background-accent;
+  }
+}
+.cart {
+  // Cart table
+  &__table {
+    p {
+      margin: 10px 0;
+      line-height: 1.4em;
+    }
+    a {
+      color: $body-text-color;
+    }
+  }
+  // Cart header
+  &__header {
+    font-weight: 600;
+    display: none;
+    @include mqmin($bp-md) {
+      display: block;
+    }
+  }
+}
+.cart-line {
+  position: relative;
+  margin-top: $body-element-spacing;
+  padding: 0;
+  border: 1px solid $color-lines;
+  border-radius: $form-borderradius;
+  overflow: hidden;
+  background: #fff;
+  // Image column and heading
+  &__image {
+    text-align: center;
+    @include mqmin($bp-md) {
+      text-align: left;
+      max-width: 180px;
+    }
+  }
+  // Title column and heading
+  &__title {
+    text-align: left;
+    // Reserve space for remove link
+    padding-right: 40px;
+    padding-left: $gutter;
+    @include mqmin($bp-md) {
+      padding-left: $gutter-md;
+    }
+  }
+  // Quantity column and heading
+  &__quantity {
+    text-align: center;
+    @include mqmin($bp-md) {
+      max-width: 150px;
+      padding-right: $gutter-md;
+    }
+  }
+}
+// Cart product lines (not headings)
+.cart__lines {
+  .cart-line {
+    &__image {
+      padding: $cart-card-spacing;
+      a {
+        display: block;
+        max-width: 180px;
+        margin: 0 auto;
+        opacity: 1;
+        transition: opacity 0.2s ease-in-out;
+        &:focus,
+        &:hover,
+        &:active {
+          opacity: 0.7;
+        }
+      }
+    }
+    &__title {
+      text-align: left;
+      padding-top: $cart-card-spacing;
+    }
+    &__quantity {
+      @include mqmax($bp-md) {
+        padding: 0;
+        border-top: 1px solid $color-lines;
+        flex-basis: 50%;
+        max-width: 50%;
+        min-height: 40px;
+      }
+    }
+    &__subtotal {
+      padding: 3em $cart-card-spacing;
+      @include mqmax($bp-md) {
+        padding: 0 $cart-card-spacing;
+        border-top: 1px solid $color-lines;
+        border-left: 1px solid $color-lines;
+        max-width: 50%;
+        flex-basis: 50%;
+        min-height: 40px;
+        line-height: 40px;
+      }
+      @include mqmin($bp-md) {
+        // Reserve space for remove link
+        padding: 30px 0;
+      }
+    }
+    // Subtotal column and heading
+    &__subtotal {
+      padding-right: $cart-card-spacing;
+      text-align: right;
+      @include mqmin($bp-md) {
+        max-width: 7em;
+      }
+    }
+    // Remove product column
+    &__remove  {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      max-width: 40px;
+      padding: 0;
+      // Remove product button
+      .cart-remove {
+        cursor: pointer;
+        color: $body-text-color;
+        text-decoration: none;
+        opacity: 0.5;
+        transition: opacity 0.2s ease-in-out;
+        display: block;
+        padding: $cart-card-spacing;
+        font-size: 20px;
+        &:hover,
+        &:focus,
+        &:active {
+          opacity: 1;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  .cart-drawer {
+    &__quantity-modifier {
+      margin: 0;
+      max-width: 100%;
+      button,
+      input {
+        border: 0;
+      }
+    }
+    &__quantity-modifier {
+      width: 100%;
+      float: right;
+      @include mqmin($bp-md) {
+        float: none;
+      }
+      input {
+        &[type=number]::-webkit-inner-spin-button,
+        &[type=number]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+        }
+      }
+    }
+  }
+  // Cart footer
+  &__footer {
+    padding-top: $body-element-spacing;
+    @include clearfix;
+    .price-discounts {
+      display: block;
+      margin-top: 20px;
+      &.hidden {
+        display: none;
+      }
+    }
+  }
+  &__shipping {
+    @include mqmin($bp-lg) {
+      text-align: right;
+    }
+  }
+
+  // Cart footer totals
+  &__totals-col {
+    padding-top: $body-element-spacing;
+    &:first-child {
+      padding-top: 0;
+    }
+    @include mqmin($bp-md) {
+      padding-top: 0;
+    }
+    .price-total {
+      font-size: 1.2em;
+      border: 1px solid #000;
+      background: #fff;
+      padding: 1em;
+      border-radius: $form-borderradius;
+      .price {
+        float: right;
+      }
+      .price-discounts {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  &__checkout-col,
+  &__notes-col {
+    margin-top: $body-element-spacing;
+  }
+}
+
+@include mqmin($bp-md) {
+  .cart__totals-col,
+  .cart__checkout-col {
+    width: 50%;
+    float: right;
+    box-sizing: border-box;
+    padding-left: 0.5 * $gutter-md;
+  }
+  .cart__totals-col {
+    margin: 0;
+  }
+  .cart__notes-col {
+    margin: 0;
+    width: 45%;
+    float: left;
+    box-sizing: border-box;
+    padding-right: 0.5 * $gutter-md;
+  }
+  // If there are no notes
+  .cart__totals-col + .cart__checkout-col {
+    clear: both;
+  }
+}

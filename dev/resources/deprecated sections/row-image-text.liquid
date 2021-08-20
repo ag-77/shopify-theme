@@ -1,0 +1,205 @@
+{%- comment -%} Get nr of columns from settings {%- endcomment -%}
+{%- assign items_per_row = 2 -%}
+
+{%- comment -%} Get classes for responsive columns {%- endcomment -%}
+{%- render 'responsive-column-dimensions',
+  items_per_row = items_per_row
+-%}
+
+{%- comment -%} Get responsive image dimensions {%- endcomment -%}
+{%- render 'responsive-image-dimensions',
+  items_per_row = items_per_row,
+  responsive_image_ratio: '1'
+-%}
+
+{%- comment -%} create content {%- endcomment -%}
+{%- capture section_content -%}
+
+  {%- if section.blocks.size > 0 -%}
+    {%- for block in section.blocks -%}
+      <div class="row row--gutter row--line-spacing col-md--no-line-spacing{% if block.settings.reverse_row %} row--reverse{% endif %}">
+        <div class="col-xs-12 col-md-6 image-col col">
+          {%- if block.settings.image != blank -%}
+            {%- render 'responsive-image',
+                responsive_image: block.settings.image,
+                responsive_image_class: 'img--border',
+                responsive_image_alt: block.settings.title
+              -%}
+          {%- else -%}
+            {%- capture current -%}{%- cycle 1, 2, 3, 4, 5, 6 -%}{%- endcapture -%}
+            <figure class="img img--border">
+              {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </figure>
+          {%- endif -%}
+        </div>
+        <div class="col-xs-12 col-md-6 content-col col">
+          {% if block.settings.title != blank or block.settings.text != blank or block.settings.button_label != blank or block.settings.link != blank %}
+            <div class="content-col-wrapper text-align-{{ block.settings.text_align }}">
+              {%- if block.settings.title != blank -%}
+                <h3 class="h2">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.text != blank%}
+                <div class="content-col-text">
+                  {{ block.settings.text }}
+                </div>
+              {%- endif -%}
+              {%- if block.settings.button_label != blank and block.settings.link != blank -%}
+                <p class="content-col-button">
+                  <a href="{{ block.settings.link }}" class="button">
+                    {{ block.settings.button_label }}
+                  </a>
+                </p>
+              {%- endif -%}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} wrap and render content {%- endcomment -%}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+
+{% schema %}
+{
+  "name": "Image + text",
+  "class": "image-text-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Images with text",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  } ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image with text",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "reverse_row",
+          "label": "Reverse order",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Text appears here.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text align",
+          "default": "left",
+          "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centered"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          } ]
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Image with text",
+    "category": "Text",
+    "settings": {
+    },
+    "blocks": [
+      {
+        "type": "image",
+        "settings": {
+          "title": "Title",
+          "text": "<p>Consequat magna laboris eiusmod adipisicing anim dolore tempor enim veniam.</p>",
+          "button_label": "Read more",
+          "link": "#"
+        }
+      },
+      {
+        "type": "image",
+        "settings": {
+          "reverse_row": true,
+          "title": "Title",
+          "text": "<p>Consequat magna laboris eiusmod adipisicing anim dolore tempor enim veniam.</p>",
+          "button_label": "Read more",
+          "link": "#"
+        }
+      }
+    ]
+  }]
+}
+{% endschema %}

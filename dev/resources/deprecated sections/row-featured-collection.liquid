@@ -1,0 +1,175 @@
+{%- comment -%} Get nr of columns from settings {%- endcomment -%}
+{%- assign items_per_row = section.settings.items_per_row | times: '1' -%}
+{%- assign max_items = section.settings.nr_items | times: '1' -%}
+
+{%- comment -%} Get classes for responsive columns {%- endcomment -%}
+{%- render 'responsive-column-dimensions',
+  items_per_row = items_per_row
+-%}
+
+{%- comment -%} If the items span muliple rows - don't remove the vertical line spacing {%- endcomment -%}
+{%- if max_items > items_per_row -%}
+  {%- assign responsive_no_line_spacing = '' -%}
+{%- endif -%}
+
+{%- comment -%} Get responsive image dimensions {%- endcomment -%}
+{%- render 'responsive-image-dimensions',
+  items_per_row = items_per_row,
+  responsive_image_ratio: '1'
+-%}
+
+{%- comment -%} Get the collections from settings {%- endcomment -%}
+{%- assign the_collection = collections[section.settings.collection] -%}
+
+{%- comment -%} If collection is viewed as a list, there are no columns {%- endcomment -%}
+{%- if section.settings.collection_view == 'list' -%}
+  {%- assign responsive_column_classes = 'col-xs-12' -%}
+{%- endif -%}
+
+{%- comment -%} Create content {%- endcomment -%}
+{%- capture section_content -%}
+  {%- if section.settings.collection != blank -%}
+    {%- if the_collection.products_count > 0 -%}
+      <div class="row row--gutter row--line-spacing {{ responsive_no_line_spacing }}">
+        {%- for product in the_collection.products limit: section.settings.max_items -%}
+          <div class="col {{ responsive_column_classes }} col--border">
+            {%- render 'product-link',
+              the_product: product,
+              product_view: section.settings.collection_view
+            -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p class="text-align-center">{{ 'collections.general.no_matches' | t }}</p>
+    {%- endif -%}
+  {%- else -%}
+    <div class="row row--gutter row--line-spacing {{ responsive_no_line_spacing }}">
+      {%- for i in (1..section.settings.nr_items) -%}
+        <div class="col {{ responsive_column_classes }} col--border">
+          {%- render 'product-link',
+            product_view: section.settings.collection_view,
+            product_demo: i
+          -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} Wrap and render content {% endcomment -%}
+{%- render 'container',
+  container_content: section_content,
+  container_title: section.settings.title,
+  container_classes: section.settings.section_background,
+  container_title_hidden: section.settings.hide_heading
+ -%}
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "class": "collection-featured-section",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section layout",
+    "info": "Control the look of this section"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Featured collection",
+    "info": "Always give this a good SEO value"
+  },
+  {
+    "type": "select",
+    "id": "hide_heading",
+    "label": "Heading visibility",
+    "default": "false",
+    "options": [
+    {
+      "value": "false",
+      "label": "Show heading"
+    },
+    {
+      "value": "true",
+      "label": "Hide heading"
+    } ]
+  },
+  {
+    "type": "select",
+    "id": "section_background",
+    "label": "Section background color",
+    "default": "",
+    "options": [
+    {
+      "value": "",
+      "label": "None"
+    },
+    {
+      "value": "container--accent container--block",
+      "label": "Accent"
+    } ]
+  },
+  {
+    "type": "header",
+    "content": "Section content"
+  },
+  {
+    "type": "collection",
+    "id": "collection",
+    "label": "Select collection"
+  },
+  {
+    "type": "select",
+    "id": "collection_view",
+    "label": "Collection view",
+    "default": "grid",
+    "options": [
+    {
+      "value": "grid",
+      "label": "Grid"
+    },
+    {
+      "value": "list",
+      "label": "List"
+    } ]
+  },
+  {
+    "type": "text",
+    "id": "nr_items",
+    "default": "3",
+    "label": "Nr of items"
+  },
+  {
+    "type": "select",
+    "id": "items_per_row",
+    "default": "3",
+    "label": "Nr of items per row",
+    "options": [
+    {
+      "value": "1",
+      "label": "1"
+    },
+    {
+      "value": "2",
+      "label": "2"
+    },
+    {
+      "value": "3",
+      "label": "3"
+    },
+    {
+      "value": "4",
+      "label": "4"
+    } ]
+  } ],
+  "presets": [
+  {
+    "name": "Featured collection",
+    "category": "Collection",
+    "settings": {}
+  } ]
+}
+{% endschema %}

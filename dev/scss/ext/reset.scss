@@ -1,0 +1,43 @@
+/*================ Form element helpers ================*/
+@include mqmax($bp-md) {
+  input,
+  textarea,
+  select {
+    // Use 16px minimal to prevent zoom on touch devices in active inputs
+    font-size: 16px;
+  }
+}
+button,
+input[type="submit"],
+input[type="button"],
+label[for] {
+  cursor: pointer;
+}
+button[disabled],
+input[type="submit"][disabled]{
+  cursor: default;
+}
+optgroup {
+  font-weight: 700;
+}
+// Force option color (affects IE only)
+option {
+  color: $body-text-color;
+}
+// hide outline on focus for elements which are given focus by JS
+[tabindex='-1']:focus {
+  outline: none;
+}
+/*============================================================================
+  Fast Tap
+  enables no-delay taps (FastClick-esque) on supporting browsers
+==============================================================================*/
+a,
+button,
+[role="button"],
+input,
+label,
+select,
+textarea {
+  touch-action: manipulation;
+}

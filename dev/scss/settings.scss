@@ -1,0 +1,141 @@
+/*============================================================================
+  # Color Settings
+==============================================================================*/
+$color-primary: #0040FF;      // primary color, primary buttons
+$color-primary-text: #fff;    // text on primary color
+$color-secondary: #1111aa;    // secondary color, secondary buttons
+$color-secondary-text: #fff;  // text on secondary color
+$color-funnel: #ff6600;       // funnel color, all funnel elements
+$color-funnel-text: #fff;     // text on funnel color
+
+/*================ Border colors ================*/
+$color-lines: #D8D8D8;        // single lines
+$color-border: #D8D8D8;       // borders around elements
+
+/*================ Body colors ================*/
+$body-background: #fff;
+$body-background-accent: #f7f7f7;
+$body-text-color: #071013;
+$body-text-color-light: mix($body-text-color, #fff, 70%);
+$body-link-color: $color-secondary;
+
+/*================ Header colors ================*/
+$header-background: #fff;
+$header-text-color: $body-text-color;
+$header-link-color: $body-text-color;
+
+/*================ Footer colors ================*/
+$footer-background: #fff;
+$footer-text-color: $body-text-color;
+$footer-link-color: $body-text-color;
+
+/*================ Social colors ================*/
+$color-facebook: #3b5998;
+$color-twitter: #1da1f2;
+$color-pinterest: #bd081c;
+$color-google: #db4538;
+
+/*================ Notification colors  ================*/
+$color-error: red;
+$color-error-text: #fff;
+$color-success: green;
+$color-success-text: #fff;
+
+/*================ Buttons ================*/
+// .button
+$button-background: #fff;
+$button-text: #000;
+$button-background-hover: #fff;
+$button-border-radius: 4px;
+
+// .button.button--primary
+$button-text-primary: $color-primary-text;
+$button-background-primary: $color-primary;
+$button-background-primary-hover: mix($button-background-primary, #fff, 90%);
+
+// .button.button--secondary
+$button-text-secondary: $color-secondary-text;
+$button-background-secondary: $color-secondary;
+$button-background-secondary-hover: mix($button-background-secondary, #fff, 90%);
+
+// .button.button--funnel
+$button-text-funnel: $color-funnel-text;
+$button-background-funnel: $color-funnel;
+$button-background-funnel-hover: mix($button-background-funnel, #fff, 90%);
+
+/*================ table ================*/
+$table-background: transparent;                       // Background color for tables
+$table-background-accent: $body-background-accent;    // Background color for alternating table rows
+
+
+/*============================================================================
+  # Layout dimensions
+==============================================================================*/
+$site-center: 1440px;                   // max width of page center
+$site-center-narrow: 720px;             // max width of narrow page center for textpages etc.
+
+$site-side-spacing: 16px;               // Set spacing for the site left and right sides
+$site-side-spacing-md: 32px;
+
+$container-spacing: 16px;               // Vertical spacing between containers
+$container-spacing-md: 32px;
+
+$container-row-spacing: 16px;           // Vertical spacing between container-rows inside containers
+$container-row-spacing-md: 32px;
+
+$gutter: 16px;                          // Gutter between columns
+$gutter-md: 24px;
+
+$row-spacing: $gutter;                  // Gutter between column rows
+$row-spacing-md: $gutter-md;
+
+$body-element-spacing: 16px;            // Vertical spacing between common text elements (p, ul, table)
+
+// Responsive breakpoints for media queries
+$bp-xs: 360px;
+$bp-sm: 410px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1440px;
+
+// Responsive breakpoints for specific elements
+$bp-header: $bp-md;
+$bp-footer: $bp-md;
+
+/*================ Form dimensions ================*/
+$form-element-height: 2.5rem;              // Height of text-inputs and buttons
+$form-focus-color: $color-primary;         // Border focus color for form elements
+$form-borderradius: $button-border-radius; // Border radius for form elements
+
+
+/*============================================================================
+  # Font Settings
+==============================================================================*/
+$body-font-family: Verdana, Arial, Helvetica, sans-serif;
+$body-font-weight: 400;
+$body-font-style: normal;
+$body-font-size: 16;      // Body font size in pixels, use with mixin rem($body-font-size)
+$body-line-height: 24;     // Body line-height in pixels, use with mixin rem($body-line-height)
+
+$body-heading-font-family: $body-font-family;
+$body-heading-font-weight: 700;
+$body-heading-font-style: normal;
+
+$nav-fontfamily: $body-font-family;
+$nav-fontweight: 400;
+$nav-fontstyle: normal;
+$nav-fontsize: $body-font-size;
+
+
+/*============================================================================
+  # Grid column Settings
+==============================================================================*/
+// Responsive breakpoints for col.scss
+$mq-breakpoints:
+xs $bp-xs,
+sm $bp-sm,
+md $bp-md,
+lg $bp-lg,
+xl $bp-xl;
+
+$flex-columns: 12; // Number of columns to use on the flexboxgrid layout (12 / 16)

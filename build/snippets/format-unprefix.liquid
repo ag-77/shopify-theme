@@ -1,0 +1,43 @@
+{%- comment -%}
+  {%- render 'format-unprefix', format: page.title -%}
+  Strip a [theme-tag] from the tekst
+  "Dit is de [theme-tag] tekst" will render as "Dit is de tekst"
+
+  {%- render 'format-unprefix', format: page.title, format_return_vars: true -%}
+  Will not render the formatted text
+  Returns format_unprefixed: "Dit is de tekst"
+  Returns format_prefix: "theme-tag"
+{%- endcomment -%}
+
+{%- comment -%} Reset vars {%- endcomment -%}
+{%- assign format_unprefixed = '' -%}
+{%- assign format_prefix = '' -%}
+{%- assign string_start = '' -%}
+{%- assign string_end = '' -%}
+
+{%- if format contains '[' and format contains ']' -%}
+
+    {%- comment -%} Split format to arrays on both sides {%- endcomment -%}
+    {%- assign string_start_parts = format | split: '[' -%}
+    {%- assign string_end_parts = format | split: ']' -%}
+
+    {%- comment -%} Find the prefix part {%- endcomment -%}
+    {%- assign format_prefix = string_start_parts.last | split: ']' | first -%}
+
+    {%- comment -%} Get usefull parts of arrays {%- endcomment -%}
+    {%- assign string_end = string_end_parts[1] -%}
+    {%- if string_start_parts[1] != blank -%}
+      {%- assign string_start = string_start_parts[0] -%}
+    {%- endif -%}
+
+    {%- comment -%} Concat parts {%- endcomment -%}
+    {%- assign format_unprefixed = string_start | append: string_end | replace: '  ',' ' | strip -%}
+
+{%- else -%}
+
+    {%- assign format_unprefixed = format -%}
+
+{%- endif -%}
+{%- unless format_return_vars -%}
+  {{- format_unprefixed -}}
+{%- endunless -%}
